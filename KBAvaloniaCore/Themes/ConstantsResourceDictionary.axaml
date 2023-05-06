@@ -1,0 +1,14 @@
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    
+    <Thickness x:Key="LeftMargin" >5, 0, 0, 0</Thickness>    
+    <Thickness x:Key="RightMargin" >0, 0, 5, 0</Thickness>
+    <Thickness x:Key="TopMargin" >0, 5, 0, 0</Thickness>
+    <Thickness x:Key="BottomMargin" >0, 0, 0, 5</Thickness>
+    <Thickness x:Key="AllMargin" >5</Thickness>
+    <Thickness x:Key="NoMargin">0</Thickness>
+    <Thickness x:Key="HorizontalMargin">5, 0, 5, 0</Thickness>
+    <Thickness x:Key="VerticalMargin">0, 5, 0, 5</Thickness>
+    
+    
+</ResourceDictionary>

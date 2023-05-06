@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AvaloniaProject">
+    <option name="projectPerEditor">
+      <map>
+        <entry key="AvaloniaTestApp/App.axaml" value="AvaloniaTestApp/AvaloniaTestApp.csproj" />
+        <entry key="AvaloniaTestApp/Views/MainWindow.axaml" value="AvaloniaTestApp/AvaloniaTestApp.csproj" />
+        <entry key="KBAvaloniaCore/Themes/ConstantsResourceDictionary.axaml" value="AvaloniaTestApp/AvaloniaTestApp.csproj" />
+        <entry key="KBAvaloniaCore/Themes/Dark/DarkButtonSpinnerStyle.axaml" value="AvaloniaTestApp/AvaloniaTestApp.csproj" />
+        <entry key="KBAvaloniaCore/Themes/Dark/DarkButtonStyle.axaml" value="AvaloniaTestApp/AvaloniaTestApp.csproj" />
+        <entry key="KBAvaloniaCore/Themes/Dark/DarkCheckBoxStyle.axaml" value="AvaloniaTestApp/AvaloniaTestApp.csproj" />
+        <entry key="KBAvaloniaCore/Themes/Dark/DarkGridSplitterStyle.axaml" value="KBGodotBuilderWizard/KBGodotBuilderWizard.csproj" />
+        <entry key="KBAvaloniaCore/Themes/Dark/DarkListBoxStyle.axaml" value="AvaloniaTestApp/AvaloniaTestApp.csproj" />
+        <entry key="KBAvaloniaCore/Themes/Dark/DarkTabControlStyle.axaml" value="AvaloniaTestApp/AvaloniaTestApp.csproj" />
+        <entry key="KBAvaloniaCore/Themes/Dark/DarkTextBlockStyle.axaml" value="AvaloniaTestApp/AvaloniaTestApp.csproj" />
+        <entry key="KBAvaloniaCore/Themes/Dark/DarkTextBoxStyle.axaml" value="AvaloniaTestApp/AvaloniaTestApp.csproj" />
+        <entry key="KBAvaloniaCore/Themes/Dark/DarkThemeColors.axaml" value="AvaloniaTestApp/AvaloniaTestApp.csproj" />
+        <entry key="KBAvaloniaCore/Themes/Dark/DarkWindowStyle.axaml" value="AvaloniaTestApp/AvaloniaTestApp.csproj" />
+        <entry key="KBAvaloniaCore/Themes/Dark/ThemeColors.axaml" value="AvaloniaTestApp/AvaloniaTestApp.csproj" />
+        <entry key="KBAvaloniaCore/Themes/DarkButtonSpinnerStyle.axaml" value="AvaloniaTestApp/AvaloniaTestApp.csproj" />
+        <entry key="KBAvaloniaCore/Themes/DarkButtonStyle.axaml" value="AvaloniaTestApp/AvaloniaTestApp.csproj" />
+        <entry key="KBAvaloniaCore/Themes/DarkCheckBoxStyle.axaml" value="AvaloniaTestApp/AvaloniaTestApp.csproj" />
+        <entry key="KBAvaloniaCore/Themes/DarkGridSplitterStyle.axaml" value="AvaloniaTestApp/AvaloniaTestApp.csproj" />
+        <entry key="KBAvaloniaCore/Themes/DarkListBoxStyle.axaml" value="AvaloniaTestApp/AvaloniaTestApp.csproj" />
+        <entry key="KBAvaloniaCore/Themes/DarkTabControlStyle.axaml" value="AvaloniaTestApp/AvaloniaTestApp.csproj" />
+        <entry key="KBAvaloniaCore/Themes/DarkTextBlockStyle.axaml" value="AvaloniaTestApp/AvaloniaTestApp.csproj" />
+        <entry key="KBAvaloniaCore/Themes/DarkTextBoxStyle.axaml" value="AvaloniaTestApp/AvaloniaTestApp.csproj" />
+        <entry key="KBAvaloniaCore/Themes/DarkWindowStyle.axaml" value="AvaloniaTestApp/AvaloniaTestApp.csproj" />
+        <entry key="KBAvaloniaCore/Themes/ImplicitStyles.axaml" value="AvaloniaTestApp/AvaloniaTestApp.csproj" />
+        <entry key="KBAvaloniaCore/Themes/ThemeColors.axaml" value="AvaloniaTestApp/AvaloniaTestApp.csproj" />
+        <entry key="KBGodotBuilderWizard/App.axaml" value="KBGodotBuilderWizard/KBGodotBuilderWizard.csproj" />
+        <entry key="KBGodotBuilderWizard/Views/ConfigurationWidow.axaml" value="KBGodotBuilderWizard/KBGodotBuilderWizard.csproj" />
+        <entry key="KBGodotBuilderWizard/Views/ConfigurationWindow.axaml" value="KBGodotBuilderWizard/KBGodotBuilderWizard.csproj" />
+        <entry key="KBGodotBuilderWizard/Views/MainWindow.axaml" value="KBGodotBuilderWizard/KBGodotBuilderWizard.csproj" />
+        <entry key="KBGodotBuilderWizard/Views/VersionUpdaterView.axaml" value="KBGodotBuilderWizard/KBGodotBuilderWizard.csproj" />
+      </map>
+    </option>
+  </component>
+</project>

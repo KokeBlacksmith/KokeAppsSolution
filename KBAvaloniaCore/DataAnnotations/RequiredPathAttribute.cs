@@ -1,0 +1,34 @@
+﻿#nullable enable
+using System.ComponentModel.DataAnnotations;
+using Path = KBAvaloniaCore.IO.Path;
+
+namespace KBAvaloniaCore.DataAnnotations;
+
+[AttributeUsage(AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Parameter, AllowMultiple = false)]
+public sealed class RequiredPathAttribute : RequiredAttribute
+{
+    public RequiredPathAttribute() : base()
+    {
+        AllowEmptyStrings = false;
+    }
+
+    public bool AllowNonExistingPath { get; set; }
+
+    public override bool IsValid(object? value)
+    {
+        if (base.IsValid(value))
+        {
+            if (!AllowNonExistingPath)
+            {
+                Path path = (Path)value!;
+                return path.Exists();
+            }
+            else
+            {
+                return true; 
+            }
+        }
+
+        return false;
+    }
+}

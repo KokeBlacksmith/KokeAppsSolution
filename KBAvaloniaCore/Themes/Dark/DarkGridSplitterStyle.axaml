@@ -1,0 +1,34 @@
+﻿<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Design.PreviewWith>
+        <Grid ColumnDefinitions="*, Auto, *" Width="200" Height="100">
+            <Border Grid.Column="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="Red"/>
+            <GridSplitter Grid.Column="1"/>
+            <Border Grid.Column="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="Aqua"/>
+        </Grid>
+    </Design.PreviewWith>
+
+    <Styles.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceInclude Source="/Themes/Dark/DarkThemeColors.axaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Styles.Resources>
+    
+    <!-- Add Styles Here -->
+    <Style Selector="GridSplitter">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="BorderBrush" Value="Transparent"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="HorizontalAlignment" Value="Stretch"/>
+        <Setter Property="VerticalAlignment" Value="Stretch"/>
+        <Setter Property="ShowsPreview" Value="True"/>
+        <Setter Property="CornerRadius" Value="0"/>
+    </Style>
+    
+    <Style Selector="GridSplitter:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+        <Setter Property="Background" Value="{StaticResource DarkMovementControlHighLightBackgroundColor}"/>
+        <Setter Property="BorderBrush" Value="{StaticResource DarkMovementControlHighLightBackgroundColor}"/>
+    </Style>
+</Styles>

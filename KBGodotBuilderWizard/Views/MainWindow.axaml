@@ -1,0 +1,66 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:KBGodotBuilderWizard.ViewModels"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="KBGodotBuilderWizard.Views.MainWindow"
+        Icon="/Assets/avalonia-logo.ico"
+        Title="KBGodotBuilderWizard">
+
+    <Design.DataContext>
+        <vm:MainWindowViewModel/>
+    </Design.DataContext>
+
+    <Grid RowDefinitions="Auto,*" ColumnDefinitions="200, 350, *">
+
+        <StackPanel Grid.Row="0" Grid.Column="0" Orientation="Horizontal">
+            <Button Content="Refresh" Command="{Binding RefreshAvailableVersionsCommand }"/>
+            <ProgressBar IsIndeterminate="True" ShowProgressText="True"
+                         IsVisible="{Binding IsBusy}"/>
+        </StackPanel>
+        
+        <ListBox Grid.Row="1" Grid.Column="0" MinWidth="100" 
+                 Items="{Binding VersionsList}" 
+                 SelectedItem="{Binding SelectedVersion}">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding Version}"/>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+        
+        <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Horizontal">
+            <TextBlock Text="Godot Version:"/>
+            <TextBlock Text="{Binding SelectedVersion.Version}"/>
+            <!-- <TextBlock Text="{Binding SelectedVersion}"/> -->
+        </StackPanel>
+        
+        <ListBox Grid.Row="1" Grid.Column="1" MinWidth="100"
+                 Items="{Binding SelectedVersion.Installs}"
+                 SelectedItem="{Binding SelectedDownload}">
+            
+            <ListBox.Styles>
+                <Style Selector="Image">
+                    <Setter Property="Width" Value="18"/>
+                    <Setter Property="Height" Value="18"/>
+                    <Setter Property="Margin" Value="{StaticResource HorizontalMargin}"/>
+                </Style>
+            </ListBox.Styles>
+            
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <Grid ColumnDefinitions="Auto, 100, 18, 18">
+                        <Button Grid.Column="0" Width="18" Height="18" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" Margin="{StaticResource HorizontalMargin}">
+                            <Image Source="/Assets/download_icon.ico" />
+                        </Button>
+                        <TextBlock Grid.Column="1" Text="{Binding Name}"/>
+                        <Image Grid.Column="2" Source="/Assets/windows_icon.ico"/>
+                        <Image Grid.Column="3" Source="/Assets/apple_icon.ico"/>
+                    </Grid>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+        
+    </Grid>
+</Window>

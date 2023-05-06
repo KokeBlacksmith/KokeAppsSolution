@@ -1,0 +1,53 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:AvaloniaTestApp.ViewModels"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="AvaloniaTestApp.Views.MainWindow"
+        Icon="/Assets/avalonia-logo.ico"
+        Title="AvaloniaTestApp"
+        Background="{StaticResource DarkestBackgroundColor}">
+
+    <Design.DataContext>
+        <vm:MainWindowViewModel/>
+    </Design.DataContext>
+
+    <TabControl>
+        <TabItem Header="Random Controls">
+            <StackPanel Orientation="Vertical">
+                <TextBlock Text="{Binding Greeting}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                <TextBox Text="{Binding TextBoxString}" />
+                <Button Content="{Binding ButtonString}" Command="{Binding ButtonClickCommand}"/>
+                <Label Content="Label" />
+                <CheckBox />
+                
+                <NumericUpDown Text="{Binding ButtonSpinnerNum}"/>
+                <ButtonSpinner Content="{Binding ButtonSpinnerNum}"/>
+                
+                <ProgressBar Minimum="0" Maximum="20" Value="{Binding ButtonSpinnerNum}"
+                             Height="30"/>
+            </StackPanel>
+        </TabItem>
+        
+        <TabItem Header="TextBoxes">
+            
+        </TabItem>
+        
+        <TabItem Header="Buttons">
+            
+        </TabItem>
+        
+        <TabItem Header="Collections">
+            
+        </TabItem>
+        
+        <TabItem Header="Canvas">
+            
+        </TabItem>
+        
+        
+    </TabControl>
+    
+
+</Window>
