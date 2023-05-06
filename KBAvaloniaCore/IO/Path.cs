@@ -1,38 +1,41 @@
-﻿using System.Runtime.CompilerServices;
+﻿using System.Net.Http.Headers;
+using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
+using System.Xml;
+using System.Xml.Schema;
+using System.Xml.Serialization;
+using Avalonia.Rendering;
 
 namespace KBAvaloniaCore.IO;
 
 [Serializable]
-public sealed class Path : ISerializable
+[DataContract(Name = nameof(Path))]
+public sealed class Path
 {
-    private string _path;
     private EPathType _pathType;
-    
-    
-    public Path(string path, EPathType pathType)
-    {
-        _path = path;
-        _pathType = pathType;
-    }
+    private string _fullPath;
     
     public Path(string path)
     {
-        _path = path;
-        _pathType = System.IO.Path.HasExtension(_path) ? EPathType.File : EPathType.Directory;
+        FullPath = path;
     }
-    
+
     /// <summary>
-    /// ISerialization constructor
+    /// Constructor using for serialization
     /// </summary>
-    /// <param name="info"></param>
-    /// <param name="context"></param>
-    protected Path(SerializationInfo info, StreamingContext context)
+    private Path() { }
+
+    [DataMember(Name = nameof(Path.FullPath))]
+    public string FullPath
     {
-        _path = (string)info.GetValue("Path", typeof(string));
-        _pathType = (EPathType)info.GetValue("Member2", typeof(EPathType));
+        get { return _fullPath;}
+        set
+        {
+            _fullPath = value;
+            _pathType = System.IO.Path.HasExtension(FullPath) ? EPathType.File : EPathType.Directory;
+        }
     }
-    
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Path Combine(params string[] paths)
     {
@@ -42,14 +45,14 @@ public sealed class Path : ISerializable
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public bool Exists()
     {
-        return _pathType == EPathType.Directory ? System.IO.Directory.Exists(_path) : System.IO.File.Exists(_path);
+        return _pathType == EPathType.Directory ? System.IO.Directory.Exists(FullPath) : System.IO.File.Exists(FullPath);
     }
     
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void Combine(string path)
     {
-        _path = System.IO.Path.Combine(_path, path);
-        _pathType = System.IO.Path.HasExtension(_path) ? EPathType.File : EPathType.Directory;
+        FullPath = System.IO.Path.Combine(FullPath, path);
+        _pathType = System.IO.Path.HasExtension(FullPath) ? EPathType.File : EPathType.Directory;
     }
     
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -61,25 +64,25 @@ public sealed class Path : ISerializable
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public string GetPath()
     {
-        return _path;
+        return FullPath;
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public string GetFileName()
     {
-        return _pathType == EPathType.File ? System.IO.Path.GetFileName(_path) : String.Empty;
+        return _pathType == EPathType.File ? System.IO.Path.GetFileName(FullPath) : String.Empty;
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public string GetDirectoryName()
     {
-        return System.IO.Path.GetDirectoryName(_path);
+        return System.IO.Path.GetDirectoryName(FullPath);
     }
     
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public string GetExtension()
     {
-        return System.IO.Path.GetExtension(_path);
+        return System.IO.Path.GetExtension(FullPath);
     }
     
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -100,7 +103,7 @@ public sealed class Path : ISerializable
         {
             if (overrideExisting)
             {
-                System.IO.File.Delete(_path);
+                System.IO.File.Delete(FullPath);
             }
             else
             {
@@ -108,7 +111,7 @@ public sealed class Path : ISerializable
             }
         }
 
-        FileStream fs = System.IO.File.Create(_path);
+        FileStream fs = System.IO.File.Create(FullPath);
         fs.Dispose();
 
         return this.Exists();
@@ -117,19 +120,7 @@ public sealed class Path : ISerializable
     
     public override string ToString()
     {
-        return $"Type ´{_pathType}´ Path ´{_path}´";
-    }
-
-    /// <summary>
-    /// ISerializable implementation
-    /// </summary>
-    /// <param name="info"></param>
-    /// <param name="context"></param>
-    /// <exception cref="NotImplementedException"></exception>
-    public void GetObjectData(SerializationInfo info, StreamingContext context)
-    {
-        info.AddValue("Path", _path);
-        info.AddValue("PathType", Enum.GetName(typeof(EPathType), _pathType));
+        return $"Type ´{_pathType}´ Path ´{FullPath}´";
     }
 
     public static Path operator +(Path path1, Path path2) => Path.Combine(path1.GetPath(), path2.GetPath());

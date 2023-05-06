@@ -21,7 +21,7 @@
     </Window.DataContext>
     
     <Grid RowDefinitions="50, 50">
-        <controls:TextBoxPath PathText="{Binding InstallsPath}"
+        <controls:TextBoxPath PathText="{Binding InstallsPath, Mode=TwoWay}"
                               HorizontalAlignment="Center"
                               VerticalContentAlignment="Stretch"
                               Margin="{StaticResource AllMargin}"/>

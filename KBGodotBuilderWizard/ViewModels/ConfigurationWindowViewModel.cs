@@ -1,17 +1,27 @@
-﻿using System.Windows.Input;
+﻿using System;
+using System.IO;
+using System.Reactive.Linq;
+using System.Windows.Input;
 using Avalonia.Interactivity;
+using DynamicData.Binding;
+using KBAvaloniaCore.IO;
 using KBAvaloniaCore.Miscellaneous;
+using KBGodotBuilderWizard.Models;
 using ReactiveUI;
+using Path = KBAvaloniaCore.IO.Path;
 
 namespace KBGodotBuilderWizard.ViewModels;
 
 public class ConfigurationWindowViewModel : BaseViewModel
 {
-    private string _installsPath = "Placeholder install path";
+    private string _installsPath = "bobo Placeholder install path";
 
     public ConfigurationWindowViewModel()
     {
-        SaveCommand = ReactiveCommand.Create(_SaveCommandExecute);
+        IObservable<bool> canSave = this
+            .WhenAnyValue(x => x.InstallsPath, (path) => new KBAvaloniaCore.IO.Path(path).Exists());
+        
+        SaveCommand = ReactiveCommand.Create(_SaveCommandExecute, canSave);
         CancelCommand = ReactiveCommand.Create(_CancelCommandExecute);
     }
     
@@ -26,11 +36,13 @@ public class ConfigurationWindowViewModel : BaseViewModel
     
     private void _SaveCommandExecute()
     {
-        
+        ConfigurationFileData configurationFileData = new ConfigurationFileData();
+        configurationFileData.InstallVersionsPath = InstallsPath;
+        configurationFileData.Save();
     }
     
     private void _CancelCommandExecute()
     {
-           
+        
     }
 }

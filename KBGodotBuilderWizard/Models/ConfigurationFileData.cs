@@ -19,7 +19,7 @@ public class ConfigurationFileData
                                                                                         System.Reflection.Assembly.GetCallingAssembly().GetName().Name!, 
                                                                                         "SaveDataConfiguration.xml");
 
-    [XmlAttribute(nameof(ConfigurationFileData.InstallVersionsPath))]
+    [XmlElement(nameof(ConfigurationFileData.InstallVersionsPath))]
     [RequiredPath(ErrorMessage = "Please enter the path to install Godot executables.", AllowNonExistingPath = false)]
     public KBAvaloniaCore.IO.Path InstallVersionsPath { get; set; } = null;
 

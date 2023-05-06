@@ -1,6 +1,7 @@
 ﻿using System.Reflection;
 using System.Xml.Serialization;
 using JetBrains.Annotations;
+using KBAvaloniaCore.Miscellaneous;
 
 namespace KBAvaloniaCore.IO;
 
@@ -15,23 +16,35 @@ public static class XmlSerializableHelper
         }
     }
 
-    public static T Load<T>(string path)
+    public static Result<T> Load<T>(string path)
     {
         using (FileStream fileStream = new FileStream(path, FileMode.Open))
         {
-            XmlSerializer xmlSerializer = new XmlSerializer(typeof(T));
-            return (T)xmlSerializer.Deserialize(fileStream);
+            try
+            {
+                XmlSerializer xmlSerializer = new XmlSerializer(typeof(T));
+                return new Result<T>((T)xmlSerializer.Deserialize(fileStream), true);
+            }
+            catch (Exception e)
+            {
+                return new Result<T>(e.Message);
+            }
         }
     }
     
-    public static void Load<T>(string path, [NotNull] T toFillObject)
+    public static Result Load<T>(string path, [NotNull] T toFillObject)
         where T : class
     {
         if (toFillObject == null)
             throw new ArgumentNullException(nameof(toFillObject));
         
-        T deserialized = XmlSerializableHelper.Load<T>(path);
-        XmlSerializableHelper._Load(toFillObject, deserialized);
+        Result<T> deserializedResult = XmlSerializableHelper.Load<T>(path);
+        if (deserializedResult.IsSuccess)
+        {
+            XmlSerializableHelper._Load(toFillObject, deserializedResult.Value);
+        }
+
+        return deserializedResult.ToResult();
     }
     
     private static void _Load<T>(T toFillObject, T dataObject)
