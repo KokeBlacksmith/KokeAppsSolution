@@ -28,7 +28,7 @@ namespace KBGodotBuilderWizard.ViewModels
         public MainWindowViewModel()
         {
             RefreshAvailableVersionsCommand = ReactiveCommand.Create(_FetchVersions);
-            InitliazeVersionConfigurationCommand = ReactiveCommand.Create(_InitializeVersionConfigurationCommandExecute);
+            InitializeVersionConfigurationCommand = ReactiveCommand.Create(_InitializeVersionConfigurationCommandExecute);
         }
         
         public AvaloniaList<GodotVersionViewModel> VersionsList
@@ -66,7 +66,7 @@ namespace KBGodotBuilderWizard.ViewModels
         }
 
         public ICommand RefreshAvailableVersionsCommand { get; }
-        public ICommand InitliazeVersionConfigurationCommand { get; }
+        public ICommand InitializeVersionConfigurationCommand { get; }
 
         /// <summary>
         /// Retrieves the available number versions

@@ -5,6 +5,8 @@
       <map>
         <entry key="AvaloniaTestApp/App.axaml" value="AvaloniaTestApp/AvaloniaTestApp.csproj" />
         <entry key="AvaloniaTestApp/Views/MainWindow.axaml" value="AvaloniaTestApp/AvaloniaTestApp.csproj" />
+        <entry key="KBAvaloniaCore/Controls/TextBoxPath.axaml" value="KBBehaviourTree/KBBehaviourTree.csproj" />
+        <entry key="KBAvaloniaCore/Controls/TextBoxPath/View/TextBoxPath.axaml" value="KBBehaviourTree/KBBehaviourTree.csproj" />
         <entry key="KBAvaloniaCore/Themes/ConstantsResourceDictionary.axaml" value="AvaloniaTestApp/AvaloniaTestApp.csproj" />
         <entry key="KBAvaloniaCore/Themes/Dark/DarkButtonSpinnerStyle.axaml" value="AvaloniaTestApp/AvaloniaTestApp.csproj" />
         <entry key="KBAvaloniaCore/Themes/Dark/DarkButtonStyle.axaml" value="AvaloniaTestApp/AvaloniaTestApp.csproj" />

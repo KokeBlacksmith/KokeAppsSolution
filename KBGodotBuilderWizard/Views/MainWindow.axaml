@@ -51,7 +51,10 @@
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <Grid ColumnDefinitions="Auto, 100, 18, 18">
-                        <Button Grid.Column="0" Width="18" Height="18" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" Margin="{StaticResource HorizontalMargin}">
+                        <Button Grid.Column="0" Width="18" Height="18" 
+                                HorizontalContentAlignment="Stretch" 
+                                VerticalContentAlignment="Stretch" 
+                                Margin="{StaticResource HorizontalMargin}">
                             <Image Source="/Assets/download_icon.ico" />
                         </Button>
                         <TextBlock Grid.Column="1" Text="{Binding Name}"/>

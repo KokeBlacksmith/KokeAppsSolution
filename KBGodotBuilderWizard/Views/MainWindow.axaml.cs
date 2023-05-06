@@ -30,7 +30,6 @@ namespace KBGodotBuilderWizard.Views
             
             ConfigurationWindow configurationWidow = new ConfigurationWindow();
             configurationWidow.ShowDialog(this);
-
         }
 
     }

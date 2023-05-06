@@ -6,12 +6,6 @@ namespace KBAvaloniaCore.IO;
 [Serializable]
 public sealed class Path : ISerializable
 {
-    public enum EPathType
-    {
-        File,
-        Directory,
-    }
-    
     private string _path;
     private EPathType _pathType;
     
