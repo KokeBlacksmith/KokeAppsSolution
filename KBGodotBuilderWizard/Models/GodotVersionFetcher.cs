@@ -1,9 +1,13 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using HtmlAgilityPack;
+using KBAvaloniaCore.Miscellaneous;
+using Path = KBAvaloniaCore.IO.Path;
 
 namespace KBGodotBuilderWizard.Models;
 
@@ -17,6 +21,18 @@ internal class GodotVersionFetcher
     };
 
 
+    public struct GodotInstallData
+    {
+        public GodotInstallData(string version, string fileName)
+        {
+            Version = version;
+            FileName = fileName;
+        }
+
+        public string Version { get; }
+        public string FileName { get; }
+    }
+    
     public static Task<IEnumerable<string>> FetchVersions()
     {
         HttpClient client = new HttpClient();
@@ -43,7 +59,8 @@ internal class GodotVersionFetcher
 
     public static async Task<IEnumerable<GodotInstallData>> FetchVersionDownloads(string currentVersion)
     {
-        IEnumerable<HtmlNode> links = GodotVersionFetcher._ReadHtmlNodes(GodotVersionFetcher.s_repositoryURL + $"/{currentVersion}/");
+        string url = GodotVersionFetcher.s_repositoryURL + $"/{currentVersion}/";
+        IEnumerable<HtmlNode> links = GodotVersionFetcher._ReadHtmlNodes(url);
         return links.Select(link => link.Attributes["href"].Value).Except(GodotVersionFetcher.s_skipStrings).Select(link => new GodotInstallData(currentVersion, link));
     }
 
@@ -66,16 +83,26 @@ internal class GodotVersionFetcher
             }
         }
     }
-
-    public struct GodotInstallData
+    
+    public static async Task<Result> DownloadVersion(KBAvaloniaCore.IO.Path destinationFolder, string urlVersionPath)
     {
-        public GodotInstallData(string version, string fileName)
+        try
         {
-            Version = version;
-            FileName = fileName;
+            using (HttpClient client = new HttpClient())
+            {
+                // Make a GET request to the URL
+                using (HttpResponseMessage response = client.GetAsync(GodotVersionFetcher.s_repositoryURL + urlVersionPath).Result)
+                {
+                    // Read the content of the response
+                    byte[] content = await response.Content.ReadAsByteArrayAsync();
+                    await File.WriteAllBytesAsync(destinationFolder.FullPath, content);
+                    return Result.CreateSuccess();
+                }
+            }
         }
-
-        public string Version { get; }
-        public string FileName { get; }
+        catch (Exception e)
+        {
+            return Result.CreateFailure(e);
+        }
     }
 }

@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Avalonia.Collections;
-using JetBrains.Annotations;
 using KBAvaloniaCore.Miscellaneous;
 using KBGodotBuilderWizard.Models;
 using ReactiveUI;
@@ -14,7 +15,7 @@ namespace KBGodotBuilderWizard.ViewModels;
 
 public class MainWindowViewModel : BaseViewModel
 {
-    private string? _selectedDownload;
+    private GodotInstallViewModel? _selectedDownload;
     private GodotVersionViewModel? _selectedVersion;
     private AvaloniaList<GodotVersionViewModel> _selectedVersionDownloadList = new AvaloniaList<GodotVersionViewModel>();
     private AvaloniaList<GodotVersionViewModel> _versionsList = new AvaloniaList<GodotVersionViewModel>();
@@ -22,9 +23,15 @@ public class MainWindowViewModel : BaseViewModel
 
     public MainWindowViewModel()
     {
-        RefreshAvailableVersionsCommand = ReactiveCommand.Create(_FetchVersions);
         _updateVersionsBusyOperation = new BusyOperation(this, nameof(MainWindowViewModel.IsUpdatingVersions));
-
+        
+        RefreshAvailableVersionsCommand = ReactiveCommand.Create(_FetchVersions);
+        
+        IObservable<bool> canDownload = this.WhenAnyValue(
+            property1: x => x.IsUpdatingVersions,
+            property2: y => y.SelectedDownload,
+            selector: (isUpdating, selected) => !isUpdating && selected != null);
+        DownloadVersionCommand = ReactiveCommand.Create(_DownloadVersionCommandExecute, canDownload);
     }
 
     public AvaloniaList<GodotVersionViewModel> VersionsList
@@ -49,25 +56,26 @@ public class MainWindowViewModel : BaseViewModel
         }
     }
 
-    public string? SelectedDownload
+    public GodotInstallViewModel? SelectedDownload
     {
         get { return _selectedDownload; }
         set { this.RaiseAndSetIfChanged(ref _selectedDownload, value); }
     }
-    
+
     public bool IsUpdatingVersions
     {
         get { return _updateVersionsBusyOperation.IsBusy; }
     }
 
     public ICommand RefreshAvailableVersionsCommand { get; }
+    public ICommand DownloadVersionCommand { get; }
 
     /// <summary>
     ///     Retrieves the available number versions
     /// </summary>
     private async void _FetchVersions()
     {
-        using (IDisposable _ = StartBusyOperation())
+        using (IDisposable _ = m_busyOperation.StartOperation())
         {
             await Task.Run(async () =>
             {
@@ -77,9 +85,9 @@ public class MainWindowViewModel : BaseViewModel
         }
     }
 
-    private async void _FetchVersionDownloads([NotNull] GodotVersionViewModel version, string extendPath = "/")
+    private async void _FetchVersionDownloads([JetBrains.Annotations.NotNull] GodotVersionViewModel version, string extendPath = "/")
     {
-        using (IDisposable _ = StartBusyOperation())
+        using (IDisposable _ = m_busyOperation.StartOperation())
         {
             await Task.Run(async () =>
             {
@@ -89,6 +97,8 @@ public class MainWindowViewModel : BaseViewModel
                 {
                     if (!Path.HasExtension(download.FileName))
                     {
+                        //FileName contains the directories to the file
+                        
                         // It is a folder
                         _FetchVersionDownloads(version, $"{extendPath}{download.FileName}");
                     }
@@ -99,5 +109,48 @@ public class MainWindowViewModel : BaseViewModel
                 }
             });
         }
+    }
+
+    [SuppressMessage("ReSharper.DPA", "DPA0003: Excessive memory allocations in LOH")]
+    private async void _DownloadVersionCommandExecute()
+    {
+        using (IDisposable _ = _updateVersionsBusyOperation.StartOperation())
+        {
+            await Task.Run(async () =>
+            {
+                ConfigurationFileData configurationFileData = new ConfigurationFileData();
+                Result result = configurationFileData.Load();
+                
+                if (result.IsFailure)
+                {
+                    //TODO: Show error
+                    return;    
+                }
+                
+                string fetchUrl = this.SelectedDownload!.GetPartialUrl();
+                KBAvaloniaCore.IO.Path destinationPath = KBAvaloniaCore.IO.Path.Combine(configurationFileData.InstallVersionsPath.FullPath, this.SelectedDownload!.Name, this.SelectedDownload!.Name);
+                destinationPath = new KBAvaloniaCore.IO.Path(destinationPath.FullPath.Replace('.', '_'));
+
+                destinationPath.DeleteDirectory(true);
+                destinationPath.CreateDirectory();
+                
+                result = await GodotVersionFetcher.DownloadVersion(destinationPath, fetchUrl);
+                
+                if (result.IsFailure)
+                {
+                    //TODO: Show error
+                    return;
+                }
+
+                string destinationUnzip = destinationPath.TryGetParent(out KBAvaloniaCore.IO.Path parentPath) ? parentPath.FullPath : destinationPath.FullPath;
+                ZipFile.ExtractToDirectory(destinationPath.FullPath, destinationUnzip, true);
+                File.Delete(destinationPath.FullPath);
+            });
+        }
+    }
+
+    private async void _LaunchVersionCommandExecute()
+    {
+        
     }
 }

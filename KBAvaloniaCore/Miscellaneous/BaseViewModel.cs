@@ -4,24 +4,17 @@ namespace KBAvaloniaCore.Miscellaneous;
 
 public abstract class BaseViewModel : ReactiveObject
 {
-    private readonly BusyOperation _busyOperation;
+    protected readonly BusyOperation m_busyOperation;
 
     public BaseViewModel()
     {
-        _busyOperation = new BusyOperation(this, nameof(BaseViewModel.IsBusy));
+        m_busyOperation = new BusyOperation(this, nameof(BaseViewModel.IsBusy));
     }
 
 
     public bool IsBusy
     {
-        get { return _busyOperation.IsBusy; }
-    }
-
-    public IDisposable StartBusyOperation()
-    {
-        _busyOperation.StartOperation();
-        this.RaisePropertyChanged(_busyOperation.BusyProperty);
-        return _busyOperation;
+        get { return m_busyOperation.IsBusy; }
     }
 
     protected class BusyOperation : IDisposable
@@ -53,9 +46,13 @@ public abstract class BaseViewModel : ReactiveObject
                 parent.RaisePropertyChanged(this.BusyProperty);
         }
 
-        public void StartOperation()
+        public IDisposable StartOperation()
         {
             ++_busyCount;
+            if(_parent.TryGetTarget(out var parent))
+                parent.RaisePropertyChanged(this.BusyProperty);
+
+            return this;
         }
     }
 }

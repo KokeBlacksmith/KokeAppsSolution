@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Xml.Serialization;
 using KBAvaloniaCore.DataAnnotations;
 using KBAvaloniaCore.IO;
+using KBAvaloniaCore.Miscellaneous;
 
 namespace KBGodotBuilderWizard.Models;
 
@@ -26,19 +27,19 @@ public class ConfigurationFileData
         return Validator.TryValidateObject(this, validationContext, validationResults as List<ValidationResult>, true);
     }
 
-    public void Save()
+    public Result Save()
     {
         ConfigurationFileData.DefaultConfigurationFile.CreateDirectory();
-        XmlSerializableHelper.Save(this, (string)ConfigurationFileData.DefaultConfigurationFile);
+        return XmlSerializableHelper.Save(this, (string)ConfigurationFileData.DefaultConfigurationFile);
     }
 
-    public void Load()
+    public Result Load()
     {
         if (!ConfigurationFileData.DefaultConfigurationFile.Exists())
         {
-            return;
+            return Result.CreateFailure("Configuration file does not exist.");
         }
 
-        XmlSerializableHelper.Load((string)ConfigurationFileData.DefaultConfigurationFile, this);
+        return XmlSerializableHelper.Load((string)ConfigurationFileData.DefaultConfigurationFile, this);
     }
 }

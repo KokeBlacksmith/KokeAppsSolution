@@ -20,7 +20,7 @@ public class GodotInstallViewModel : BaseViewModel
     {
         Version = version ?? throw new ArgumentNullException(nameof(version));
         Name = name ?? throw new ArgumentNullException(nameof(name));
-        UrlParentFolderName = urlParentFolderName ?? "stable";
+        UrlParentFolderName = urlParentFolderName;
         _Initialize();
     }
 
@@ -67,6 +67,11 @@ public class GodotInstallViewModel : BaseViewModel
     }
 
     public ICommand DownloadVersionCommand { get; }
+    
+    public string GetPartialUrl()
+    {
+        return $"{Version}{UrlParentFolderName}/{Name}.zip".Replace('\\', '/');
+    }
 
     private void _Initialize()
     {

@@ -2,16 +2,16 @@
 
 public readonly struct Result
 {
-    public Result(bool isSuccess)
+    private Result(bool isSuccess)
     {
         IsSuccess = isSuccess;
         Error = null;
     }
 
-    public Result(string error)
+    private Result(params string[] errors)
     {
         IsSuccess = false;
-        Error = error;
+        Error = errors;
     }
 
     public bool IsSuccess { get; }
@@ -21,23 +21,38 @@ public readonly struct Result
         get { return !IsSuccess; }
     }
 
-    public string? Error { get; }
+    public string[]? Error { get; }
+    
+    public static Result CreateFailure(params string[] errors)
+    {
+        return new Result(errors);
+    }
+    
+    public static Result CreateFailure(Exception exception)
+    {
+        return new Result(exception.Message, exception.InnerException?.Message);
+    }
+    
+    public static Result CreateSuccess()
+    {
+        return new Result(true);
+    }
 }
 
 public readonly struct Result<T>
 {
-    public Result(T value, bool isSuccess)
+    private Result(T value, bool isSuccess)
     {
         Value = value;
         IsSuccess = isSuccess;
-        Error = null;
+        Errors = null;
     }
 
-    public Result(string error)
+    private Result(params string[] errors)
     {
         Value = default(T);
         IsSuccess = false;
-        Error = error;
+        Errors = errors;
     }
 
     public bool IsSuccess { get; }
@@ -49,10 +64,25 @@ public readonly struct Result<T>
 
     public T Value { get; }
 
-    public string Error { get; }
+    public string[] Errors { get; }
 
     public Result ToResult()
     {
-        return IsSuccess ? new Result(true) : new Result(Error);
+        return IsSuccess ? Result.CreateSuccess() : Result.CreateFailure(Errors);
+    }
+    
+    public static Result<T> CreateFailure(string[] errors)
+    {
+        return new Result<T>(errors);
+    }
+    
+    public static Result<T> CreateFailure(Exception exception)
+    {
+        return new Result<T>(exception.Message, exception.InnerException?.Message);
+    }
+    
+    public static Result<T> CreateSuccess(T value)
+    {
+        return new Result<T>(value, true);
     }
 }

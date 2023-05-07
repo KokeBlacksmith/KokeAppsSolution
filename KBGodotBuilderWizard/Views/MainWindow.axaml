@@ -18,11 +18,11 @@
         <StackPanel Grid.Row="0" Grid.Column="0" Orientation="Horizontal">
             <Button Content="Refresh" Command="{Binding RefreshAvailableVersionsCommand }" />
             <ProgressBar IsIndeterminate="True" ShowProgressText="False"
-                         IsVisible="{Binding IsBusy}" />
+                         IsVisible="{Binding IsBusy}"/>
         </StackPanel>
 
         <!-- Versions list box -->
-        <ListBox Grid.Row="1" Grid.Column="0" MinWidth="100"
+        <ListBox Grid.Row="1" Grid.Column="0" MinWidth="100" IsEnabled="{Binding !IsBusy}"
                  Items="{Binding VersionsList}"
                  SelectedItem="{Binding SelectedVersion}">
             <ListBox.ItemTemplate>
@@ -41,7 +41,7 @@
             
             <ListBox Grid.Row="0"  MinWidth="100"
                      Items="{Binding SelectedVersion.Installs , FallbackValue={x:Null}}"
-                     SelectedItem="{Binding SelectedDownload}">
+                     SelectedItem="{Binding SelectedDownload, Mode=TwoWay}">
 
                 <ListBox.Styles>
                     <Style Selector="Image">
@@ -72,7 +72,8 @@
             <Border Grid.Row="1" Classes="control_container">
                 <StackPanel Orientation="Horizontal" Margin="{StaticResource AllMargin}" 
                             HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-                    <Button Content="Update" Width="100" HorizontalContentAlignment="Center"/>
+                    <Button Content="Download" Width="100" HorizontalContentAlignment="Center"
+                            Command="{Binding DownloadVersionCommand}"/>
                     <Button Content="Launch" Width="100" HorizontalContentAlignment="Center"/>
                     <ProgressBar IsIndeterminate="True" ShowProgressText="False"
                                  IsEnabled="{Binding IsUpdatingVersions}"/>

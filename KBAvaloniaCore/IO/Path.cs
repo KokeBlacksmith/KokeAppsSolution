@@ -1,15 +1,16 @@
-﻿using System.Runtime.CompilerServices;
+﻿using System.Collections;
+using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 
 namespace KBAvaloniaCore.IO;
 
 [DataContract(Name = nameof(Path))]
-public sealed class Path
+public struct Path //: IEnumerable<Path>
 {
     private string _fullPath;
     private EPathType _pathType;
 
-    public Path(string path)
+    public Path(string path) : this()
     {
         FullPath = path;
     }
@@ -17,7 +18,10 @@ public sealed class Path
     /// <summary>
     ///     Constructor using for serialization
     /// </summary>
-    private Path() { }
+    public Path()
+    {
+        this = default(Path);
+    }
 
     [DataMember]
     public string FullPath
@@ -28,6 +32,19 @@ public sealed class Path
             _fullPath = value;
             _pathType = System.IO.Path.HasExtension(FullPath) ? EPathType.File : EPathType.Directory;
         }
+    }
+
+    public bool TryGetParent(out Path parentPath)
+    {
+        DirectoryInfo? parent = Directory.GetParent(this.FullPath);
+        if (parent != null)
+        {
+            parentPath = new Path(parent.FullName);
+            return true;
+        }
+
+        parentPath = default(Path);
+        return false;
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -68,7 +85,7 @@ public sealed class Path
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public string GetDirectoryName()
+    public string? GetDirectoryName()
     {
         return System.IO.Path.GetDirectoryName(FullPath);
     }
@@ -83,6 +100,16 @@ public sealed class Path
     public DirectoryInfo CreateDirectory()
     {
         return Directory.CreateDirectory(GetDirectoryName());
+    }
+    
+    
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public bool DeleteDirectory(bool recursive)
+    {
+        if(Directory.Exists(this.FullPath))
+            Directory.Delete(this.FullPath, recursive);
+        
+        return Directory.Exists(this.FullPath);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -111,11 +138,18 @@ public sealed class Path
         return Exists();
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public string GetRootDirectoryName()
+    {
+        return Directory.GetDirectoryRoot(this.FullPath);
+    }
+
 
     public override string ToString()
     {
         return $"Type ´{_pathType}´ Path ´{FullPath}´";
     }
+
 
     public static Path operator +(Path path1, Path path2)
     {
@@ -129,6 +163,26 @@ public sealed class Path
 
     public static explicit operator string(Path a)
     {
-        return a?.GetPath() ?? String.Empty;
+        return a.GetPath() ?? String.Empty;
     }
+
+    // #region IEnumerable
+    //
+    // IEnumerator IEnumerable.GetEnumerator()
+    // {
+    //     return GetEnumerator();
+    // }
+    //
+    // public IEnumerator<Path> GetEnumerator()
+    // {
+    //     foreach (string directory in Directory.GetDirectories(this.FullPath))
+    //     {
+    //         yield return new Path(directory);
+    //     }
+    //     
+    //     if(this._pathType == EPathType.File)
+    //         yield return this;
+    // }
+    //
+    // #endregion
 }

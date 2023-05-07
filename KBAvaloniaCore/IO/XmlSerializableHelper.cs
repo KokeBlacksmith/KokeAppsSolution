@@ -7,12 +7,20 @@ namespace KBAvaloniaCore.IO;
 
 public static class XmlSerializableHelper
 {
-    public static void Save<T>(T obj, string path)
+    public static Result Save<T>(T obj, string path)
     {
-        using (FileStream fileStream = new FileStream(path, FileMode.Create))
+        try
         {
-            XmlSerializer xmlSerializer = new XmlSerializer(typeof(T));
-            xmlSerializer.Serialize(fileStream, obj);
+            using (FileStream fileStream = new FileStream(path, FileMode.Create))
+            {
+                XmlSerializer xmlSerializer = new XmlSerializer(typeof(T));
+                xmlSerializer.Serialize(fileStream, obj);
+                return Result.CreateSuccess();
+            }
+        }
+        catch (Exception e)
+        {
+            return Result.CreateFailure(e);
         }
     }
 
@@ -23,11 +31,11 @@ public static class XmlSerializableHelper
             try
             {
                 XmlSerializer xmlSerializer = new XmlSerializer(typeof(T));
-                return new Result<T>((T)xmlSerializer.Deserialize(fileStream), true);
+                return Result<T>.CreateSuccess((T)xmlSerializer.Deserialize(fileStream));
             }
             catch (Exception e)
             {
-                return new Result<T>(e.Message);
+                return Result<T>.CreateFailure(e);
             }
         }
     }
