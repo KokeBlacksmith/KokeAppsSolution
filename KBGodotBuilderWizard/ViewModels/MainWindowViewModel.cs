@@ -73,28 +73,38 @@ namespace KBGodotBuilderWizard.ViewModels
         /// </summary>
         private async void _FetchVersions()
         {
-            this.IsBusy = true;
-            IEnumerable<GodotVersionViewModel> godotVersions = (await GodotVersionFetcher.FetchVersions())
-                                                                        .Select(strVersion => new GodotVersionViewModel(strVersion)); 
-            VersionsList = new AvaloniaList<GodotVersionViewModel>(godotVersions);
-            this.IsBusy = false;
+            using (IDisposable _ = StartBusyOperation())
+            {
+                await Task.Run(async () =>
+                {
+                    IEnumerable<GodotVersionViewModel> godotVersions = (await GodotVersionFetcher.FetchVersions())
+                                                                                .Select(strVersion => new GodotVersionViewModel(strVersion)); 
+                    VersionsList = new AvaloniaList<GodotVersionViewModel>(godotVersions);
+                });
+            }
         }
         
         private async void _FetchVersionDownloads([NotNull]GodotVersionViewModel version, string extendPath = "/")
         {
-            string urlParentFolderName = Path.GetDirectoryName(extendPath)!;
-            // Fetch from the web
-            foreach (GodotVersionFetcher.GodotInstallData download in await GodotVersionFetcher.FetchVersionDownloads(version.Version + extendPath))
+            using (IDisposable _ = StartBusyOperation())
             {
-                if (!Path.HasExtension(download.FileName))
+                await Task.Run(async () =>
                 {
-                    // It is a folder
-                    _FetchVersionDownloads(version, $"{extendPath}{download.FileName}");
-                }
-                else
-                {
-                    version.AddInstall(download.FileName, urlParentFolderName);
-                }
+                    string urlParentFolderName = Path.GetDirectoryName(extendPath)!;
+                    // Fetch from the web
+                    foreach (GodotVersionFetcher.GodotInstallData download in await GodotVersionFetcher.FetchVersionDownloads(version.Version + extendPath))
+                    {
+                        if (!Path.HasExtension(download.FileName))
+                        {
+                            // It is a folder
+                            _FetchVersionDownloads(version, $"{extendPath}{download.FileName}");
+                        }
+                        else
+                        {
+                            version.AddInstall(download.FileName, urlParentFolderName);
+                        }
+                    }
+                });
             }
         }
         

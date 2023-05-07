@@ -1,14 +1,8 @@
-﻿using System.Net.Http.Headers;
-using System.Runtime.CompilerServices;
+﻿using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
-using System.Xml;
-using System.Xml.Schema;
-using System.Xml.Serialization;
-using Avalonia.Rendering;
 
 namespace KBAvaloniaCore.IO;
 
-[Serializable]
 [DataContract(Name = nameof(Path))]
 public sealed class Path
 {
@@ -25,7 +19,7 @@ public sealed class Path
     /// </summary>
     private Path() { }
 
-    [DataMember(Name = nameof(Path.FullPath))]
+    [DataMember]
     public string FullPath
     {
         get { return _fullPath;}

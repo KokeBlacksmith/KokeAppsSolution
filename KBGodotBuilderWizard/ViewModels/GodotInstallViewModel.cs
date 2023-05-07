@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Security.Principal;
+using System.Windows.Input;
 using KBAvaloniaCore.Miscellaneous;
 using KBGodotBuilderWizard.Models;
 using ReactiveUI;
@@ -22,6 +23,8 @@ public class GodotInstallViewModel : BaseViewModel
         this.Name = name ?? throw new ArgumentNullException(nameof(name));
         this.UrlParentFolderName = urlParentFolderName ?? "stable";
         _Initialize();
+        
+        DownloadVersionCommand = ReactiveCommand.Create(_DownloadVersionCommandExecute);
     }
 
     public string Version
@@ -66,6 +69,8 @@ public class GodotInstallViewModel : BaseViewModel
         set { this.RaiseAndSetIfChanged(ref _isMonoVersion, value); }
     }
 
+    public ICommand DownloadVersionCommand { get; }
+
     private void _Initialize()
     {
         IsMonoVersion = Name.Contains("mono");
@@ -102,5 +107,10 @@ public class GodotInstallViewModel : BaseViewModel
         
         
         // bool isStableVersion = Name.Contains("stable");
+    }
+
+    private void _DownloadVersionCommandExecute()
+    {
+        
     }
 }

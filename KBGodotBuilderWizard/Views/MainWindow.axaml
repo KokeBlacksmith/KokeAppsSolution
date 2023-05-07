@@ -54,7 +54,8 @@
                         <Button Grid.Column="0" Width="18" Height="18" 
                                 HorizontalContentAlignment="Stretch" 
                                 VerticalContentAlignment="Stretch" 
-                                Margin="{StaticResource HorizontalMargin}">
+                                Margin="{StaticResource HorizontalMargin}"
+                                Command="{Binding DownloadVersionCommand}">
                             <Image Source="/Assets/download_icon.ico" />
                         </Button>
                         <TextBlock Grid.Column="1" Text="{Binding Name}"/>
