@@ -14,7 +14,8 @@
     <Styles.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceInclude Source="/Themes/Dark/DarkThemeColors.axaml" />
+                <ResourceInclude Source="/Themes/Dark/ThemeColors.axaml" />
+                <ResourceInclude Source="/Themes/ConstantsResourceDictionary.axaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Styles.Resources>
@@ -24,9 +25,9 @@
         <Setter Property="Background" Value="{StaticResource DarkBackgroundColor}" />
         <Setter Property="BorderBrush" Value="{StaticResource DarkBorderColor}" />
         <Setter Property="Foreground" Value="{StaticResource DarkTextColor}" />
+        <Setter Property="Margin" Value="{StaticResource AllMargin}"/>
         <Setter Property="Padding" Value="5" />
         <Setter Property="BorderThickness" Value="1" />
-        <Setter Property="Margin" Value="1" />
     </Style>
 
     <Style Selector="Button:pointerover /template/ ContentPresenter#PART_ContentPresenter">

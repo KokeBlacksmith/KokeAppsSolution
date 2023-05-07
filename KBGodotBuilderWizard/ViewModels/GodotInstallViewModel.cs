@@ -22,8 +22,6 @@ public class GodotInstallViewModel : BaseViewModel
         Name = name ?? throw new ArgumentNullException(nameof(name));
         UrlParentFolderName = urlParentFolderName ?? "stable";
         _Initialize();
-
-        DownloadVersionCommand = ReactiveCommand.Create(_DownloadVersionCommandExecute);
     }
 
     public string Version
@@ -107,6 +105,4 @@ public class GodotInstallViewModel : BaseViewModel
 
         // bool isStableVersion = Name.Contains("stable");
     }
-
-    private void _DownloadVersionCommandExecute() { }
 }

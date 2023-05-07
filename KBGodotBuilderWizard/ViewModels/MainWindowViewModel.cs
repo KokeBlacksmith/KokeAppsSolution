@@ -14,15 +14,17 @@ namespace KBGodotBuilderWizard.ViewModels;
 
 public class MainWindowViewModel : BaseViewModel
 {
-    private string _selectedDownload;
-    private GodotVersionViewModel _selectedVersion;
+    private string? _selectedDownload;
+    private GodotVersionViewModel? _selectedVersion;
     private AvaloniaList<GodotVersionViewModel> _selectedVersionDownloadList = new AvaloniaList<GodotVersionViewModel>();
-    private int _totalInstalls;
     private AvaloniaList<GodotVersionViewModel> _versionsList = new AvaloniaList<GodotVersionViewModel>();
+    private readonly BusyOperation _updateVersionsBusyOperation;
 
     public MainWindowViewModel()
     {
         RefreshAvailableVersionsCommand = ReactiveCommand.Create(_FetchVersions);
+        _updateVersionsBusyOperation = new BusyOperation(this, nameof(MainWindowViewModel.IsUpdatingVersions));
+
     }
 
     public AvaloniaList<GodotVersionViewModel> VersionsList
@@ -37,7 +39,7 @@ public class MainWindowViewModel : BaseViewModel
         set { this.RaiseAndSetIfChanged(ref _selectedVersionDownloadList, value); }
     }
 
-    public GodotVersionViewModel SelectedVersion
+    public GodotVersionViewModel? SelectedVersion
     {
         get { return _selectedVersion; }
         set
@@ -47,20 +49,18 @@ public class MainWindowViewModel : BaseViewModel
         }
     }
 
-    public string SelectedDownload
+    public string? SelectedDownload
     {
         get { return _selectedDownload; }
         set { this.RaiseAndSetIfChanged(ref _selectedDownload, value); }
     }
-
-    public int TotalInstalls
+    
+    public bool IsUpdatingVersions
     {
-        get { return _totalInstalls; }
-        set { this.RaiseAndSetIfChanged(ref _totalInstalls, value); }
+        get { return _updateVersionsBusyOperation.IsBusy; }
     }
 
     public ICommand RefreshAvailableVersionsCommand { get; }
-    public ICommand InitializeVersionConfigurationCommand { get; }
 
     /// <summary>
     ///     Retrieves the available number versions

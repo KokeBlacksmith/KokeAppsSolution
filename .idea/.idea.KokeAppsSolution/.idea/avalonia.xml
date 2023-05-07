@@ -7,17 +7,20 @@
         <entry key="AvaloniaTestApp/Views/MainWindow.axaml" value="AvaloniaTestApp/AvaloniaTestApp.csproj" />
         <entry key="KBAvaloniaCore/Controls/TextBoxPath.axaml" value="KBBehaviourTree/KBBehaviourTree.csproj" />
         <entry key="KBAvaloniaCore/Controls/TextBoxPath/View/TextBoxPath.axaml" value="KBBehaviourTree/KBBehaviourTree.csproj" />
-        <entry key="KBAvaloniaCore/Themes/ConstantsResourceDictionary.axaml" value="AvaloniaTestApp/AvaloniaTestApp.csproj" />
-        <entry key="KBAvaloniaCore/Themes/Dark/DarkButtonSpinnerStyle.axaml" value="AvaloniaTestApp/AvaloniaTestApp.csproj" />
-        <entry key="KBAvaloniaCore/Themes/Dark/DarkButtonStyle.axaml" value="AvaloniaTestApp/AvaloniaTestApp.csproj" />
-        <entry key="KBAvaloniaCore/Themes/Dark/DarkCheckBoxStyle.axaml" value="AvaloniaTestApp/AvaloniaTestApp.csproj" />
+        <entry key="KBAvaloniaCore/Themes/ConstantsResourceDictionary.axaml" value="KBBehaviourTree/KBBehaviourTree.csproj" />
+        <entry key="KBAvaloniaCore/Themes/Dark/DarkButtonSpinnerStyle.axaml" value="KBBehaviourTree/KBBehaviourTree.csproj" />
+        <entry key="KBAvaloniaCore/Themes/Dark/DarkButtonStyle.axaml" value="KBBehaviourTree/KBBehaviourTree.csproj" />
+        <entry key="KBAvaloniaCore/Themes/Dark/DarkCheckBoxStyle.axaml" value="KBBehaviourTree/KBBehaviourTree.csproj" />
+        <entry key="KBAvaloniaCore/Themes/Dark/DarkExplicitStyles.axaml" value="KBBehaviourTree/KBBehaviourTree.csproj" />
         <entry key="KBAvaloniaCore/Themes/Dark/DarkGridSplitterStyle.axaml" value="KBGodotBuilderWizard/KBGodotBuilderWizard.csproj" />
-        <entry key="KBAvaloniaCore/Themes/Dark/DarkListBoxStyle.axaml" value="AvaloniaTestApp/AvaloniaTestApp.csproj" />
-        <entry key="KBAvaloniaCore/Themes/Dark/DarkTabControlStyle.axaml" value="AvaloniaTestApp/AvaloniaTestApp.csproj" />
-        <entry key="KBAvaloniaCore/Themes/Dark/DarkTextBlockStyle.axaml" value="AvaloniaTestApp/AvaloniaTestApp.csproj" />
-        <entry key="KBAvaloniaCore/Themes/Dark/DarkTextBoxStyle.axaml" value="AvaloniaTestApp/AvaloniaTestApp.csproj" />
-        <entry key="KBAvaloniaCore/Themes/Dark/DarkThemeColors.axaml" value="AvaloniaTestApp/AvaloniaTestApp.csproj" />
-        <entry key="KBAvaloniaCore/Themes/Dark/DarkWindowStyle.axaml" value="AvaloniaTestApp/AvaloniaTestApp.csproj" />
+        <entry key="KBAvaloniaCore/Themes/Dark/DarkImplicitStyles.axaml" value="KBBehaviourTree/KBBehaviourTree.csproj" />
+        <entry key="KBAvaloniaCore/Themes/Dark/DarkListBoxStyle.axaml" value="KBBehaviourTree/KBBehaviourTree.csproj" />
+        <entry key="KBAvaloniaCore/Themes/Dark/DarkTabControlStyle.axaml" value="KBBehaviourTree/KBBehaviourTree.csproj" />
+        <entry key="KBAvaloniaCore/Themes/Dark/DarkTextBlockStyle.axaml" value="KBBehaviourTree/KBBehaviourTree.csproj" />
+        <entry key="KBAvaloniaCore/Themes/Dark/DarkTextBoxStyle.axaml" value="KBBehaviourTree/KBBehaviourTree.csproj" />
+        <entry key="KBAvaloniaCore/Themes/Dark/DarkThemeColors.axaml" value="KBBehaviourTree/KBBehaviourTree.csproj" />
+        <entry key="KBAvaloniaCore/Themes/Dark/DarkWindowStyle.axaml" value="KBBehaviourTree/KBBehaviourTree.csproj" />
+        <entry key="KBAvaloniaCore/Themes/Dark/ProgressBarStyle.axaml" value="KBBehaviourTree/KBBehaviourTree.csproj" />
         <entry key="KBAvaloniaCore/Themes/Dark/ThemeColors.axaml" value="AvaloniaTestApp/AvaloniaTestApp.csproj" />
         <entry key="KBAvaloniaCore/Themes/DarkButtonSpinnerStyle.axaml" value="AvaloniaTestApp/AvaloniaTestApp.csproj" />
         <entry key="KBAvaloniaCore/Themes/DarkButtonStyle.axaml" value="AvaloniaTestApp/AvaloniaTestApp.csproj" />

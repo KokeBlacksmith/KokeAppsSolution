@@ -8,7 +8,7 @@
 
     <Application.Styles>
         <FluentTheme Mode="Dark" />
-        <StyleInclude Source="avares://KBAvaloniaCore/Themes/Dark/DarkImplicitStyles.axaml" />
+        <StyleInclude Source="avares://KBAvaloniaCore/Themes/Dark/DarkStyles.axaml" />
     </Application.Styles>
 
     <Application.Resources>

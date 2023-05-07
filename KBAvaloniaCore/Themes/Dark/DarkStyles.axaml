@@ -1,0 +1,24 @@
+﻿<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <StyleInclude Source="/Themes/Dark/ButtonStyle.axaml" />
+    <StyleInclude Source="/Themes/Dark/CheckBoxStyle.axaml" />
+    <StyleInclude Source="/Themes/Dark/TextBlockStyle.axaml" />
+    <StyleInclude Source="/Themes/Dark/TextBoxStyle.axaml" />
+    <StyleInclude Source="/Themes/Dark/ButtonSpinnerStyle.axaml" />
+    <StyleInclude Source="/Themes/Dark/TabControlStyle.axaml" />
+    <StyleInclude Source="/Themes/Dark/ListBoxStyle.axaml" />
+    <StyleInclude Source="/Themes/Dark/WindowStyle.axaml" />
+    <StyleInclude Source="/Themes/Dark/GridSplitterStyle.axaml" />
+    <StyleInclude Source="/Themes/Dark/ProgressBarStyle.axaml" />
+    <StyleInclude Source="/Themes/Dark/BorderStyle.axaml" />
+
+    <Styles.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceInclude Source="/Themes/Dark/ThemeColors.axaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Styles.Resources>
+
+</Styles>

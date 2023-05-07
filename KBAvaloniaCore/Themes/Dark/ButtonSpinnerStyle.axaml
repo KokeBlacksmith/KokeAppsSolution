@@ -11,12 +11,12 @@
         </Border>
     </Design.PreviewWith>
 
-    <StyleInclude Source="/Themes/Dark/DarkButtonStyle.axaml" />
+    <StyleInclude Source="/Themes/Dark/ButtonStyle.axaml" />
 
     <Styles.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceInclude Source="/Themes/Dark/DarkThemeColors.axaml" />
+                <ResourceInclude Source="/Themes/Dark/ThemeColors.axaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Styles.Resources>
