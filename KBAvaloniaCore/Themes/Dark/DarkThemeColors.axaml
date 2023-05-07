@@ -1,34 +1,33 @@
 ﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-    
+
     <!-- Other -->
     <Color x:Key="LightGreenColor">#59C225</Color>
     <Color x:Key="DarkGreenColor">#489C1E</Color>
     <Color x:Key="DarkRedColor">#8B0000 </Color>
-    
+
     <!-- Backgrounds -->
     <Color x:Key="DarkestBackgroundColor">#182625</Color>
     <Color x:Key="DarkBackgroundColor">#28403D</Color>
-    
-    
+
+
     <!-- Interaction -->
     <Color x:Key="DarkHighLightBackgroundColor">#3D5A73</Color>
     <Color x:Key="DarkSelectedBackgroundColor">#00B3AD</Color>
     <Color x:Key="DarkPressedBackgroundColor">#006663</Color>
-    
+
     <!-- Interaction Movement -->
     <Color x:Key="DarkMovementControlBackgroundColor">LightSlateGray</Color>
     <Color x:Key="DarkMovementControlHighLightBackgroundColor">LightGray</Color>
-    
-    
+
+
     <!-- Borders -->
     <Color x:Key="DarkBorderColor">#2F3D40</Color>
     <Color x:Key="DarkBorderSelectionHighLightColor">#455559</Color>
-    
-    
-    
+
+
     <!-- Text -->
     <Color x:Key="DarkTextColor">#F2F2F2</Color>
-    
-    
+
+
 </ResourceDictionary>

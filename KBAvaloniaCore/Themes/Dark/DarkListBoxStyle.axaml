@@ -17,39 +17,37 @@
     <Styles.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceInclude Source="/Themes/Dark/DarkThemeColors.axaml"/>
+                <ResourceInclude Source="/Themes/Dark/DarkThemeColors.axaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Styles.Resources>
 
     <Style Selector="ListBox">
-        <Setter Property="VirtualizationMode" Value="Simple"/>
-        <Setter Property="Background" Value="{StaticResource DarkestBackgroundColor}"/>
+        <Setter Property="VirtualizationMode" Value="Simple" />
+        <Setter Property="Background" Value="{StaticResource DarkestBackgroundColor}" />
     </Style>
-    
+
     <Style Selector="ListBoxItem">
-        <Setter Property="Padding" Value="10"/>
-        <Setter Property="Background" Value="{StaticResource DarkBackgroundColor}"/>
-        <Setter Property="Foreground" Value="{StaticResource DarkTextColor}"/>
-        <Setter Property="BorderBrush" Value="{StaticResource DarkBorderColor}"/>
-        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="Padding" Value="10" />
+        <Setter Property="Background" Value="{StaticResource DarkBackgroundColor}" />
+        <Setter Property="Foreground" Value="{StaticResource DarkTextColor}" />
+        <Setter Property="BorderBrush" Value="{StaticResource DarkBorderColor}" />
+        <Setter Property="BorderThickness" Value="1" />
     </Style>
-    
+
     <Style Selector="ListBoxItem:pointerover /template/ ContentPresenter#PART_ContentPresenter">
-        <Setter Property="Background" Value="{StaticResource DarkHighLightBackgroundColor}"/>
+        <Setter Property="Background" Value="{StaticResource DarkHighLightBackgroundColor}" />
     </Style>
-    
+
     <Style Selector="ListBoxItem:pressed /template/ ContentPresenter#PART_ContentPresenter">
-        <Setter Property="Background" Value="{StaticResource DarkPressedBackgroundColor}"/>
+        <Setter Property="Background" Value="{StaticResource DarkPressedBackgroundColor}" />
     </Style>
-    
+
     <Style Selector="ListBoxItem:selected /template/ ContentPresenter#PART_ContentPresenter">
-        <Setter Property="Background" Value="{StaticResource DarkSelectedBackgroundColor}"/>
+        <Setter Property="Background" Value="{StaticResource DarkSelectedBackgroundColor}" />
     </Style>
-    
+
     <Style Selector="ListBoxItem:selected:pressed /template/ ContentPresenter#PART_ContentPresenter">
-        <Setter Property="Background" Value="{StaticResource DarkPressedBackgroundColor}"/>
+        <Setter Property="Background" Value="{StaticResource DarkPressedBackgroundColor}" />
     </Style>
 </Styles>
-
-

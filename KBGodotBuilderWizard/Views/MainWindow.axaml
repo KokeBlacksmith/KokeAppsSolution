@@ -9,62 +9,62 @@
         Title="KBGodotBuilderWizard">
 
     <Design.DataContext>
-        <vm:MainWindowViewModel/>
+        <vm:MainWindowViewModel />
     </Design.DataContext>
 
     <Grid RowDefinitions="Auto,*" ColumnDefinitions="200, 350, *">
 
         <StackPanel Grid.Row="0" Grid.Column="0" Orientation="Horizontal">
-            <Button Content="Refresh" Command="{Binding RefreshAvailableVersionsCommand }"/>
-            <ProgressBar IsIndeterminate="True" ShowProgressText="True"
-                         IsVisible="{Binding IsBusy}"/>
+            <Button Content="Refresh" Command="{Binding RefreshAvailableVersionsCommand }" />
+            <ProgressBar IsIndeterminate="True" ShowProgressText="False"
+                         IsVisible="{Binding IsBusy}" />
         </StackPanel>
-        
-        <ListBox Grid.Row="1" Grid.Column="0" MinWidth="100" 
-                 Items="{Binding VersionsList}" 
+
+        <ListBox Grid.Row="1" Grid.Column="0" MinWidth="100"
+                 Items="{Binding VersionsList}"
                  SelectedItem="{Binding SelectedVersion}">
             <ListBox.ItemTemplate>
                 <DataTemplate>
-                    <TextBlock Text="{Binding Version}"/>
+                    <TextBlock Text="{Binding Version}" />
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
-        
+
         <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Horizontal">
-            <TextBlock Text="Godot Version:"/>
-            <TextBlock Text="{Binding SelectedVersion.Version}"/>
+            <TextBlock Text="Godot Version:" />
+            <TextBlock Text="{Binding SelectedVersion.Version}" />
             <!-- <TextBlock Text="{Binding SelectedVersion}"/> -->
         </StackPanel>
-        
+
         <ListBox Grid.Row="1" Grid.Column="1" MinWidth="100"
                  Items="{Binding SelectedVersion.Installs}"
                  SelectedItem="{Binding SelectedDownload}">
-            
+
             <ListBox.Styles>
                 <Style Selector="Image">
-                    <Setter Property="Width" Value="18"/>
-                    <Setter Property="Height" Value="18"/>
-                    <Setter Property="Margin" Value="{StaticResource HorizontalMargin}"/>
+                    <Setter Property="Width" Value="18" />
+                    <Setter Property="Height" Value="18" />
+                    <Setter Property="Margin" Value="{StaticResource HorizontalMargin}" />
                 </Style>
             </ListBox.Styles>
-            
+
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <Grid ColumnDefinitions="Auto, 100, 18, 18">
-                        <Button Grid.Column="0" Width="18" Height="18" 
-                                HorizontalContentAlignment="Stretch" 
-                                VerticalContentAlignment="Stretch" 
+                        <Button Grid.Column="0" Width="18" Height="18"
+                                HorizontalContentAlignment="Stretch"
+                                VerticalContentAlignment="Stretch"
                                 Margin="{StaticResource HorizontalMargin}"
                                 Command="{Binding DownloadVersionCommand}">
                             <Image Source="/Assets/download_icon.ico" />
                         </Button>
-                        <TextBlock Grid.Column="1" Text="{Binding Name}"/>
-                        <Image Grid.Column="2" Source="/Assets/windows_icon.ico"/>
-                        <Image Grid.Column="3" Source="/Assets/apple_icon.ico"/>
+                        <TextBlock Grid.Column="1" Text="{Binding Name}" />
+                        <Image Grid.Column="2" Source="/Assets/windows_icon.ico" />
+                        <Image Grid.Column="3" Source="/Assets/apple_icon.ico" />
                     </Grid>
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
-        
+
     </Grid>
 </Window>

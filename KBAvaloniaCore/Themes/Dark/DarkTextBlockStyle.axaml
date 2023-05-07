@@ -1,36 +1,36 @@
 ﻿<Styles xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-    
+
     <!-- Add Controls for Previewer Here -->
     <Design.PreviewWith>
         <Border Padding="20">
             <StackPanel Orientation="Vertical">
-                <TextBlock Text="Normal TextBox"/>
-                <TextBlock Text="Disabled TextBox" IsEnabled="False"/>
+                <TextBlock Text="Normal TextBox" />
+                <TextBlock Text="Disabled TextBox" IsEnabled="False" />
             </StackPanel>
         </Border>
     </Design.PreviewWith>
-    
+
     <Styles.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceInclude Source="/Themes/Dark/DarkThemeColors.axaml"/>
+                <ResourceInclude Source="/Themes/Dark/DarkThemeColors.axaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Styles.Resources>
-    
+
     <!-- Add Styles Here -->
     <Style Selector="TextBlock">
         <Setter Property="Margin" Value="1" />
         <Setter Property="FontSize" Value="12" />
         <Setter Property="Foreground" Value="{StaticResource DarkTextColor}" />
     </Style>
-    
+
     <!-- <Style Selector="TextBlock"> -->
     <!--     <Setter Property="Margin" Value="1" /> -->
     <!--     <Setter Property="FontSize" Value="12" /> -->
     <!--     <Setter Property="Foreground" Value="{StaticResource DarkTextColor}" /> -->
     <!-- </Style> -->
-    
-    
+
+
 </Styles>

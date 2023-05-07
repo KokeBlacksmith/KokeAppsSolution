@@ -31,13 +31,13 @@ public static class XmlSerializableHelper
             }
         }
     }
-    
+
     public static Result Load<T>(string path, [NotNull] T toFillObject)
         where T : class
     {
         if (toFillObject == null)
             throw new ArgumentNullException(nameof(toFillObject));
-        
+
         Result<T> deserializedResult = XmlSerializableHelper.Load<T>(path);
         if (deserializedResult.IsSuccess)
         {
@@ -46,7 +46,7 @@ public static class XmlSerializableHelper
 
         return deserializedResult.ToResult();
     }
-    
+
     private static void _Load<T>(T toFillObject, T dataObject)
     {
         IList<PropertyInfo> props = new List<PropertyInfo>(typeof(T).GetProperties());

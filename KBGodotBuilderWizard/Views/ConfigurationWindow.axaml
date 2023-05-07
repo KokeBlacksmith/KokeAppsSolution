@@ -8,30 +8,30 @@
         Width="250" Height="100" WindowStartupLocation="CenterOwner"
         x:Class="KBGodotBuilderWizard.Views.ConfigurationWindow"
         Title="ConfigurationWindow">
-    
-        <!-- ExtendClientAreaChromeHints="NoChrome" -->
-        <!-- ExtendClientAreaToDecorationsHint="True" -->
-        <!-- ExtendClientAreaTitleBarHeightHint="-1" -->
+
+    <!-- ExtendClientAreaChromeHints="NoChrome" -->
+    <!-- ExtendClientAreaToDecorationsHint="True" -->
+    <!-- ExtendClientAreaTitleBarHeightHint="-1" -->
     <Design.DataContext>
         <vm:ConfigurationWindowViewModel />
     </Design.DataContext>
-    
+
     <Window.DataContext>
         <vm:ConfigurationWindowViewModel />
     </Window.DataContext>
-    
+
     <Grid RowDefinitions="50, 50">
         <controls:TextBoxPath PathText="{Binding InstallsPath, Mode=TwoWay}"
                               HorizontalAlignment="Center"
                               VerticalContentAlignment="Stretch"
-                              Margin="{StaticResource AllMargin}"/>
+                              Margin="{StaticResource AllMargin}" />
         <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right">
             <Button Content="Save" Command="{Binding SaveCommand}"
-                    Margin="{StaticResource AllMargin}"/>
-            <Button Content="Cancel" Command="{Binding CancelCommand}" 
-                    Margin="{StaticResource AllMargin}"/>
+                    Margin="{StaticResource AllMargin}" />
+            <Button Content="Cancel" Command="{Binding CancelCommand}"
+                    Margin="{StaticResource AllMargin}" />
         </StackPanel>
     </Grid>
-    
-    
+
+
 </Window>

@@ -1,22 +1,22 @@
 ﻿<Styles xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-    
-    <StyleInclude Source="/Themes/Dark/DarkButtonStyle.axaml"/>
-    <StyleInclude Source="/Themes/Dark/DarkCheckBoxStyle.axaml"/>
-    <StyleInclude Source="/Themes/Dark/DarkTextBlockStyle.axaml"/>
-    <StyleInclude Source="/Themes/Dark/DarkTextBoxStyle.axaml"/>
-    <StyleInclude Source="/Themes/Dark/DarkButtonSpinnerStyle.axaml"/>
-    <StyleInclude Source="/Themes/Dark/DarkTabControlStyle.axaml"/>
-    <StyleInclude Source="/Themes/Dark/DarkListBoxStyle.axaml"/>
-    <StyleInclude Source="/Themes/Dark/DarkWindowStyle.axaml"/>
-    <StyleInclude Source="/Themes/Dark/DarkGridSplitterStyle.axaml"/>
-    
+
+    <StyleInclude Source="/Themes/Dark/DarkButtonStyle.axaml" />
+    <StyleInclude Source="/Themes/Dark/DarkCheckBoxStyle.axaml" />
+    <StyleInclude Source="/Themes/Dark/DarkTextBlockStyle.axaml" />
+    <StyleInclude Source="/Themes/Dark/DarkTextBoxStyle.axaml" />
+    <StyleInclude Source="/Themes/Dark/DarkButtonSpinnerStyle.axaml" />
+    <StyleInclude Source="/Themes/Dark/DarkTabControlStyle.axaml" />
+    <StyleInclude Source="/Themes/Dark/DarkListBoxStyle.axaml" />
+    <StyleInclude Source="/Themes/Dark/DarkWindowStyle.axaml" />
+    <StyleInclude Source="/Themes/Dark/DarkGridSplitterStyle.axaml" />
+
     <Styles.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceInclude Source="/Themes/Dark/DarkThemeColors.axaml"/>
+                <ResourceInclude Source="/Themes/Dark/DarkThemeColors.axaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Styles.Resources>
-    
+
 </Styles>

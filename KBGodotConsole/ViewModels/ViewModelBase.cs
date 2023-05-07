@@ -1,6 +1,5 @@
 ﻿using ReactiveUI;
 
-namespace KBGodotConsole.ViewModels
-{
-    public class ViewModelBase : ReactiveObject { }
-}
+namespace KBGodotConsole.ViewModels;
+
+public class ViewModelBase : ReactiveObject { }

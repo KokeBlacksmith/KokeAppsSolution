@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Net;
 using System.Net.Http;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using HtmlAgilityPack;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace KBGodotBuilderWizard.Models;
 
@@ -15,30 +11,21 @@ internal class GodotVersionFetcher
 {
     // Methods are fetched form a online directory in https://downloads.tuxfamily.org/godotengine/
     private const string s_repositoryURL = "https://downloads.tuxfamily.org/godotengine/";
-    private static string[] s_skipStrings = { "Parent Directory", "../" };
 
-    public struct GodotInstallData
-    {
-        public GodotInstallData(string version, string fileName)
-        {
-            Version = version;
-            FileName = fileName;
-        }
-        
-        public string Version { get; }
-        public string FileName { get; }
-    }
-    
-    
+    private readonly static string[] s_skipStrings = {
+        "Parent Directory", "../",
+    };
+
+
     public static Task<IEnumerable<string>> FetchVersions()
     {
         HttpClient client = new HttpClient();
         HttpResponseMessage response = client.GetAsync(GodotVersionFetcher.s_repositoryURL).Result;
         string responseString = response.Content.ReadAsStringAsync().Result;
-            
+
         List<string> versions = new List<string>();
         string[] lines = responseString.Split("\n");
-        
+
         Regex regex = new Regex(@"(\d+\.)+\d+");
         foreach (string line in lines)
         {
@@ -57,9 +44,7 @@ internal class GodotVersionFetcher
     public static async Task<IEnumerable<GodotInstallData>> FetchVersionDownloads(string currentVersion)
     {
         IEnumerable<HtmlNode> links = GodotVersionFetcher._ReadHtmlNodes(GodotVersionFetcher.s_repositoryURL + $"/{currentVersion}/");
-        return links.Select(link => link.Attributes["href"].Value)
-                    .Except(GodotVersionFetcher.s_skipStrings)
-                    .Select(link => new GodotInstallData(currentVersion, link));
+        return links.Select(link => link.Attributes["href"].Value).Except(GodotVersionFetcher.s_skipStrings).Select(link => new GodotInstallData(currentVersion, link));
     }
 
     private static IEnumerable<HtmlNode> _ReadHtmlNodes(string url)
@@ -73,12 +58,24 @@ internal class GodotVersionFetcher
                 string content = response.Content.ReadAsStringAsync().Result;
 
                 // Load the HTML content into a document object using HtmlAgilityPack
-                HtmlAgilityPack.HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
+                HtmlDocument doc = new HtmlDocument();
                 doc.LoadHtml(content);
 
                 // Search for all anchor tags in the document
                 return doc.DocumentNode.Descendants("a");
             }
         }
+    }
+
+    public struct GodotInstallData
+    {
+        public GodotInstallData(string version, string fileName)
+        {
+            Version = version;
+            FileName = fileName;
+        }
+
+        public string Version { get; }
+        public string FileName { get; }
     }
 }

@@ -6,8 +6,9 @@
              x:Class="KBAvaloniaCore.Controls.TextBoxPath">
 
     <Grid x:FieldModifier="private" x:Name="_container" ColumnDefinitions="*, Auto">
-        <TextBox x:FieldModifier="private" x:Name="_tbPath" Grid.Column="0" HorizontalAlignment="Stretch" IsReadOnly="True"/>
-        <Button x:FieldModifier="private" x:Name="_btSearchPath" Grid.Column="1" Content="..."/>
+        <TextBox x:FieldModifier="private" x:Name="_tbPath" Grid.Column="0" HorizontalAlignment="Stretch"
+                 IsReadOnly="True" />
+        <Button x:FieldModifier="private" x:Name="_btSearchPath" Grid.Column="1" Content="..." />
     </Grid>
 
 </UserControl>

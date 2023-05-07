@@ -1,31 +1,29 @@
 using System;
-using System.ComponentModel;
 using Avalonia.Controls;
 using Avalonia.Controls.Templates;
 using KBGodotConsole.ViewModels;
 
-namespace KBGodotConsole
+namespace KBGodotConsole;
+
+public class ViewLocator : IDataTemplate
 {
-    public class ViewLocator : IDataTemplate
+    public IControl Build(object data)
     {
-        public IControl Build(object data)
+        string name = data.GetType().FullName!.Replace("ViewModel", "View");
+        Type? type = Type.GetType(name);
+
+        if (type != null)
         {
-            var name = data.GetType().FullName!.Replace("ViewModel", "View");
-            var type = Type.GetType(name);
-
-            if (type != null)
-            {
-                return (Control)Activator.CreateInstance(type)!;
-            }
-
-            return new TextBlock {
-                Text = "Not Found: " + name
-            };
+            return (Control)Activator.CreateInstance(type)!;
         }
 
-        public bool Match(object data)
-        {
-            return data is ViewModelBase;
-        }
+        return new TextBlock {
+            Text = "Not Found: " + name,
+        };
+    }
+
+    public bool Match(object data)
+    {
+        return data is ViewModelBase;
     }
 }

@@ -6,23 +6,23 @@ namespace KBAvaloniaCore.IO;
 [DataContract(Name = nameof(Path))]
 public sealed class Path
 {
-    private EPathType _pathType;
     private string _fullPath;
-    
+    private EPathType _pathType;
+
     public Path(string path)
     {
         FullPath = path;
     }
 
     /// <summary>
-    /// Constructor using for serialization
+    ///     Constructor using for serialization
     /// </summary>
     private Path() { }
 
     [DataMember]
     public string FullPath
     {
-        get { return _fullPath;}
+        get { return _fullPath; }
         set
         {
             _fullPath = value;
@@ -35,26 +35,26 @@ public sealed class Path
     {
         return new Path(System.IO.Path.Combine(paths));
     }
-    
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public bool Exists()
     {
-        return _pathType == EPathType.Directory ? System.IO.Directory.Exists(FullPath) : System.IO.File.Exists(FullPath);
+        return _pathType == EPathType.Directory ? Directory.Exists(FullPath) : File.Exists(FullPath);
     }
-    
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void Combine(string path)
     {
         FullPath = System.IO.Path.Combine(FullPath, path);
         _pathType = System.IO.Path.HasExtension(FullPath) ? EPathType.File : EPathType.Directory;
     }
-    
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void Combine(KBAvaloniaCore.IO.Path path)
+    public void Combine(Path path)
     {
-        this.Combine(path.GetPath());
+        Combine(path.GetPath());
     }
-    
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public string GetPath()
     {
@@ -72,19 +72,19 @@ public sealed class Path
     {
         return System.IO.Path.GetDirectoryName(FullPath);
     }
-    
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public string GetExtension()
     {
         return System.IO.Path.GetExtension(FullPath);
     }
-    
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public DirectoryInfo CreateDirectory()
     {
-        return System.IO.Directory.CreateDirectory(this.GetDirectoryName());
+        return Directory.CreateDirectory(GetDirectoryName());
     }
-    
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public bool CreateFile(bool overrideExisting)
     {
@@ -93,11 +93,11 @@ public sealed class Path
             throw new Exception("Path is not a file");
         }
 
-        if (this.Exists())
+        if (Exists())
         {
             if (overrideExisting)
             {
-                System.IO.File.Delete(FullPath);
+                File.Delete(FullPath);
             }
             else
             {
@@ -105,19 +105,30 @@ public sealed class Path
             }
         }
 
-        FileStream fs = System.IO.File.Create(FullPath);
+        FileStream fs = File.Create(FullPath);
         fs.Dispose();
 
-        return this.Exists();
+        return Exists();
     }
-    
-    
+
+
     public override string ToString()
     {
         return $"Type ´{_pathType}´ Path ´{FullPath}´";
     }
 
-    public static Path operator +(Path path1, Path path2) => Path.Combine(path1.GetPath(), path2.GetPath());
-    public static implicit operator Path(string a) => new Path(a);
-    public static explicit operator string(Path a) => a?.GetPath() ?? String.Empty;
+    public static Path operator +(Path path1, Path path2)
+    {
+        return Path.Combine(path1.GetPath(), path2.GetPath());
+    }
+
+    public static implicit operator Path(string a)
+    {
+        return new Path(a);
+    }
+
+    public static explicit operator string(Path a)
+    {
+        return a?.GetPath() ?? String.Empty;
+    }
 }

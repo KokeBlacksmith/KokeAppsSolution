@@ -1,52 +1,50 @@
 ﻿<Styles xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-    
+
     <Design.PreviewWith>
         <!-- Add Controls for Previewer Here -->
         <Border Padding="20" Background="{StaticResource DarkestBackgroundColor}">
             <StackPanel Orientation="Vertical">
-                <ButtonSpinner Content="I am normal spinner"/>
-                <ButtonSpinner Content="I am disabled spinner" IsEnabled="False"/>
+                <ButtonSpinner Content="I am normal spinner" />
+                <ButtonSpinner Content="I am disabled spinner" IsEnabled="False" />
             </StackPanel>
         </Border>
     </Design.PreviewWith>
-    
-    <StyleInclude Source="/Themes/Dark/DarkButtonStyle.axaml"/>
-    
+
+    <StyleInclude Source="/Themes/Dark/DarkButtonStyle.axaml" />
+
     <Styles.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceInclude Source="/Themes/Dark/DarkThemeColors.axaml"/>
+                <ResourceInclude Source="/Themes/Dark/DarkThemeColors.axaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Styles.Resources>
-    
+
     <!-- Add Styles Here -->
-    
+
     <Style Selector="ButtonSpinner">
-        <Setter Property="BorderThickness" Value="0"></Setter>
-        <Setter Property="Margin" Value="1"/>
-        
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="Margin" Value="1" />
+
     </Style>
-    
+
     <Style Selector="RepeatButton.ButtonSpinnerRepeatButton/template/ ContentPresenter">
         <Setter Property="Margin" Value="2" />
         <Setter Property="Height" Value="30" />
         <Setter Property="Width" Value="30" />
-        <Setter Property="CornerRadius" Value="5"/>
+        <Setter Property="CornerRadius" Value="5" />
     </Style>
-    
+
     <Style Selector="RepeatButton.ButtonSpinnerRepeatButton#PART_IncreaseButton /template/ ContentPresenter">
-        <Setter Property="Background" Value="{StaticResource DarkGreenColor}"/>
+        <Setter Property="Background" Value="{StaticResource DarkGreenColor}" />
     </Style>
-    
+
     <Style Selector="RepeatButton.ButtonSpinnerRepeatButton#PART_DecreaseButton /template/ ContentPresenter">
-        <Setter Property="Background" Value="{StaticResource DarkRedColor}"/>
+        <Setter Property="Background" Value="{StaticResource DarkRedColor}" />
     </Style>
-    
-    
-    
-    
+
+
     <!-- <Style Selector="ButtonSpinner /template/ RepeatButton:pointerover"> -->
     <!--     <Setter Property="Background" Value="{DynamicResource ThemeControlMidBrush}"/> -->
     <!--     <Setter Property="BorderBrush" Value="{DynamicResource ThemeBorderMidBrush}"/> -->

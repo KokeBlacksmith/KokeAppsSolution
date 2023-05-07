@@ -1,6 +1,5 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Controls.Primitives;
 using Avalonia.Interactivity;
 using Avalonia.Layout;
 using Avalonia.Markup.Xaml;
@@ -11,11 +10,27 @@ namespace KBAvaloniaCore.Controls;
 
 public partial class TextBoxPath : UserControl
 {
+    public readonly static StyledProperty<string> PathTextProperty = AvaloniaProperty.Register<TextBoxPath, string>(nameof(TextBoxPath.PathText), String.Empty);
+
+    public readonly static StyledProperty<EPathType> PathTypeProperty = AvaloniaProperty.Register<TextBoxPath, EPathType>(nameof(TextBoxPath.PathType), EPathType.Directory);
+
     public TextBoxPath()
     {
         InitializeComponent();
     }
-        
+
+    public string PathText
+    {
+        get { return GetValue(TextBoxPath.PathTextProperty); }
+        set { SetValue(TextBoxPath.PathTextProperty, value); }
+    }
+
+    public EPathType PathType
+    {
+        get { return GetValue(TextBoxPath.PathTypeProperty); }
+        set { SetValue(TextBoxPath.PathTypeProperty, value); }
+    }
+
     private void InitializeComponent()
     {
         AvaloniaXamlLoader.Load(this);
@@ -24,30 +39,12 @@ public partial class TextBoxPath : UserControl
         _btSearchPath = this.FindControl<Button>(nameof(TextBoxPath._btSearchPath));
         _btSearchPath.Click += _OnSearchPathClick;
     }
-    
-    public static readonly StyledProperty<string> PathTextProperty =
-        AvaloniaProperty.Register<TextBoxPath, string>(nameof(TextBoxPath.PathText), String.Empty);
-    
-    public static readonly StyledProperty<EPathType> PathTypeProperty =
-        AvaloniaProperty.Register<TextBoxPath, EPathType>(nameof(TextBoxPath.PathType), EPathType.Directory);
-    
-    public string PathText
-    {
-        get { return GetValue(TextBoxPath.PathTextProperty); }
-        set { SetValue(TextBoxPath.PathTextProperty, value); }
-    }
-    
-    public EPathType PathType
-    {
-        get { return GetValue(TextBoxPath.PathTypeProperty); }
-        set { SetValue(TextBoxPath.PathTypeProperty, value); }
-    }
-    
+
     private async void _OnSearchPathClick(object sender, RoutedEventArgs e)
     {
         Window parentWindow = this.FindAncestorOfType<Window>();
         string selectedDirectory = null;
-        
+
         if (PathType == EPathType.Directory)
         {
             OpenFolderDialog dialog = new OpenFolderDialog();
@@ -59,7 +56,7 @@ public partial class TextBoxPath : UserControl
             dialog.AllowMultiple = false;
             selectedDirectory = (await dialog.ShowAsync(parentWindow))?.FirstOrDefault();
         }
-        
+
         if (!String.IsNullOrWhiteSpace(selectedDirectory))
         {
             PathText = selectedDirectory;
@@ -70,16 +67,16 @@ public partial class TextBoxPath : UserControl
     {
         base.OnPropertyChanged(change);
 
-        TextBoxPath textBoxPath = (TextBoxPath) change.Sender;
+        TextBoxPath textBoxPath = (TextBoxPath)change.Sender;
         if (change.Property == TextBoxPath.PathTextProperty)
         {
             textBoxPath._tbPath.Text = change.NewValue.GetValueOrDefault() as string;
         }
-        else if(change.Property == TextBoxPath.HorizontalAlignmentProperty)
+        else if (change.Property == TextBoxPath.HorizontalAlignmentProperty)
         {
             textBoxPath._container.HorizontalAlignment = change.NewValue.GetValueOrDefault<HorizontalAlignment>();
         }
-        else if(change.Property == TextBoxPath.VerticalAlignmentProperty)
+        else if (change.Property == TextBoxPath.VerticalAlignmentProperty)
         {
             textBoxPath._container.VerticalAlignment = change.NewValue.GetValueOrDefault<VerticalAlignment>();
         }

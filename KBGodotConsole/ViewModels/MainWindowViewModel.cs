@@ -1,7 +1,9 @@
-﻿namespace KBGodotConsole.ViewModels
+﻿namespace KBGodotConsole.ViewModels;
+
+public class MainWindowViewModel : ViewModelBase
 {
-    public class MainWindowViewModel : ViewModelBase
+    public string Greeting
     {
-        public string Greeting => "Welcome to Avalonia!";
+        get { return "Welcome to Avalonia!"; }
     }
 }

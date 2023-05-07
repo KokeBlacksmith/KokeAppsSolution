@@ -4,10 +4,10 @@ using Path = KBAvaloniaCore.IO.Path;
 
 namespace KBAvaloniaCore.DataAnnotations;
 
-[AttributeUsage(AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Parameter, AllowMultiple = false)]
+[AttributeUsage(AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Parameter)]
 public sealed class RequiredPathAttribute : RequiredAttribute
 {
-    public RequiredPathAttribute() : base()
+    public RequiredPathAttribute()
     {
         AllowEmptyStrings = false;
     }
@@ -23,10 +23,8 @@ public sealed class RequiredPathAttribute : RequiredAttribute
                 Path path = (Path)value!;
                 return path.Exists();
             }
-            else
-            {
-                return true; 
-            }
+
+            return true;
         }
 
         return false;

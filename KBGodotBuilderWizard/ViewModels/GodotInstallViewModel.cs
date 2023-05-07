@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Security.Principal;
 using System.Windows.Input;
 using KBAvaloniaCore.Miscellaneous;
 using KBGodotBuilderWizard.Models;
@@ -9,21 +8,21 @@ namespace KBGodotBuilderWizard.ViewModels;
 
 public class GodotInstallViewModel : BaseViewModel
 {
-    private string _version;
+    private string _installPath;
+    private bool _isMonoVersion;
     private string _name;
     private EOperatingSystem _operatingSystem;
     private EProcessor _processorBits;
-    private string _installPath;
     private string _urlParentFolderName;
-    private bool _isMonoVersion;
+    private string _version;
 
     public GodotInstallViewModel(string version, string name, string urlParentFolderName)
     {
-        this.Version = version ?? throw new ArgumentNullException(nameof(version));
-        this.Name = name ?? throw new ArgumentNullException(nameof(name));
-        this.UrlParentFolderName = urlParentFolderName ?? "stable";
+        Version = version ?? throw new ArgumentNullException(nameof(version));
+        Name = name ?? throw new ArgumentNullException(nameof(name));
+        UrlParentFolderName = urlParentFolderName ?? "stable";
         _Initialize();
-        
+
         DownloadVersionCommand = ReactiveCommand.Create(_DownloadVersionCommandExecute);
     }
 
@@ -56,7 +55,7 @@ public class GodotInstallViewModel : BaseViewModel
         get { return _installPath; }
         set { this.RaiseAndSetIfChanged(ref _installPath, value); }
     }
-    
+
     public string UrlParentFolderName
     {
         get { return _urlParentFolderName; }
@@ -87,10 +86,10 @@ public class GodotInstallViewModel : BaseViewModel
         {
             Processor = EProcessor.ARM;
         }
-        
+
         if (Name.Contains("win"))
         {
-            OperatingSystem = EOperatingSystem.Windows;    
+            OperatingSystem = EOperatingSystem.Windows;
         }
         else if (Name.Contains("osx") || Name.Contains("macos"))
         {
@@ -104,13 +103,10 @@ public class GodotInstallViewModel : BaseViewModel
         {
             OperatingSystem = EOperatingSystem.Linux;
         }
-        
-        
+
+
         // bool isStableVersion = Name.Contains("stable");
     }
 
-    private void _DownloadVersionCommandExecute()
-    {
-        
-    }
+    private void _DownloadVersionCommandExecute() { }
 }
