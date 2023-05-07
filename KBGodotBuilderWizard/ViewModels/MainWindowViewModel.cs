@@ -111,7 +111,6 @@ public class MainWindowViewModel : BaseViewModel
         }
     }
 
-    [SuppressMessage("ReSharper.DPA", "DPA0003: Excessive memory allocations in LOH")]
     private async void _DownloadVersionCommandExecute()
     {
         using (IDisposable _ = _updateVersionsBusyOperation.StartOperation())

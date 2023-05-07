@@ -96,6 +96,9 @@ internal class GodotVersionFetcher
                     // Read the content of the response
                     byte[] content = await response.Content.ReadAsByteArrayAsync();
                     await File.WriteAllBytesAsync(destinationFolder.FullPath, content);
+                    content = null;
+                    GC.Collect();
+                    GC.WaitForPendingFinalizers();
                     return Result.CreateSuccess();
                 }
             }

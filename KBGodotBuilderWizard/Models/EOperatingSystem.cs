@@ -2,10 +2,12 @@
 
 public enum EOperatingSystem
 {
-    Windows = 0,
-    Linux = 1,
-    LinuxServer = 2,
-    MacOS = 3,
+    Unknown = 0,
+    Windows = 1,
+    Linux = 2,
+    LinuxServer = 3,
+    MacOS = 4,
+    Web = 5,
 }
 
 public enum EProcessor

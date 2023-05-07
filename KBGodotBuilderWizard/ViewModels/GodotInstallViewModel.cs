@@ -106,6 +106,10 @@ public class GodotInstallViewModel : BaseViewModel
         {
             OperatingSystem = EOperatingSystem.Linux;
         }
+        else if (Name.Contains("web"))
+        {
+            OperatingSystem = EOperatingSystem.Web;
+        }
 
 
         // bool isStableVersion = Name.Contains("stable");

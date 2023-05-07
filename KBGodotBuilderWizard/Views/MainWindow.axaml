@@ -3,6 +3,7 @@
         xmlns:vm="using:KBGodotBuilderWizard.ViewModels"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:models="clr-namespace:KBGodotBuilderWizard.Models"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="KBGodotBuilderWizard.Views.MainWindow"
         Icon="/Assets/avalonia-logo.ico"
@@ -11,6 +12,14 @@
     <Design.DataContext>
         <vm:MainWindowViewModel />
     </Design.DataContext>
+    
+    <Window.Resources>
+        <models:EOperatingSystem x:Key="WindowsOS">Windows</models:EOperatingSystem>
+        <models:EOperatingSystem x:Key="LinuxOS">Linux</models:EOperatingSystem>
+        <models:EOperatingSystem x:Key="LinuxServerOS">LinuxServer</models:EOperatingSystem>
+        <models:EOperatingSystem x:Key="MacOS">MacOS</models:EOperatingSystem>
+        <models:EOperatingSystem x:Key="WebOS">Web</models:EOperatingSystem>
+    </Window.Resources>
 
     <Grid RowDefinitions="Auto,*" ColumnDefinitions="200, *">
 
@@ -45,25 +54,31 @@
 
                 <ListBox.Styles>
                     <Style Selector="Image">
-                        <Setter Property="Width" Value="18" />
-                        <Setter Property="Height" Value="18" />
-                        <Setter Property="Margin" Value="{StaticResource HorizontalMargin}" />
+                        <Setter Property="Width" Value="24" />
+                        <Setter Property="Height" Value="24" />
+                        <Setter Property="Margin" Value="{StaticResource AllMargin}" />
                     </Style>
                 </ListBox.Styles>
 
                 <ListBox.ItemTemplate>
                     <DataTemplate>
-                        <Grid ColumnDefinitions="Auto, 100, 18, 18">
-                            <Button Grid.Column="0" Width="18" Height="18"
-                                    HorizontalContentAlignment="Stretch"
-                                    VerticalContentAlignment="Stretch"
-                                    Margin="{StaticResource HorizontalMargin}"
-                                    Command="{Binding DownloadVersionCommand}">
-                                <Image Source="/Assets/download_icon.ico" />
-                            </Button>
-                            <TextBlock Grid.Column="1" Text="{Binding Name}" />
-                            <Image Grid.Column="2" Source="/Assets/windows_icon.ico" />
-                            <Image Grid.Column="3" Source="/Assets/apple_icon.ico" />
+                        <Grid ColumnDefinitions="250, 24, 24">
+                            <TextBlock Grid.Column="0" Text="{Binding Name}" />
+                            <Image Grid.Column="1" Source="/Assets/windows_icon.ico" 
+                                   IsVisible="{Binding OperatingSystem, 
+                                   Converter={StaticResource MatchValueConverter}, ConverterParameter={StaticResource WindowsOS}}"/>
+                            <Image Grid.Column="1" Source="/Assets/apple_icon.ico" 
+                                   IsVisible="{Binding OperatingSystem, 
+                                   Converter={StaticResource MatchValueConverter}, ConverterParameter={StaticResource MacOS}}"/>
+                            <Image Grid.Column="1" Source="/Assets/linux-icon.ico" 
+                                   IsVisible="{Binding OperatingSystem, 
+                                   Converter={StaticResource MatchValueConverter}, ConverterParameter={StaticResource LinuxOS}}"/>
+                            <Image Grid.Column="1" Source="/Assets/linux-icon.ico" 
+                                   IsVisible="{Binding OperatingSystem, 
+                                   Converter={StaticResource MatchValueConverter}, ConverterParameter={StaticResource LinuxServerOS}}"/>
+                            
+                            <Image Grid.Column="2" Source="/Assets/Csharp_logo.png"
+                                   IsVisible="{Binding IsMonoVersion}"/>
                         </Grid>
                     </DataTemplate>
                 </ListBox.ItemTemplate>
@@ -72,8 +87,14 @@
             <Border Grid.Row="1" Classes="control_container">
                 <StackPanel Orientation="Horizontal" Margin="{StaticResource AllMargin}" 
                             HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-                    <Button Content="Download" Width="100" HorizontalContentAlignment="Center"
-                            Command="{Binding DownloadVersionCommand}"/>
+                    <Button Width="100" HorizontalContentAlignment="Center"
+                            Command="{Binding DownloadVersionCommand}">
+                        <StackPanel Orientation="Horizontal">
+                            <Label Content="Download" />
+                            <Image Source="/Assets/download_icon.ico" 
+                                   Margin="{StaticResource HorizontalMargin}"/>
+                        </StackPanel>
+                    </Button>
                     <Button Content="Launch" Width="100" HorizontalContentAlignment="Center"/>
                     <ProgressBar IsIndeterminate="True" ShowProgressText="False"
                                  IsEnabled="{Binding IsUpdatingVersions}"/>

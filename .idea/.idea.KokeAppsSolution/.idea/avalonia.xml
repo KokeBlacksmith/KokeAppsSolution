@@ -8,6 +8,7 @@
         <entry key="KBAvaloniaCore/Controls/TextBoxPath.axaml" value="KBBehaviourTree/KBBehaviourTree.csproj" />
         <entry key="KBAvaloniaCore/Controls/TextBoxPath/View/TextBoxPath.axaml" value="KBBehaviourTree/KBBehaviourTree.csproj" />
         <entry key="KBAvaloniaCore/Themes/ConstantsResourceDictionary.axaml" value="KBBehaviourTree/KBBehaviourTree.csproj" />
+        <entry key="KBAvaloniaCore/Themes/ConvertersResourceDictionary.axaml" value="KBBehaviourTree/KBBehaviourTree.csproj" />
         <entry key="KBAvaloniaCore/Themes/Dark/DarkButtonSpinnerStyle.axaml" value="KBBehaviourTree/KBBehaviourTree.csproj" />
         <entry key="KBAvaloniaCore/Themes/Dark/DarkButtonStyle.axaml" value="KBBehaviourTree/KBBehaviourTree.csproj" />
         <entry key="KBAvaloniaCore/Themes/Dark/DarkCheckBoxStyle.axaml" value="KBBehaviourTree/KBBehaviourTree.csproj" />
