@@ -30,6 +30,8 @@ public class MainWindowViewModel : BaseViewModel
 
         IObservable<bool> canDownload = this.WhenAnyValue(x => x.IsUpdatingVersions, y => y.SelectedDownload, (isUpdating, selected) => !isUpdating && selected != null);
         DownloadVersionCommand = ReactiveCommand.Create(_DownloadVersionCommandExecute, canDownload);
+        IObservable<bool> canInstall = this.WhenAnyValue(x => x.IsUpdatingVersions, y => y.SelectedDownload, (isUpdating, selected) => !isUpdating && selected is { IsInstalled: true });
+        LaunchVersionCommand = ReactiveCommand.Create(_LaunchVersionCommandExecute, canInstall);
     }
 
     public AvaloniaList<GodotVersionViewModel> VersionsList
@@ -67,6 +69,7 @@ public class MainWindowViewModel : BaseViewModel
 
     public ICommand RefreshAvailableVersionsCommand { get; }
     public ICommand DownloadVersionCommand { get; }
+    public ICommand LaunchVersionCommand { get; }
 
     /// <summary>
     ///     Retrieves the available number versions
@@ -103,5 +106,8 @@ public class MainWindowViewModel : BaseViewModel
         }
     }
 
-    private async void _LaunchVersionCommandExecute() { }
+    private async void _LaunchVersionCommandExecute()
+    {
+        _selectedDownload!.Launch();
+    }
 }

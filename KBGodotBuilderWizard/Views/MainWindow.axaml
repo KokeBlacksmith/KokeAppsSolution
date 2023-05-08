@@ -96,7 +96,8 @@
                                    Margin="{StaticResource HorizontalMargin}" />
                         </StackPanel>
                     </Button>
-                    <Button Grid.Column="1" Content="Launch" Width="100" HorizontalContentAlignment="Center" />
+                    <Button Grid.Column="1" Content="Launch" Width="100" HorizontalContentAlignment="Center" 
+                            Command="{Binding LaunchVersionCommand}"/>
                     <ProgressBar Grid.Column="2" IsIndeterminate="True" ShowProgressText="False"
                                  HorizontalAlignment="Stretch"
                                  IsEnabled="{Binding IsUpdatingVersions}" />

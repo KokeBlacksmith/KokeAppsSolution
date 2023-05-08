@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
+using System.Text;
 using System.Threading.Tasks;
 using KBAvaloniaCore.Miscellaneous;
 using KBGodotBuilderWizard.Models;
@@ -18,6 +20,7 @@ public class GodotInstallViewModel : BaseViewModel
     private EProcessor _processorBits;
     private string _urlParentFolderName;
     private string _version;
+    private bool _isInstalled;
 
     public GodotInstallViewModel(string version, string name, string? urlParentFolderName)
     {
@@ -67,6 +70,12 @@ public class GodotInstallViewModel : BaseViewModel
     {
         get { return _isMonoVersion; }
         set { this.RaiseAndSetIfChanged(ref _isMonoVersion, value); }
+    }
+
+    public bool IsInstalled
+    {
+        get { return _isInstalled; }
+        set { this.RaiseAndSetIfChanged(ref _isInstalled, value); }
     }
 
     public string GetPartialUrl()
@@ -142,14 +151,25 @@ public class GodotInstallViewModel : BaseViewModel
             ZipFile.ExtractToDirectory(destinationPath.FullPath, destinationUnzip, true);
             destinationPath.DeleteFile();
             File.Delete(destinationPath.FullPath);
-
+            this.IsInstalled = true;
+            this.InstallPath = Path.Combine(destinationUnzip, this.Name).FullPath;
             return Result.CreateSuccess();
         });
-        
     }
 
     public Result Uninstall()
     {
         return Result.CreateSuccess();
+    }
+
+    public void Launch()
+    {
+        using (Process godotApp = new Process())
+        {
+            godotApp.StartInfo.UseShellExecute = false;
+            godotApp.StartInfo.FileName = this.InstallPath;
+            godotApp.StartInfo.CreateNoWindow = true;
+            godotApp.Start();
+        }
     }
 }
