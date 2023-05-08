@@ -9,7 +9,7 @@
     <Thickness x:Key="NoMargin">0</Thickness>
     <Thickness x:Key="HorizontalMargin">2.5, 0, 2.5, 0</Thickness>
     <Thickness x:Key="VerticalMargin">0, 2.5, 0, 2.5</Thickness>
-    
+
     <Thickness x:Key="AllPadding">2.5</Thickness>
     <Thickness x:Key="NoPadding">0</Thickness>
 

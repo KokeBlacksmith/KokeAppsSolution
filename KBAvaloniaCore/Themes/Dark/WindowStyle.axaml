@@ -16,4 +16,11 @@
     <Style Selector="Window">
         <Setter Property="Background" Value="{StaticResource DarkestBackgroundColor}" />
     </Style>
+    
+    <Style Selector="Window.no_border">
+        <Setter Property="ExtendClientAreaChromeHints" Value="NoChrome" />
+        <Setter Property="ExtendClientAreaToDecorationsHint" Value="True" />
+        <Setter Property="ExtendClientAreaTitleBarHeightHint" Value="-1" />
+    </Style>
+    
 </Styles>

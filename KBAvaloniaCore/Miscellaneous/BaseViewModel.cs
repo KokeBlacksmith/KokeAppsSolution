@@ -19,8 +19,8 @@ public abstract class BaseViewModel : ReactiveObject
 
     protected class BusyOperation : IDisposable
     {
-        private ushort _busyCount;
         private readonly WeakReference<BaseViewModel> _parent;
+        private ushort _busyCount;
 
         public BusyOperation(BaseViewModel parent, string busyProperty)
         {
@@ -31,9 +31,9 @@ public abstract class BaseViewModel : ReactiveObject
             _parent = new WeakReference<BaseViewModel>(parent);
             BusyProperty = busyProperty ?? throw new ArgumentNullException(nameof(busyProperty));
         }
-        
+
         public string BusyProperty { get; }
-        
+
         public bool IsBusy
         {
             get { return _busyCount > 0; }
@@ -42,15 +42,15 @@ public abstract class BaseViewModel : ReactiveObject
         public void Dispose()
         {
             --_busyCount;
-            if(_parent.TryGetTarget(out var parent))
-                parent.RaisePropertyChanged(this.BusyProperty);
+            if (_parent.TryGetTarget(out BaseViewModel? parent))
+                parent.RaisePropertyChanged(BusyProperty);
         }
 
         public IDisposable StartOperation()
         {
             ++_busyCount;
-            if(_parent.TryGetTarget(out var parent))
-                parent.RaisePropertyChanged(this.BusyProperty);
+            if (_parent.TryGetTarget(out BaseViewModel? parent))
+                parent.RaisePropertyChanged(BusyProperty);
 
             return this;
         }

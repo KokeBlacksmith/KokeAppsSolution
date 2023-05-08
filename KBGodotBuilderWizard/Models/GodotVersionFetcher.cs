@@ -20,19 +20,6 @@ internal class GodotVersionFetcher
         "Parent Directory", "../",
     };
 
-
-    public struct GodotInstallData
-    {
-        public GodotInstallData(string version, string fileName)
-        {
-            Version = version;
-            FileName = fileName;
-        }
-
-        public string Version { get; }
-        public string FileName { get; }
-    }
-    
     public static Task<IEnumerable<string>> FetchVersions()
     {
         HttpClient client = new HttpClient();
@@ -59,6 +46,9 @@ internal class GodotVersionFetcher
 
     public static async Task<IEnumerable<GodotInstallData>> FetchVersionDownloads(string currentVersion)
     {
+        if (currentVersion == null)
+            throw new ArgumentNullException(nameof(currentVersion));
+
         string url = GodotVersionFetcher.s_repositoryURL + $"/{currentVersion}/";
         IEnumerable<HtmlNode> links = GodotVersionFetcher._ReadHtmlNodes(url);
         return links.Select(link => link.Attributes["href"].Value).Except(GodotVersionFetcher.s_skipStrings).Select(link => new GodotInstallData(currentVersion, link));
@@ -83,8 +73,8 @@ internal class GodotVersionFetcher
             }
         }
     }
-    
-    public static async Task<Result> DownloadVersion(KBAvaloniaCore.IO.Path destinationFolder, string urlVersionPath)
+
+    public static async Task<Result> DownloadVersion(Path destinationFolder, string urlVersionPath)
     {
         try
         {
@@ -107,5 +97,18 @@ internal class GodotVersionFetcher
         {
             return Result.CreateFailure(e);
         }
+    }
+
+
+    public struct GodotInstallData
+    {
+        public GodotInstallData(string version, string fileName)
+        {
+            Version = version;
+            FileName = fileName;
+        }
+
+        public string Version { get; }
+        public string FileName { get; }
     }
 }

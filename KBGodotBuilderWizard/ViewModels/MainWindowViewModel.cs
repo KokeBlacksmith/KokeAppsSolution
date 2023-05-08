@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
-using System.IO.Compression;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Avalonia.Collections;
+using JetBrains.Annotations;
+using KBAvaloniaCore.Controls;
 using KBAvaloniaCore.Miscellaneous;
 using KBGodotBuilderWizard.Models;
 using ReactiveUI;
@@ -15,22 +16,19 @@ namespace KBGodotBuilderWizard.ViewModels;
 
 public class MainWindowViewModel : BaseViewModel
 {
+    private readonly BusyOperation _updateVersionsBusyOperation;
     private GodotInstallViewModel? _selectedDownload;
     private GodotVersionViewModel? _selectedVersion;
     private AvaloniaList<GodotVersionViewModel> _selectedVersionDownloadList = new AvaloniaList<GodotVersionViewModel>();
     private AvaloniaList<GodotVersionViewModel> _versionsList = new AvaloniaList<GodotVersionViewModel>();
-    private readonly BusyOperation _updateVersionsBusyOperation;
 
     public MainWindowViewModel()
     {
         _updateVersionsBusyOperation = new BusyOperation(this, nameof(MainWindowViewModel.IsUpdatingVersions));
-        
+
         RefreshAvailableVersionsCommand = ReactiveCommand.Create(_FetchVersions);
-        
-        IObservable<bool> canDownload = this.WhenAnyValue(
-            property1: x => x.IsUpdatingVersions,
-            property2: y => y.SelectedDownload,
-            selector: (isUpdating, selected) => !isUpdating && selected != null);
+
+        IObservable<bool> canDownload = this.WhenAnyValue(x => x.IsUpdatingVersions, y => y.SelectedDownload, (isUpdating, selected) => !isUpdating && selected != null);
         DownloadVersionCommand = ReactiveCommand.Create(_DownloadVersionCommandExecute, canDownload);
     }
 
@@ -85,7 +83,7 @@ public class MainWindowViewModel : BaseViewModel
         }
     }
 
-    private async void _FetchVersionDownloads([JetBrains.Annotations.NotNull] GodotVersionViewModel version, string extendPath = "/")
+    private async void _FetchVersionDownloads([NotNull] GodotVersionViewModel version, string extendPath = "/")
     {
         using (IDisposable _ = m_busyOperation.StartOperation())
         {
@@ -98,7 +96,7 @@ public class MainWindowViewModel : BaseViewModel
                     if (!Path.HasExtension(download.FileName))
                     {
                         //FileName contains the directories to the file
-                        
+
                         // It is a folder
                         _FetchVersionDownloads(version, $"{extendPath}{download.FileName}");
                     }
@@ -115,41 +113,13 @@ public class MainWindowViewModel : BaseViewModel
     {
         using (IDisposable _ = _updateVersionsBusyOperation.StartOperation())
         {
-            await Task.Run(async () =>
+            Result result = await SelectedDownload!.Download();
+            if (result.IsFailure)
             {
-                ConfigurationFileData configurationFileData = new ConfigurationFileData();
-                Result result = configurationFileData.Load();
-                
-                if (result.IsFailure)
-                {
-                    //TODO: Show error
-                    return;    
-                }
-                
-                string fetchUrl = this.SelectedDownload!.GetPartialUrl();
-                KBAvaloniaCore.IO.Path destinationPath = KBAvaloniaCore.IO.Path.Combine(configurationFileData.InstallVersionsPath.FullPath, this.SelectedDownload!.Name, this.SelectedDownload!.Name);
-                destinationPath = new KBAvaloniaCore.IO.Path(destinationPath.FullPath.Replace('.', '_'));
-
-                destinationPath.DeleteDirectory(true);
-                destinationPath.CreateDirectory();
-                
-                result = await GodotVersionFetcher.DownloadVersion(destinationPath, fetchUrl);
-                
-                if (result.IsFailure)
-                {
-                    //TODO: Show error
-                    return;
-                }
-
-                string destinationUnzip = destinationPath.TryGetParent(out KBAvaloniaCore.IO.Path parentPath) ? parentPath.FullPath : destinationPath.FullPath;
-                ZipFile.ExtractToDirectory(destinationPath.FullPath, destinationUnzip, true);
-                File.Delete(destinationPath.FullPath);
-            });
+                MessageBoxHelper.ShowErrorDialog(result);
+            }
         }
     }
 
-    private async void _LaunchVersionCommandExecute()
-    {
-        
-    }
+    private async void _LaunchVersionCommandExecute() { }
 }

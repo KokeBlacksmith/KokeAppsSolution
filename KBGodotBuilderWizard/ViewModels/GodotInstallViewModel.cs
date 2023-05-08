@@ -1,8 +1,11 @@
 ﻿using System;
-using System.Windows.Input;
+using System.IO;
+using System.IO.Compression;
+using System.Threading.Tasks;
 using KBAvaloniaCore.Miscellaneous;
 using KBGodotBuilderWizard.Models;
 using ReactiveUI;
+using Path = KBAvaloniaCore.IO.Path;
 
 namespace KBGodotBuilderWizard.ViewModels;
 
@@ -16,7 +19,7 @@ public class GodotInstallViewModel : BaseViewModel
     private string _urlParentFolderName;
     private string _version;
 
-    public GodotInstallViewModel(string version, string name, string urlParentFolderName)
+    public GodotInstallViewModel(string version, string name, string? urlParentFolderName)
     {
         Version = version ?? throw new ArgumentNullException(nameof(version));
         Name = name ?? throw new ArgumentNullException(nameof(name));
@@ -66,8 +69,6 @@ public class GodotInstallViewModel : BaseViewModel
         set { this.RaiseAndSetIfChanged(ref _isMonoVersion, value); }
     }
 
-    public ICommand DownloadVersionCommand { get; }
-    
     public string GetPartialUrl()
     {
         return $"{Version}{UrlParentFolderName}/{Name}.zip".Replace('\\', '/');
@@ -110,8 +111,41 @@ public class GodotInstallViewModel : BaseViewModel
         {
             OperatingSystem = EOperatingSystem.Web;
         }
+    }
 
+    public async Task<Result> Download()
+    {
+        ConfigurationFileData configurationFileData = new ConfigurationFileData();
+        Result result = configurationFileData.Load();
 
-        // bool isStableVersion = Name.Contains("stable");
+        if (result.IsFailure)
+        {
+            return result;
+        }
+
+        Path destinationPath = Path.Combine(configurationFileData.InstallVersionsPath.FullPath, Name, Name);
+        destinationPath = new Path(destinationPath.FullPath.Replace('.', '_'));
+
+        destinationPath.DeleteDirectory(true);
+        destinationPath.CreateDirectory();
+
+        result = await GodotVersionFetcher.DownloadVersion(destinationPath, GetPartialUrl());
+
+        if (result.IsFailure)
+        {
+            return result;
+        }
+
+        string destinationUnzip = destinationPath.TryGetParent(out Path parentPath) ? parentPath.FullPath : destinationPath.FullPath;
+        ZipFile.ExtractToDirectory(destinationPath.FullPath, destinationUnzip, true);
+        destinationPath.DeleteFile();
+        File.Delete(destinationPath.FullPath);
+
+        return Result.CreateSuccess();
+    }
+
+    public Result Uninstall()
+    {
+        return Result.CreateSuccess();
     }
 }

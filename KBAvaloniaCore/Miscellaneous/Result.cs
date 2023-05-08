@@ -5,13 +5,13 @@ public readonly struct Result
     private Result(bool isSuccess)
     {
         IsSuccess = isSuccess;
-        Error = null;
+        Errors = null;
     }
 
-    private Result(params string[] errors)
+    private Result(params string[] errorses)
     {
         IsSuccess = false;
-        Error = errors;
+        Errors = errorses;
     }
 
     public bool IsSuccess { get; }
@@ -21,18 +21,18 @@ public readonly struct Result
         get { return !IsSuccess; }
     }
 
-    public string[]? Error { get; }
-    
+    public string[]? Errors { get; }
+
     public static Result CreateFailure(params string[] errors)
     {
         return new Result(errors);
     }
-    
+
     public static Result CreateFailure(Exception exception)
     {
         return new Result(exception.Message, exception.InnerException?.Message);
     }
-    
+
     public static Result CreateSuccess()
     {
         return new Result(true);
@@ -70,17 +70,17 @@ public readonly struct Result<T>
     {
         return IsSuccess ? Result.CreateSuccess() : Result.CreateFailure(Errors);
     }
-    
+
     public static Result<T> CreateFailure(string[] errors)
     {
         return new Result<T>(errors);
     }
-    
+
     public static Result<T> CreateFailure(Exception exception)
     {
         return new Result<T>(exception.Message, exception.InnerException?.Message);
     }
-    
+
     public static Result<T> CreateSuccess(T value)
     {
         return new Result<T>(value, true);

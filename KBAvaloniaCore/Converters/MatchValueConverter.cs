@@ -6,7 +6,7 @@ namespace KBAvaloniaCore.Converters;
 public class MatchValueConverter : IValueConverter
 {
     /// <summary>
-    /// Returns true if the value matches the parameter
+    ///     Returns true if the value matches the parameter
     /// </summary>
     /// <param name="value"></param>
     /// <param name="targetType"></param>
@@ -16,8 +16,7 @@ public class MatchValueConverter : IValueConverter
     /// <exception cref="NotImplementedException"></exception>
     public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
-        return value switch 
-        {
+        return value switch {
             null when parameter == null => true,
             null when parameter != null => false,
             _ => value.Equals(parameter),

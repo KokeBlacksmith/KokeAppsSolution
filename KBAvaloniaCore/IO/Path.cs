@@ -1,6 +1,6 @@
-﻿using System.Collections;
-using System.Runtime.CompilerServices;
+﻿using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
+using KBAvaloniaCore.Miscellaneous;
 
 namespace KBAvaloniaCore.IO;
 
@@ -36,7 +36,7 @@ public struct Path //: IEnumerable<Path>
 
     public bool TryGetParent(out Path parentPath)
     {
-        DirectoryInfo? parent = Directory.GetParent(this.FullPath);
+        DirectoryInfo? parent = Directory.GetParent(FullPath);
         if (parent != null)
         {
             parentPath = new Path(parent.FullName);
@@ -101,15 +101,32 @@ public struct Path //: IEnumerable<Path>
     {
         return Directory.CreateDirectory(GetDirectoryName());
     }
-    
-    
+
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public bool DeleteDirectory(bool recursive)
     {
-        if(Directory.Exists(this.FullPath))
-            Directory.Delete(this.FullPath, recursive);
-        
-        return Directory.Exists(this.FullPath);
+        if (Directory.Exists(FullPath))
+            Directory.Delete(FullPath, recursive);
+
+        return Directory.Exists(FullPath);
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public Result DeleteFile()
+    {
+        try
+        {
+            if (_pathType != EPathType.File)
+                return Result.CreateFailure($"The path '{FullPath}' is not a file");
+
+            File.Delete(FullPath);
+            return Result.CreateSuccess();
+        }
+        catch (Exception e)
+        {
+            return Result.CreateFailure(e);
+        }
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -141,7 +158,7 @@ public struct Path //: IEnumerable<Path>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public string GetRootDirectoryName()
     {
-        return Directory.GetDirectoryRoot(this.FullPath);
+        return Directory.GetDirectoryRoot(FullPath);
     }
 
 

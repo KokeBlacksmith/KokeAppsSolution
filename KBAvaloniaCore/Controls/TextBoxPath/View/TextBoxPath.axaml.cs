@@ -62,7 +62,7 @@ public partial class TextBoxPath : UserControl
             PathText = selectedDirectory;
         }
     }
-
+    
     protected override void OnPropertyChanged<T>(AvaloniaPropertyChangedEventArgs<T> change)
     {
         base.OnPropertyChanged(change);
