@@ -1,5 +1,6 @@
 using System;
 using Avalonia.Controls;
+using KBAvaloniaCore.Miscellaneous;
 using KBGodotBuilderWizard.Models;
 
 namespace KBGodotBuilderWizard.Views;
@@ -20,7 +21,13 @@ public partial class MainWindow : Window
     private void _CheckForSaveDataConfiguration()
     {
         ConfigurationFileData configurationFileData = new ConfigurationFileData();
-        configurationFileData.Load();
+        Result loadResult = configurationFileData.Load();
+        if (loadResult.IsFailure)
+        {
+            KBAvaloniaCore.Miscellaneous.MessageBoxHelper.ShowErrorDialog(loadResult);
+            return;
+        }
+        
         if (configurationFileData.IsValid(out _))
         {
             return;

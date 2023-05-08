@@ -14,10 +14,22 @@ namespace KBGodotBuilderWizard.Models;
 public class ConfigurationFileData
 {
     public readonly static Path DefaultConfigurationFile = Path.Combine(System.IO.Path.GetTempPath(), Assembly.GetCallingAssembly().GetName().Name!, "SaveDataConfiguration.xml");
-
+    private Path _installVersionsPath;
+    
+    
     [XmlElement(nameof(ConfigurationFileData.InstallVersionsPath))]
     [RequiredPath(ErrorMessage = "Please enter the path to install Godot executables.", AllowNonExistingPath = false)]
-    public Path InstallVersionsPath { get; set; }
+    public string InstallVersionsPath 
+    {
+        get
+        {
+            return _installVersionsPath.FullPath;
+        }
+        set
+        {
+            _installVersionsPath = new Path(value);
+        }
+    }
 
     public bool IsValid(out IEnumerable<ValidationResult> validationResults)
     {
@@ -37,7 +49,7 @@ public class ConfigurationFileData
     {
         if (!ConfigurationFileData.DefaultConfigurationFile.Exists())
         {
-            return Result.CreateFailure("Configuration file does not exist.");
+            return Result.CreateFailure($"Configuration file '{ConfigurationFileData.DefaultConfigurationFile}' does not exist.");
         }
 
         return XmlSerializableHelper.Load((string)ConfigurationFileData.DefaultConfigurationFile, this);

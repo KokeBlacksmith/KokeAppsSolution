@@ -5,7 +5,7 @@ namespace KBAvaloniaCore.Miscellaneous;
 
 public static class MessageBoxHelper
 {
-    public static void ShowErrorDialog(Result result)
+    public static void ShowErrorDialog(in Result result)
     {
         StringBuilder sb = new StringBuilder();
         if (result.Errors != null)

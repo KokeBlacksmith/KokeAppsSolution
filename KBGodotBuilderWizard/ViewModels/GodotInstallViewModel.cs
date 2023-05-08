@@ -134,7 +134,7 @@ public class GodotInstallViewModel : BaseViewModel
                 return result;
             }
 
-            Path destinationPath = Path.Combine(configurationFileData.InstallVersionsPath.FullPath, Name, Name);
+            Path destinationPath = Path.Combine(configurationFileData.InstallVersionsPath, Name, Name);
             destinationPath = new Path(destinationPath.FullPath.Replace('.', '_'));
 
             destinationPath.DeleteDirectory(true);
@@ -147,12 +147,29 @@ public class GodotInstallViewModel : BaseViewModel
                 return result;
             }
 
-            string destinationUnzip = destinationPath.TryGetParent(out Path parentPath) ? parentPath.FullPath : destinationPath.FullPath;
-            ZipFile.ExtractToDirectory(destinationPath.FullPath, destinationUnzip, true);
+            Path destinationUnzipPath = destinationPath.TryGetParent(out Path parentPath) ? parentPath : destinationPath;
+            ZipFile.ExtractToDirectory(destinationPath.FullPath, destinationUnzipPath.FullPath, true);
+            // Delete zip file
             destinationPath.DeleteFile();
-            File.Delete(destinationPath.FullPath);
+
+            if (this.IsMonoVersion)
+            {
+                //Mono versions have more folders
+                //Move all files to the previous folder
+                // Path[] monoVersionFolders = destinationUnzipPath.GetDirectories();
+                // foreach (Path monoVersionFolder in monoVersionFolders)
+                // {
+                //     Path[] monoVersionFolderFiles = monoVersionFolder.GetFiles();
+                //     foreach (Path monoVersionFolderFile in monoVersionFolderFiles)
+                //     {
+                //         monoVersionFolderFile.MoveTo(destinationUnzipPath);
+                //     }
+                // }
+            }
+            
+            
             this.IsInstalled = true;
-            this.InstallPath = Path.Combine(destinationUnzip, this.Name).FullPath;
+            this.InstallPath = Path.Combine(destinationUnzipPath.FullPath, this.Name).FullPath;
             return Result.CreateSuccess();
         });
     }

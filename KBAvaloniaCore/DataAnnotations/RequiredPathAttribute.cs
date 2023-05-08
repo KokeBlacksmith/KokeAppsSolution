@@ -20,7 +20,7 @@ public sealed class RequiredPathAttribute : RequiredAttribute
         {
             if (!AllowNonExistingPath)
             {
-                Path path = (Path)value!;
+                Path path = (Path)(string)value!;
                 return path.Exists();
             }
 

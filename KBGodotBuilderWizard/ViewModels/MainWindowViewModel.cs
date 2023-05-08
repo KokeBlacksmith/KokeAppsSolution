@@ -106,7 +106,7 @@ public class MainWindowViewModel : BaseViewModel
         }
     }
 
-    private async void _LaunchVersionCommandExecute()
+    private void _LaunchVersionCommandExecute()
     {
         _selectedDownload!.Launch();
     }

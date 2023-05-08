@@ -4,35 +4,17 @@ using KBAvaloniaCore.Miscellaneous;
 
 namespace KBAvaloniaCore.IO;
 
-[DataContract(Name = nameof(Path))]
-public struct Path //: IEnumerable<Path>
+public readonly struct Path
 {
-    private string _fullPath;
-    private EPathType _pathType;
+    private readonly EPathType _pathType;
 
     public Path(string path) : this()
     {
         FullPath = path;
+        _pathType = System.IO.Path.HasExtension(FullPath) ? EPathType.File : EPathType.Directory;
     }
 
-    /// <summary>
-    ///     Constructor using for serialization
-    /// </summary>
-    public Path()
-    {
-        this = default(Path);
-    }
-
-    [DataMember]
-    public string FullPath
-    {
-        get { return _fullPath; }
-        set
-        {
-            _fullPath = value;
-            _pathType = System.IO.Path.HasExtension(FullPath) ? EPathType.File : EPathType.Directory;
-        }
-    }
+    public string FullPath { get; }
 
     public bool TryGetParent(out Path parentPath)
     {
@@ -52,24 +34,17 @@ public struct Path //: IEnumerable<Path>
     {
         return new Path(System.IO.Path.Combine(paths));
     }
+    
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static Path Combine(params Path[] paths)
+    {
+        return new Path(System.IO.Path.Combine(paths.Select(p => p.FullPath).ToArray()));
+    }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public bool Exists()
     {
         return _pathType == EPathType.Directory ? Directory.Exists(FullPath) : File.Exists(FullPath);
-    }
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void Combine(string path)
-    {
-        FullPath = System.IO.Path.Combine(FullPath, path);
-        _pathType = System.IO.Path.HasExtension(FullPath) ? EPathType.File : EPathType.Directory;
-    }
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void Combine(Path path)
-    {
-        Combine(path.GetPath());
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -173,7 +148,7 @@ public struct Path //: IEnumerable<Path>
         return Path.Combine(path1.GetPath(), path2.GetPath());
     }
 
-    public static implicit operator Path(string a)
+    public static explicit operator Path(string a)
     {
         return new Path(a);
     }
@@ -182,24 +157,4 @@ public struct Path //: IEnumerable<Path>
     {
         return a.GetPath() ?? String.Empty;
     }
-
-    // #region IEnumerable
-    //
-    // IEnumerator IEnumerable.GetEnumerator()
-    // {
-    //     return GetEnumerator();
-    // }
-    //
-    // public IEnumerator<Path> GetEnumerator()
-    // {
-    //     foreach (string directory in Directory.GetDirectories(this.FullPath))
-    //     {
-    //         yield return new Path(directory);
-    //     }
-    //     
-    //     if(this._pathType == EPathType.File)
-    //         yield return this;
-    // }
-    //
-    // #endregion
 }
