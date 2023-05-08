@@ -113,35 +113,39 @@ public class GodotInstallViewModel : BaseViewModel
         }
     }
 
-    public async Task<Result> Download()
+    public Task<Result> DownloadAsync()
     {
-        ConfigurationFileData configurationFileData = new ConfigurationFileData();
-        Result result = configurationFileData.Load();
-
-        if (result.IsFailure)
+        return Task.Run(async () =>
         {
-            return result;
-        }
+            ConfigurationFileData configurationFileData = new ConfigurationFileData();
+            Result result = configurationFileData.Load();
 
-        Path destinationPath = Path.Combine(configurationFileData.InstallVersionsPath.FullPath, Name, Name);
-        destinationPath = new Path(destinationPath.FullPath.Replace('.', '_'));
+            if (result.IsFailure)
+            {
+                return result;
+            }
 
-        destinationPath.DeleteDirectory(true);
-        destinationPath.CreateDirectory();
+            Path destinationPath = Path.Combine(configurationFileData.InstallVersionsPath.FullPath, Name, Name);
+            destinationPath = new Path(destinationPath.FullPath.Replace('.', '_'));
 
-        result = await GodotVersionFetcher.DownloadVersion(destinationPath, GetPartialUrl());
+            destinationPath.DeleteDirectory(true);
+            destinationPath.CreateDirectory();
 
-        if (result.IsFailure)
-        {
-            return result;
-        }
+            result = await GodotVersionFetcher.DownloadVersion(destinationPath, GetPartialUrl());
 
-        string destinationUnzip = destinationPath.TryGetParent(out Path parentPath) ? parentPath.FullPath : destinationPath.FullPath;
-        ZipFile.ExtractToDirectory(destinationPath.FullPath, destinationUnzip, true);
-        destinationPath.DeleteFile();
-        File.Delete(destinationPath.FullPath);
+            if (result.IsFailure)
+            {
+                return result;
+            }
 
-        return Result.CreateSuccess();
+            string destinationUnzip = destinationPath.TryGetParent(out Path parentPath) ? parentPath.FullPath : destinationPath.FullPath;
+            ZipFile.ExtractToDirectory(destinationPath.FullPath, destinationUnzip, true);
+            destinationPath.DeleteFile();
+            File.Delete(destinationPath.FullPath);
+
+            return Result.CreateSuccess();
+        });
+        
     }
 
     public Result Uninstall()

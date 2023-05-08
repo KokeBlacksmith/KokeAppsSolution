@@ -1,6 +1,9 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
+using System.Threading.Tasks;
 using Avalonia.Collections;
 using KBAvaloniaCore.Miscellaneous;
+using KBGodotBuilderWizard.Models;
 using ReactiveUI;
 
 namespace KBGodotBuilderWizard.ViewModels;
@@ -43,5 +46,28 @@ public class GodotVersionViewModel : BaseViewModel
                 break;
             }
         }
+    }
+    
+    public Task FetchAvailableDownloads(string extendPath = "/")
+    {
+        return Task.Run(async () =>
+        {
+            string urlParentFolderName = Path.GetDirectoryName(extendPath)!;
+            // Fetch from the web
+            foreach (GodotVersionFetcher.GodotInstallData download in await GodotVersionFetcher.FetchVersionDownloads(this.Version + extendPath))
+            {
+                if (!Path.HasExtension(download.FileName))
+                {
+                    //FileName contains the directories to the file
+
+                    // It is a folder
+                    FetchAvailableDownloads($"{extendPath}{download.FileName}");
+                }
+                else
+                {
+                    this.AddInstall(download.FileName, urlParentFolderName);
+                }
+            }
+        });
     }
 }

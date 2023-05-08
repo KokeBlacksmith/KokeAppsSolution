@@ -87,25 +87,7 @@ public class MainWindowViewModel : BaseViewModel
     {
         using (IDisposable _ = m_busyOperation.StartOperation())
         {
-            await Task.Run(async () =>
-            {
-                string urlParentFolderName = Path.GetDirectoryName(extendPath)!;
-                // Fetch from the web
-                foreach (GodotVersionFetcher.GodotInstallData download in await GodotVersionFetcher.FetchVersionDownloads(version.Version + extendPath))
-                {
-                    if (!Path.HasExtension(download.FileName))
-                    {
-                        //FileName contains the directories to the file
-
-                        // It is a folder
-                        _FetchVersionDownloads(version, $"{extendPath}{download.FileName}");
-                    }
-                    else
-                    {
-                        version.AddInstall(download.FileName, urlParentFolderName);
-                    }
-                }
-            });
+            await version.FetchAvailableDownloads(extendPath);
         }
     }
 
@@ -113,7 +95,7 @@ public class MainWindowViewModel : BaseViewModel
     {
         using (IDisposable _ = _updateVersionsBusyOperation.StartOperation())
         {
-            Result result = await SelectedDownload!.Download();
+            Result result = await SelectedDownload!.DownloadAsync();
             if (result.IsFailure)
             {
                 MessageBoxHelper.ShowErrorDialog(result);
