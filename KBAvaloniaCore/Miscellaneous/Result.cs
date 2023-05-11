@@ -1,4 +1,6 @@
-﻿namespace KBAvaloniaCore.Miscellaneous;
+﻿using System.Runtime.CompilerServices;
+
+namespace KBAvaloniaCore.Miscellaneous;
 
 public readonly struct Result
 {
@@ -8,10 +10,10 @@ public readonly struct Result
         Errors = null;
     }
 
-    private Result(params string[] errorses)
+    private Result(params string[] errors)
     {
         IsSuccess = false;
-        Errors = errorses;
+        Errors = errors;
     }
 
     public bool IsSuccess { get; }
@@ -30,7 +32,8 @@ public readonly struct Result
 
     public static Result CreateFailure(Exception exception)
     {
-        return new Result(exception.Message, exception.InnerException?.Message);
+        StackTraceData stackTraceData = new StackTraceData(exception);
+        return Result.CreateFailure(stackTraceData.ToString()!, exception.Message, exception.InnerException?.Message ?? String.Empty );
     }
 
     public static Result CreateSuccess()
@@ -73,12 +76,21 @@ public readonly struct Result<T>
 
     public static Result<T> CreateFailure(string[] errors)
     {
+// #if DEBUG
+//         System.Diagnostics.StackTrace t = new System.Diagnostics.StackTrace();
+//         List<string> errorsList = new List<string>(errors.Length + 1);
+//         errorsList.Add($"StackTrace: {t}");
+//         errors = errorsList.Concat(errors).ToArray();
+// #endif
+        
         return new Result<T>(errors);
     }
 
     public static Result<T> CreateFailure(Exception exception)
     {
-        return new Result<T>(exception.Message, exception.InnerException?.Message);
+        System.Diagnostics.StackTrace t = new System.Diagnostics.StackTrace(exception);
+        string[] errors = new[] {t.ToString(), exception.Message, exception.InnerException?.Message ?? String.Empty};
+        return Result<T>.CreateFailure(errors);
     }
 
     public static Result<T> CreateSuccess(T value)

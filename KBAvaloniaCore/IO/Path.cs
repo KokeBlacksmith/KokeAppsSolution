@@ -12,6 +12,11 @@ public readonly struct Path
     {
         FullPath = path;
         _pathType = System.IO.Path.HasExtension(FullPath) ? EPathType.File : EPathType.Directory;
+
+        if (!this.IsValidPath())
+        {
+            throw new Exception($"[Path constructor] Invalid path! Value: '{path}'");
+        }
     }
 
     public string FullPath { get; }
@@ -32,19 +37,56 @@ public readonly struct Path
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Path Combine(params string[] paths)
     {
-        return new Path(System.IO.Path.Combine(paths));
+        if (paths == null)
+            throw new ArgumentNullException(nameof(paths));
+
+        bool endsWithSeparator = !System.IO.Path.HasExtension(paths[^1]) && !paths[^1].EndsWith(System.IO.Path.DirectorySeparatorChar);
+        return new Path(System.IO.Path.Combine(paths) + (endsWithSeparator ? System.IO.Path.DirectorySeparatorChar.ToString() : default(string)));
     }
     
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static Path Join(Path join1, string join2)
+    {
+        return Path.Combine(join1.FullPath, join2);
+    }
+    
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static Path Join(Path join1, Path join2)
+    {
+        return Path.Combine(join1.FullPath, join2.FullPath);
+    }
+    
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static Path Join(string join1, string join2)
+    {
+        return Path.Combine(join1, join2);
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Path Combine(params Path[] paths)
     {
-        return new Path(System.IO.Path.Combine(paths.Select(p => p.FullPath).ToArray()));
+        return Path.Combine(paths.Select(p => p.FullPath).ToArray());
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public bool Exists()
     {
         return _pathType == EPathType.Directory ? Directory.Exists(FullPath) : File.Exists(FullPath);
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public bool IsValidPath()
+    {
+        try
+        {
+            
+            System.IO.Path.GetFullPath(this.FullPath);
+            return true;
+        }
+        catch (Exception)
+        {
+            return false;
+        }
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -74,7 +116,7 @@ public readonly struct Path
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public DirectoryInfo CreateDirectory()
     {
-        return Directory.CreateDirectory(GetDirectoryName());
+        return Directory.CreateDirectory(GetDirectoryName()!);
     }
 
 
@@ -131,9 +173,79 @@ public readonly struct Path
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public string[] GetDirectories()
+    {
+        return System.IO.Directory.GetDirectories(this.FullPath);
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public string[] GetFilesInDirectory()
+    {
+        return System.IO.Directory.GetFiles(this.GetDirectoryName() ?? String.Empty);
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public string GetRootDirectoryName()
     {
         return Directory.GetDirectoryRoot(FullPath);
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public Result MoveFilesAndDirectories(Path destinationDirectory)
+    {
+        if (this._pathType != EPathType.Directory)
+        {
+            return Result.CreateFailure($"The source path '{FullPath}' is not a directory");
+        }
+        
+        if (destinationDirectory._pathType != EPathType.Directory)
+        {
+            return Result.CreateFailure($"The destination path '{destinationDirectory.FullPath}' is not a directory");
+        }
+        
+        try
+        {
+            string? startErrorMessage = null;
+            if (!destinationDirectory.Exists())
+            {
+                startErrorMessage = $"Destination directory does not exists.";
+            }
+
+            if (startErrorMessage != null && !this.Exists())
+            {
+                startErrorMessage = $"Source directory does not exists.";
+            }
+
+            if (startErrorMessage != null)
+            {
+                string errorMessage = $"Error moving files from '{this.FullPath}' to '{destinationDirectory.GetDirectoryName()}'.";
+                return Result.CreateFailure($"{startErrorMessage} {errorMessage}");
+            }
+
+            // Move all files
+            foreach (string filePath in this.GetFilesInDirectory())
+            {
+                string fileName = System.IO.Path.GetFileName(filePath);
+                string destinationPath = System.IO.Path.Combine(this.FullPath, fileName);
+                File.Move(filePath, destinationPath);
+            }
+
+            // Move all subdirectories and their contents recursively
+            foreach (string subdirectoryPath in this.GetDirectories())
+            {
+                string subdirectoryName = System.IO.Path.GetFileName(subdirectoryPath);
+                Path destinationPath = new Path(System.IO.Path.Combine(destinationDirectory.FullPath, subdirectoryName));
+                ((Path)subdirectoryPath).MoveFilesAndDirectories(destinationPath);
+            }
+
+            // Remove the empty source directory
+            Directory.Delete(this.FullPath);
+            return Result.CreateSuccess();
+        }
+        catch (Exception e)
+        {
+            return Result.CreateFailure(e);
+        }
     }
 
 

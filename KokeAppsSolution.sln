@@ -1,14 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KBGodotConsole", "KBGodotConsole\KBGodotConsole.csproj", "{373B5335-6845-448E-A3C3-4875465A2899}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KBBehaviourTree", "KBBehaviourTree\KBBehaviourTree.csproj", "{67D70AB3-8253-4B1C-8087-D3436E539ECC}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "BehaviourTree", "BehaviourTree", "{2968F7A8-734D-4D41-A906-8C6F94A19DFA}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KBAvaloniaCore", "KBAvaloniaCore\KBAvaloniaCore.csproj", "{1E8F9C08-E7BE-4AC0-AE59-86B2A3E8B3F8}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "GodotConsole", "GodotConsole", "{08014A9E-FD69-44A9-9EA2-9224B4991C27}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "KBGodotBuilderWizard", "KBGodotBuilderWizard", "{159E1479-8DAB-47E9-BBA4-D6A94FF5FF29}"
 EndProject
@@ -20,14 +12,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{373B5335-6845-448E-A3C3-4875465A2899}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{373B5335-6845-448E-A3C3-4875465A2899}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{373B5335-6845-448E-A3C3-4875465A2899}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{373B5335-6845-448E-A3C3-4875465A2899}.Release|Any CPU.Build.0 = Release|Any CPU
-		{67D70AB3-8253-4B1C-8087-D3436E539ECC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{67D70AB3-8253-4B1C-8087-D3436E539ECC}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{67D70AB3-8253-4B1C-8087-D3436E539ECC}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{67D70AB3-8253-4B1C-8087-D3436E539ECC}.Release|Any CPU.Build.0 = Release|Any CPU
 		{1E8F9C08-E7BE-4AC0-AE59-86B2A3E8B3F8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{1E8F9C08-E7BE-4AC0-AE59-86B2A3E8B3F8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1E8F9C08-E7BE-4AC0-AE59-86B2A3E8B3F8}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -38,8 +22,6 @@ Global
 		{A3786112-7E38-41CD-B15D-9FC9A36359DF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{67D70AB3-8253-4B1C-8087-D3436E539ECC} = {2968F7A8-734D-4D41-A906-8C6F94A19DFA}
-		{373B5335-6845-448E-A3C3-4875465A2899} = {08014A9E-FD69-44A9-9EA2-9224B4991C27}
 		{A3786112-7E38-41CD-B15D-9FC9A36359DF} = {159E1479-8DAB-47E9-BBA4-D6A94FF5FF29}
 	EndGlobalSection
 EndGlobal

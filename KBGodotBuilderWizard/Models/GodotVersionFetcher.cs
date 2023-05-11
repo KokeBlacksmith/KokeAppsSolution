@@ -74,7 +74,7 @@ internal class GodotVersionFetcher
         }
     }
 
-    public static async Task<Result> DownloadVersion(Path destinationFolder, string urlVersionPath)
+    public static async Task<Result> DownloadVersion(Path destinationFilePath, string urlVersionPath)
     {
         try
         {
@@ -84,9 +84,7 @@ internal class GodotVersionFetcher
                 using (HttpResponseMessage response = client.GetAsync(GodotVersionFetcher.s_repositoryURL + urlVersionPath).Result)
                 {
                     // Read the content of the response
-                    byte[] content = await response.Content.ReadAsByteArrayAsync();
-                    await File.WriteAllBytesAsync(destinationFolder.FullPath, content);
-                    content = null;
+                    await File.WriteAllBytesAsync(destinationFilePath.FullPath, await response.Content.ReadAsByteArrayAsync());
                     GC.Collect();
                     GC.WaitForPendingFinalizers();
                     return Result.CreateSuccess();

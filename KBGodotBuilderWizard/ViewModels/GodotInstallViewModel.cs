@@ -134,42 +134,39 @@ public class GodotInstallViewModel : BaseViewModel
                 return result;
             }
 
-            Path destinationPath = Path.Combine(configurationFileData.InstallVersionsPath, Name, Name);
-            destinationPath = new Path(destinationPath.FullPath.Replace('.', '_'));
-
-            destinationPath.DeleteDirectory(true);
-            destinationPath.CreateDirectory();
-
-            result = await GodotVersionFetcher.DownloadVersion(destinationPath, GetPartialUrl());
+            string fileName = Name.Replace('.', '_');
+            Path versionInstallPath = Path.Combine(configurationFileData.InstallVersionsPath, Version.Replace('.', '_'));
+            Path installFolderPath = Path.Join(versionInstallPath, fileName);
+            // Delete previous install if existed
+            installFolderPath.DeleteDirectory(true);
+            versionInstallPath.CreateDirectory();
+            
+            fileName += ".zip";
+            Path zipFilePath = Path.Join(versionInstallPath, fileName);
+            result = await GodotVersionFetcher.DownloadVersion(zipFilePath, GetPartialUrl());
 
             if (result.IsFailure)
             {
                 return result;
             }
 
-            Path destinationUnzipPath = destinationPath.TryGetParent(out Path parentPath) ? parentPath : destinationPath;
-            ZipFile.ExtractToDirectory(destinationPath.FullPath, destinationUnzipPath.FullPath, true);
-            // Delete zip file
-            destinationPath.DeleteFile();
+            ZipFile.ExtractToDirectory(zipFilePath.FullPath, installFolderPath.FullPath, true);
+            zipFilePath.DeleteFile();
 
+            // Maybe unnecessary but just in case
+            Path destinationUnzipPath = installFolderPath.TryGetParent(out Path parentPath) ? parentPath : installFolderPath;
             if (this.IsMonoVersion)
             {
-                //Mono versions have more folders
-                //Move all files to the previous folder
-                // Path[] monoVersionFolders = destinationUnzipPath.GetDirectories();
-                // foreach (Path monoVersionFolder in monoVersionFolders)
-                // {
-                //     Path[] monoVersionFolderFiles = monoVersionFolder.GetFiles();
-                //     foreach (Path monoVersionFolderFile in monoVersionFolderFiles)
-                //     {
-                //         monoVersionFolderFile.MoveTo(destinationUnzipPath);
-                //     }
-                // }
+                if (destinationUnzipPath.TryGetParent(out Path finalDestinationPath))
+                {
+                    finalDestinationPath.MoveFilesAndDirectories(installFolderPath);
+                    installFolderPath = finalDestinationPath;
+                }
             }
             
             
             this.IsInstalled = true;
-            this.InstallPath = Path.Combine(destinationUnzipPath.FullPath, this.Name).FullPath;
+            this.InstallPath = Path.Join(installFolderPath, this.Name).FullPath;
             return Result.CreateSuccess();
         });
     }
