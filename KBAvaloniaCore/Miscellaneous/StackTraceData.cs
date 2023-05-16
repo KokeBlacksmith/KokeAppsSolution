@@ -3,7 +3,7 @@ using Avalonia.Rendering;
 
 namespace KBAvaloniaCore.Miscellaneous;
 
-public class StackTraceData
+public ref struct StackTraceData
 {
     private readonly StackTrace _stackTrace;
     private readonly StackFrame _stackFrame;

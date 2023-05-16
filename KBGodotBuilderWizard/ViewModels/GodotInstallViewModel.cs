@@ -2,8 +2,10 @@
 using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using KBAvaloniaCore.IO;
 using KBAvaloniaCore.Miscellaneous;
 using KBGodotBuilderWizard.Models;
 using ReactiveUI;
@@ -134,9 +136,22 @@ public class GodotInstallViewModel : BaseViewModel
                 return result;
             }
 
-            string fileName = Name.Replace('.', '_');
+            string fileName = Name;
+            if (System.IO.Path.HasExtension(Name))
+            {
+                // Replace extension dot by underscore
+                string extension = System.IO.Path.GetExtension(Name);
+                if(extension.Length <= 3)
+                {
+                    string fileNameWithoutExtension = System.IO.Path.GetFileNameWithoutExtension(Name);
+                    fileName = fileNameWithoutExtension + "_" + System.IO.Path.GetExtension(Name).TrimStart('.');
+                }
+            }
+            
+            // string fileName = Name.Replace('.', '_');
             Path versionInstallPath = Path.Combine(configurationFileData.InstallVersionsPath, Version.Replace('.', '_'));
             Path installFolderPath = Path.Join(versionInstallPath, fileName);
+            installFolderPath = installFolderPath.ConvertToDirectory();
             // Delete previous install if existed
             installFolderPath.DeleteDirectory(true);
             versionInstallPath.CreateDirectory();
@@ -153,20 +168,41 @@ public class GodotInstallViewModel : BaseViewModel
             ZipFile.ExtractToDirectory(zipFilePath.FullPath, installFolderPath.FullPath, true);
             zipFilePath.DeleteFile();
 
-            // Maybe unnecessary but just in case
-            Path destinationUnzipPath = installFolderPath.TryGetParent(out Path parentPath) ? parentPath : installFolderPath;
             if (this.IsMonoVersion)
             {
-                if (destinationUnzipPath.TryGetParent(out Path finalDestinationPath))
+                // If it is mono, the zip contains another folder with the same name as the godot version file
+                // We have to move the files from that folder to the install folder
+                //Rename install folder because it has the same name as the folder that it contains
+                Result<Path> tmpInstallPathResult = FileSystem.RenameDirectory(installFolderPath, $"{Name}_tmp");
+                if(tmpInstallPathResult.IsFailure)
                 {
-                    finalDestinationPath.MoveFilesAndDirectories(installFolderPath);
-                    installFolderPath = finalDestinationPath;
+                    return tmpInstallPathResult.ToResult();
+                }
+                
+                // Move the files from the install folder path to the version path
+                Result moveResult = FileSystem.MoveFilesAndDirectories(tmpInstallPathResult.Value, versionInstallPath);
+                if(moveResult.IsFailure)
+                {
+                    return moveResult;
+                }
+                
+                tmpInstallPathResult.Value.DeleteDirectory(true);
+                
+                // Mono version zip name comes without the extension of the executable, so we have to add it to the Name property
+                // It depends in the OS that we are at this moment
+                if (OperatingSystem == EOperatingSystem.Windows)
+                {
+                    Name += ".exe";
+                }
+                else if (OperatingSystem == EOperatingSystem.MacOS)
+                {
+                    Name += ".app";
                 }
             }
             
-            
+            Path godotExecutablePath = Path.Join(installFolderPath, this.Name);
             this.IsInstalled = true;
-            this.InstallPath = Path.Join(installFolderPath, this.Name).FullPath;
+            this.InstallPath = godotExecutablePath.FullPath;
             return Result.CreateSuccess();
         });
     }
@@ -178,6 +214,12 @@ public class GodotInstallViewModel : BaseViewModel
 
     public void Launch()
     {
+        Path installPath = new Path(this.InstallPath);
+        if (!installPath.Exists())
+        {
+            return;
+        }
+        
         using (Process godotApp = new Process())
         {
             godotApp.StartInfo.UseShellExecute = false;

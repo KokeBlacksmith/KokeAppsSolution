@@ -19,6 +19,17 @@ public readonly struct Path
         }
     }
 
+    public bool IsFile
+    {
+        get { return _pathType == EPathType.File; }
+    }
+
+    public bool IsDirectory
+    {
+        get { return _pathType == EPathType.Directory; }
+    }
+
+
     public string FullPath { get; }
 
     public bool TryGetParent(out Path parentPath)
@@ -106,6 +117,12 @@ public readonly struct Path
     {
         return System.IO.Path.GetDirectoryName(FullPath);
     }
+    
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public string? GetShortDirectoryName()
+    {
+        return System.IO.Path.GetFileName(System.IO.Path.GetDirectoryName(FullPath));
+    }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public string GetExtension()
@@ -173,13 +190,13 @@ public readonly struct Path
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public string[] GetDirectories()
+    public IEnumerable<string> GetDirectories()
     {
-        return System.IO.Directory.GetDirectories(this.FullPath);
+        return System.IO.Directory.GetDirectories(this.FullPath).Select(dir => dir + System.IO.Path.DirectorySeparatorChar);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public string[] GetFilesInDirectory()
+    public IEnumerable<string> GetFilesInDirectory()
     {
         return System.IO.Directory.GetFiles(this.GetDirectoryName() ?? String.Empty);
     }
@@ -190,63 +207,73 @@ public readonly struct Path
         return Directory.GetDirectoryRoot(FullPath);
     }
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public Result MoveFilesAndDirectories(Path destinationDirectory)
+    public Path ConvertToDirectory()
     {
-        if (this._pathType != EPathType.Directory)
+        if (this.IsFile)
         {
-            return Result.CreateFailure($"The source path '{FullPath}' is not a directory");
+            return new Path(this.FullPath + System.IO.Path.DirectorySeparatorChar);
         }
-        
-        if (destinationDirectory._pathType != EPathType.Directory)
-        {
-            return Result.CreateFailure($"The destination path '{destinationDirectory.FullPath}' is not a directory");
-        }
-        
-        try
-        {
-            string? startErrorMessage = null;
-            if (!destinationDirectory.Exists())
-            {
-                startErrorMessage = $"Destination directory does not exists.";
-            }
 
-            if (startErrorMessage != null && !this.Exists())
-            {
-                startErrorMessage = $"Source directory does not exists.";
-            }
-
-            if (startErrorMessage != null)
-            {
-                string errorMessage = $"Error moving files from '{this.FullPath}' to '{destinationDirectory.GetDirectoryName()}'.";
-                return Result.CreateFailure($"{startErrorMessage} {errorMessage}");
-            }
-
-            // Move all files
-            foreach (string filePath in this.GetFilesInDirectory())
-            {
-                string fileName = System.IO.Path.GetFileName(filePath);
-                string destinationPath = System.IO.Path.Combine(this.FullPath, fileName);
-                File.Move(filePath, destinationPath);
-            }
-
-            // Move all subdirectories and their contents recursively
-            foreach (string subdirectoryPath in this.GetDirectories())
-            {
-                string subdirectoryName = System.IO.Path.GetFileName(subdirectoryPath);
-                Path destinationPath = new Path(System.IO.Path.Combine(destinationDirectory.FullPath, subdirectoryName));
-                ((Path)subdirectoryPath).MoveFilesAndDirectories(destinationPath);
-            }
-
-            // Remove the empty source directory
-            Directory.Delete(this.FullPath);
-            return Result.CreateSuccess();
-        }
-        catch (Exception e)
-        {
-            return Result.CreateFailure(e);
-        }
+        return this;
     }
+
+    // [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    // public Result MoveFilesAndDirectories(Path destinationDirectory)
+    // {
+    //     if (this._pathType != EPathType.Directory)
+    //     {
+    //         return Result.CreateFailure($"The source path '{FullPath}' is not a directory");
+    //     }
+    //     
+    //     if (destinationDirectory._pathType != EPathType.Directory)
+    //     {
+    //         return Result.CreateFailure($"The destination path '{destinationDirectory.FullPath}' is not a directory");
+    //     }
+    //     
+    //     try
+    //     {
+    //         string? startErrorMessage = null;
+    //         if (!destinationDirectory.Exists())
+    //         {
+    //             startErrorMessage = $"Destination directory does not exists.";
+    //         }
+    //
+    //         if (startErrorMessage != null && !this.Exists())
+    //         {
+    //             startErrorMessage = $"Source directory does not exists.";
+    //         }
+    //
+    //         if (startErrorMessage != null)
+    //         {
+    //             string errorMessage = $"Error moving files from '{this.FullPath}' to '{destinationDirectory.GetDirectoryName()}'.";
+    //             return Result.CreateFailure($"{startErrorMessage} {errorMessage}");
+    //         }
+    //
+    //         // Move all files
+    //         foreach (string filePath in this.GetFilesInDirectory())
+    //         {
+    //             string fileName = System.IO.Path.GetFileName(filePath);
+    //             string destinationPath = System.IO.Path.Combine(this.FullPath, fileName);
+    //             File.Move(filePath, destinationPath);
+    //         }
+    //
+    //         // Move all subdirectories and their contents recursively
+    //         foreach (string subdirectoryPath in this.GetDirectories())
+    //         {
+    //             string subdirectoryName = System.IO.Path.GetFileName(subdirectoryPath);
+    //             Path destinationPath = new Path(System.IO.Path.Combine(destinationDirectory.FullPath, subdirectoryName));
+    //             ((Path)subdirectoryPath).MoveFilesAndDirectories(destinationPath);
+    //         }
+    //
+    //         // Remove the empty source directory
+    //         Directory.Delete(this.FullPath);
+    //         return Result.CreateSuccess();
+    //     }
+    //     catch (Exception e)
+    //     {
+    //         return Result.CreateFailure(e);
+    //     }
+    // }
 
 
     public override string ToString()

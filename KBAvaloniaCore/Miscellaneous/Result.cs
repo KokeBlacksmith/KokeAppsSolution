@@ -73,8 +73,8 @@ public readonly struct Result<T>
     {
         return IsSuccess ? Result.CreateSuccess() : Result.CreateFailure(Errors);
     }
-
-    public static Result<T> CreateFailure(string[] errors)
+    
+    public static Result<T> CreateFailure(params string[] errors)
     {
 // #if DEBUG
 //         System.Diagnostics.StackTrace t = new System.Diagnostics.StackTrace();
@@ -89,8 +89,7 @@ public readonly struct Result<T>
     public static Result<T> CreateFailure(Exception exception)
     {
         System.Diagnostics.StackTrace t = new System.Diagnostics.StackTrace(exception);
-        string[] errors = new[] {t.ToString(), exception.Message, exception.InnerException?.Message ?? String.Empty};
-        return Result<T>.CreateFailure(errors);
+        return Result<T>.CreateFailure(t.ToString(), exception.Message, exception.InnerException?.Message ?? String.Empty);
     }
 
     public static Result<T> CreateSuccess(T value)
