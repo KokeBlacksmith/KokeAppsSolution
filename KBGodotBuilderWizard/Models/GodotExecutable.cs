@@ -1,99 +1,51 @@
 ﻿using System;
 using System.Diagnostics;
-using System.IO;
 using System.IO.Compression;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using KBAvaloniaCore.IO;
 using KBAvaloniaCore.Miscellaneous;
-using KBGodotBuilderWizard.Models;
-using ReactiveUI;
-using Path = KBAvaloniaCore.IO.Path;
+using KBGodotBuilderWizard.Enums;
 
-namespace KBGodotBuilderWizard.ViewModels;
+namespace KBGodotBuilderWizard.Models;
 
-public class GodotInstallViewModel : BaseViewModel
+public class GodotExecutable
 {
-    private string _installPath;
-    private bool _isMonoVersion;
-    private string _name;
-    private EOperatingSystem _operatingSystem;
-    private EProcessor _processorBits;
-    private string _urlParentFolderName;
-    private string _version;
-    private bool _isInstalled;
+    private GodotExecutable()
+    {
+        
+    }
 
-    public GodotInstallViewModel(string version, string name, string? urlParentFolderName)
+    public GodotExecutable(string version, string fileName, string urlParentFolderName)
     {
         Version = version ?? throw new ArgumentNullException(nameof(version));
-        Name = name ?? throw new ArgumentNullException(nameof(name));
+        FileName = fileName ?? throw new ArgumentNullException(nameof(fileName));
         UrlParentFolderName = urlParentFolderName;
         _Initialize();
     }
 
-    public string Version
-    {
-        get { return _version; }
-        set { this.RaiseAndSetIfChanged(ref _version, value); }
-    }
-
-    public string Name
-    {
-        get { return _name; }
-        set { this.RaiseAndSetIfChanged(ref _name, value); }
-    }
-
-    public EOperatingSystem OperatingSystem
-    {
-        get { return _operatingSystem; }
-        set { this.RaiseAndSetIfChanged(ref _operatingSystem, value); }
-    }
-
-    public EProcessor Processor
-    {
-        get { return _processorBits; }
-        set { this.RaiseAndSetIfChanged(ref _processorBits, value); }
-    }
-
-    public string InstallPath
-    {
-        get { return _installPath; }
-        set { this.RaiseAndSetIfChanged(ref _installPath, value); }
-    }
-
-    public string UrlParentFolderName
-    {
-        get { return _urlParentFolderName; }
-        set { this.RaiseAndSetIfChanged(ref _urlParentFolderName, value); }
-    }
-
-    public bool IsMonoVersion
-    {
-        get { return _isMonoVersion; }
-        set { this.RaiseAndSetIfChanged(ref _isMonoVersion, value); }
-    }
-
-    public bool IsInstalled
-    {
-        get { return _isInstalled; }
-        set { this.RaiseAndSetIfChanged(ref _isInstalled, value); }
-    }
+    public string Version { get; set; }
+    public string FileName { get; set; }
+    public EOperatingSystem OperatingSystem { get; set; }
+    public EProcessor Processor { get; set; }
+    public string? InstallPath { get; set; }
+    public string UrlParentFolderName { get; set; }
+    public bool IsMonoVersion { get; set; }
+    public bool IsInstalled { get; set; }
 
     public string GetPartialUrl()
     {
-        return $"{Version}{UrlParentFolderName}/{Name}.zip".Replace('\\', '/');
+        return $"{Version}{UrlParentFolderName}/{FileName}.zip".Replace('\\', '/');
     }
 
     private void _Initialize()
     {
-        IsMonoVersion = Name.Contains("mono");
+        IsMonoVersion = FileName.Contains("mono");
 
-        if (Name.Contains("64"))
+        if (FileName.Contains("64"))
         {
             Processor = EProcessor.X64;
         }
-        else if (Name.Contains("32") || Name.Contains("86"))
+        else if (FileName.Contains("32") || FileName.Contains("86"))
         {
             Processor = EProcessor.X86;
         }
@@ -102,23 +54,23 @@ public class GodotInstallViewModel : BaseViewModel
             Processor = EProcessor.ARM;
         }
 
-        if (Name.Contains("win"))
+        if (FileName.Contains("win"))
         {
             OperatingSystem = EOperatingSystem.Windows;
         }
-        else if (Name.Contains("osx") || Name.Contains("macos"))
+        else if (FileName.Contains("osx") || FileName.Contains("macos"))
         {
             OperatingSystem = EOperatingSystem.MacOS;
         }
-        else if (Name.Contains("linux_server"))
+        else if (FileName.Contains("linux_server"))
         {
             OperatingSystem = EOperatingSystem.LinuxServer;
         }
-        else if (Name.Contains("x11") || Name.Contains("linux"))
+        else if (FileName.Contains("x11") || FileName.Contains("linux"))
         {
             OperatingSystem = EOperatingSystem.Linux;
         }
-        else if (Name.Contains("web"))
+        else if (FileName.Contains("web"))
         {
             OperatingSystem = EOperatingSystem.Web;
         }
@@ -136,26 +88,26 @@ public class GodotInstallViewModel : BaseViewModel
                 return result;
             }
 
-            string fileName = Name;
-            if (System.IO.Path.HasExtension(Name))
+            string fileName = FileName;
+            if (System.IO.Path.HasExtension(FileName))
             {
                 // Replace extension dot by underscore
-                string extension = System.IO.Path.GetExtension(Name);
-                if(extension.Length <= 3)
+                string extension = System.IO.Path.GetExtension(FileName);
+                if (extension.Length <= 3)
                 {
-                    string fileNameWithoutExtension = System.IO.Path.GetFileNameWithoutExtension(Name);
-                    fileName = fileNameWithoutExtension + "_" + System.IO.Path.GetExtension(Name).TrimStart('.');
+                    string fileNameWithoutExtension = System.IO.Path.GetFileNameWithoutExtension(FileName);
+                    fileName = fileNameWithoutExtension + "_" + System.IO.Path.GetExtension(FileName).TrimStart('.');
                 }
             }
-            
-            // string fileName = Name.Replace('.', '_');
+
+            // string fileName = FileName.Replace('.', '_');
             Path versionInstallPath = Path.Combine(configurationFileData.InstallVersionsPath, Version.Replace('.', '_'));
             Path installFolderPath = Path.Join(versionInstallPath, fileName);
             installFolderPath = installFolderPath.ConvertToDirectory();
             // Delete previous install if existed
             installFolderPath.DeleteDirectory(true);
             versionInstallPath.CreateDirectory();
-            
+
             fileName += ".zip";
             Path zipFilePath = Path.Join(versionInstallPath, fileName);
             result = await GodotVersionFetcher.DownloadVersion(zipFilePath, GetPartialUrl());
@@ -173,34 +125,34 @@ public class GodotInstallViewModel : BaseViewModel
                 // If it is mono, the zip contains another folder with the same name as the godot version file
                 // We have to move the files from that folder to the install folder
                 //Rename install folder because it has the same name as the folder that it contains
-                Result<Path> tmpInstallPathResult = FileSystem.RenameDirectory(installFolderPath, $"{Name}_tmp");
-                if(tmpInstallPathResult.IsFailure)
+                Result<Path> tmpInstallPathResult = FileSystem.RenameDirectory(installFolderPath, $"{FileName}_tmp");
+                if (tmpInstallPathResult.IsFailure)
                 {
                     return tmpInstallPathResult.ToResult();
                 }
-                
+
                 // Move the files from the install folder path to the version path
                 Result moveResult = FileSystem.MoveFilesAndDirectories(tmpInstallPathResult.Value, versionInstallPath);
-                if(moveResult.IsFailure)
+                if (moveResult.IsFailure)
                 {
                     return moveResult;
                 }
-                
+
                 tmpInstallPathResult.Value.DeleteDirectory(true);
-                
-                // Mono version zip name comes without the extension of the executable, so we have to add it to the Name property
+
+                // Mono version zip name comes without the extension of the executable, so we have to add it to the FileName property
                 // It depends in the OS that we are at this moment
                 if (OperatingSystem == EOperatingSystem.Windows)
                 {
-                    Name += ".exe";
+                    FileName += ".exe";
                 }
                 else if (OperatingSystem == EOperatingSystem.MacOS)
                 {
-                    Name += ".app";
+                    FileName += ".app";
                 }
             }
-            
-            Path godotExecutablePath = Path.Join(installFolderPath, this.Name);
+
+            Path godotExecutablePath = Path.Join(installFolderPath, this.FileName);
             this.IsInstalled = true;
             this.InstallPath = godotExecutablePath.FullPath;
             return Result.CreateSuccess();
@@ -212,20 +164,21 @@ public class GodotInstallViewModel : BaseViewModel
         return Result.CreateSuccess();
     }
 
-    public void Launch()
+    public Result Launch()
     {
         Path installPath = new Path(this.InstallPath);
-        if (!installPath.Exists())
+        if (!IsInstalled || !installPath.Exists())
         {
-            return;
+            return Result.CreateFailure("Godot executable is not installed");
         }
-        
+
         using (Process godotApp = new Process())
         {
             godotApp.StartInfo.UseShellExecute = false;
             godotApp.StartInfo.FileName = this.InstallPath;
             godotApp.StartInfo.CreateNoWindow = true;
             godotApp.Start();
+            return Result.CreateSuccess();
         }
     }
 }

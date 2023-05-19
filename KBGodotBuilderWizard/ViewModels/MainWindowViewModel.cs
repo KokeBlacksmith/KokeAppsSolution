@@ -1,14 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Avalonia.Collections;
 using JetBrains.Annotations;
-using KBAvaloniaCore.Controls;
 using KBAvaloniaCore.Miscellaneous;
+using KBAvaloniaCore.ReactiveUI;
 using KBGodotBuilderWizard.Models;
 using ReactiveUI;
 
@@ -17,7 +15,7 @@ namespace KBGodotBuilderWizard.ViewModels;
 public class MainWindowViewModel : BaseViewModel
 {
     private readonly BusyOperation _updateVersionsBusyOperation;
-    private GodotInstallViewModel? _selectedDownload;
+    private GodotExecutableViewModel? _selectedDownload;
     private GodotVersionViewModel? _selectedVersion;
     private AvaloniaList<GodotVersionViewModel> _selectedVersionDownloadList = new AvaloniaList<GodotVersionViewModel>();
     private AvaloniaList<GodotVersionViewModel> _versionsList = new AvaloniaList<GodotVersionViewModel>();
@@ -56,7 +54,7 @@ public class MainWindowViewModel : BaseViewModel
         }
     }
 
-    public GodotInstallViewModel? SelectedDownload
+    public GodotExecutableViewModel? SelectedDownload
     {
         get { return _selectedDownload; }
         set { this.RaiseAndSetIfChanged(ref _selectedDownload, value); }
@@ -80,17 +78,17 @@ public class MainWindowViewModel : BaseViewModel
         {
             await Task.Run(async () =>
             {
-                IEnumerable<GodotVersionViewModel> godotVersions = (await GodotVersionFetcher.FetchVersions()).Select(strVersion => new GodotVersionViewModel(strVersion));
+                IEnumerable<GodotVersionViewModel> godotVersions = (await GodotVersionFetcher.FetchVersions()).Select(version => new GodotVersionViewModel(version));
                 VersionsList = new AvaloniaList<GodotVersionViewModel>(godotVersions);
             });
         }
     }
 
-    private async void _FetchVersionDownloads([NotNull] GodotVersionViewModel version, string extendPath = "/")
+    private async void _FetchVersionDownloads([NotNull] GodotVersionViewModel version)
     {
         using (IDisposable _ = m_busyOperation.StartOperation())
         {
-            await version.FetchAvailableDownloads(extendPath);
+            await version.FetchAvailableDownloads();
         }
     }
 

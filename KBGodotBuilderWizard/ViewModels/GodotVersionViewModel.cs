@@ -1,21 +1,24 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using Avalonia.Collections;
-using KBAvaloniaCore.Miscellaneous;
+using KBAvaloniaCore.ReactiveUI;
 using KBGodotBuilderWizard.Models;
 using ReactiveUI;
 
 namespace KBGodotBuilderWizard.ViewModels;
 
-public class GodotVersionViewModel : BaseViewModel
+public class GodotVersionViewModel : BaseViewModel, IReactiveModel<GodotVersion>
 {
-    private AvaloniaList<GodotInstallViewModel> _installs = new AvaloniaList<GodotInstallViewModel>();
+    private AvaloniaList<GodotExecutableViewModel> _installs = new AvaloniaList<GodotExecutableViewModel>();
     private string _version;
 
-    public GodotVersionViewModel(string version)
+    public GodotVersionViewModel(GodotVersion model)
     {
-        Version = version;
+        this.Model = model;
+        this.FromModel(model);
     }
 
     public string Version
@@ -24,50 +27,42 @@ public class GodotVersionViewModel : BaseViewModel
         set { this.RaiseAndSetIfChanged(ref _version, value); }
     }
 
-    public AvaloniaList<GodotInstallViewModel> Installs
+    public AvaloniaList<GodotExecutableViewModel> Installs
     {
         get { return _installs; }
-        set { this.RaiseAndSetIfChanged(ref _installs, value); }
-    }
-
-    public void AddInstall(string fileName, string urlParentFolderName)
-    {
-        string fileNameWithoutExtension = Path.GetFileNameWithoutExtension(fileName);
-        switch (Path.GetExtension(fileName))
-        {
-            case ".zip":
-            {
-                GodotInstallViewModel install = new GodotInstallViewModel(Version, fileNameWithoutExtension, urlParentFolderName);
-                Installs.Add(install);
-                break;
-            }
-            case ".txt":
-            {
-                break;
-            }
-        }
+        private set { this.RaiseAndSetIfChanged(ref _installs, value); }
     }
     
-    public Task FetchAvailableDownloads(string extendPath = "/")
+    public async Task FetchAvailableDownloads()
     {
-        return Task.Run(async () =>
-        {
-            string urlParentFolderName = Path.GetDirectoryName(extendPath)!;
-            // Fetch from the web
-            foreach (GodotVersionFetcher.GodotInstallData download in await GodotVersionFetcher.FetchVersionDownloads(this.Version + extendPath))
-            {
-                if (!Path.HasExtension(download.FileName))
-                {
-                    //FileName contains the directories to the file
-
-                    // It is a folder
-                    FetchAvailableDownloads($"{extendPath}{download.FileName}");
-                }
-                else
-                {
-                    this.AddInstall(download.FileName, urlParentFolderName);
-                }
-            }
-        });
+        await Model.FetchAvailableDownloads();
+        this.Installs = new AvaloniaList<GodotExecutableViewModel>(Model.Executables.Select(exe => new GodotExecutableViewModel(exe)));
     }
+
+
+    #region IReactiveModel
+
+    public GodotVersion Model { get; }
+    
+    public void FromModel(GodotVersion model)
+    {
+        this.Version = model.Version;
+        this.Installs = new AvaloniaList<GodotExecutableViewModel>(Model.Executables.Select(exe => new GodotExecutableViewModel(exe)));
+    }
+
+    public void UpdateModel()
+    {
+        Model.Version = this.Version;
+
+        List<GodotExecutable> executables = new List<GodotExecutable>(this.Installs.Count);
+        foreach (GodotExecutableViewModel vm in Installs)
+        {
+            vm.UpdateModel();
+            executables.Add(vm.Model);
+        }
+
+        Model.Executables = executables;
+    }
+
+    #endregion
 }

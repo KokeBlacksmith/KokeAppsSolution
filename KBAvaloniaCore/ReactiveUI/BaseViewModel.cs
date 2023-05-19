@@ -1,6 +1,6 @@
 ﻿using ReactiveUI;
 
-namespace KBAvaloniaCore.Miscellaneous;
+namespace KBAvaloniaCore.ReactiveUI;
 
 public abstract class BaseViewModel : ReactiveObject
 {

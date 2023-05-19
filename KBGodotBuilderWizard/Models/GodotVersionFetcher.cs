@@ -20,31 +20,31 @@ internal class GodotVersionFetcher
         "Parent Directory", "../",
     };
 
-    public static Task<IEnumerable<string>> FetchVersions()
+    public static Task<IEnumerable<GodotVersion>> FetchVersions()
     {
         HttpClient client = new HttpClient();
         HttpResponseMessage response = client.GetAsync(GodotVersionFetcher.s_repositoryURL).Result;
         string responseString = response.Content.ReadAsStringAsync().Result;
 
-        List<string> versions = new List<string>();
+        List<GodotVersion> versions = new List<GodotVersion>();
         string[] lines = responseString.Split("\n");
 
         Regex regex = new Regex(@"(\d+\.)+\d+");
         foreach (string line in lines)
         {
             Match match = regex.Match(line);
-            if (match.Success)
+            if (match.Success && !GodotVersionFetcher.s_skipStrings.Contains(match.Value))
             {
-                versions.Add(match.Value);
+                versions.Add(new GodotVersion(match.Value));
             }
         }
 
         // Remove last one, it is the version of the server
         versions.RemoveAt(versions.Count - 1);
-        return Task.FromResult(versions.OrderByDescending(v => v).Except(GodotVersionFetcher.s_skipStrings));
+        return Task.FromResult(versions.OrderByDescending(v => v.Version).AsEnumerable());
     }
 
-    public static async Task<IEnumerable<GodotInstallData>> FetchVersionDownloads(string currentVersion)
+    public static IEnumerable<GodotInstallData> FetchVersionDownloads(string currentVersion)
     {
         if (currentVersion == null)
             throw new ArgumentNullException(nameof(currentVersion));
@@ -52,6 +52,14 @@ internal class GodotVersionFetcher
         string url = GodotVersionFetcher.s_repositoryURL + $"/{currentVersion}/";
         IEnumerable<HtmlNode> links = GodotVersionFetcher._ReadHtmlNodes(url);
         return links.Select(link => link.Attributes["href"].Value).Except(GodotVersionFetcher.s_skipStrings).Select(link => new GodotInstallData(currentVersion, link));
+    }
+    
+    public static Task<IEnumerable<GodotInstallData>> FetchVersionDownloadsAsync(string currentVersion)
+    {
+        if (currentVersion == null)
+            throw new ArgumentNullException(nameof(currentVersion));
+
+        return Task.Run(() => GodotVersionFetcher.FetchVersionDownloads(currentVersion));
     }
 
     private static IEnumerable<HtmlNode> _ReadHtmlNodes(string url)

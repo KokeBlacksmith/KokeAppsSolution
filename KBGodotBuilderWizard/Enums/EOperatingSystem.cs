@@ -1,4 +1,4 @@
-﻿namespace KBGodotBuilderWizard.Models;
+﻿namespace KBGodotBuilderWizard.Enums;
 
 public enum EOperatingSystem
 {

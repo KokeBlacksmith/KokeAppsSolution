@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:models="clr-namespace:KBGodotBuilderWizard.Models"
+        xmlns:enums="clr-namespace:KBGodotBuilderWizard.Enums"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="KBGodotBuilderWizard.Views.MainWindow"
         Icon="/Assets/avalonia-logo.ico"
@@ -14,10 +15,10 @@
     </Design.DataContext>
 
     <Window.Resources>
-        <models:EOperatingSystem x:Key="WindowsOS">Windows</models:EOperatingSystem>
-        <models:EOperatingSystem x:Key="LinuxOS">Linux</models:EOperatingSystem>
-        <models:EOperatingSystem x:Key="LinuxServerOS">LinuxServer</models:EOperatingSystem>
-        <models:EOperatingSystem x:Key="MacOS">MacOS</models:EOperatingSystem>
+        <enums:EOperatingSystem x:Key="WindowsOS">Windows</enums:EOperatingSystem>
+        <enums:EOperatingSystem x:Key="LinuxOS">Linux</enums:EOperatingSystem>
+        <enums:EOperatingSystem x:Key="LinuxServerOS">LinuxServer</enums:EOperatingSystem>
+        <enums:EOperatingSystem x:Key="MacOS">MacOS</enums:EOperatingSystem>
     </Window.Resources>
 
     <Grid RowDefinitions="Auto,*" ColumnDefinitions="200, *">
@@ -63,7 +64,7 @@
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <Grid ColumnDefinitions="250, 24, 24">
-                            <TextBlock Grid.Column="0" Text="{Binding Name}" />
+                            <TextBlock Grid.Column="0" Text="{Binding FileName}" />
                             <Image Grid.Column="1" Source="/Assets/windows_icon.ico"
                                    IsVisible="{Binding OperatingSystem, 
                                    Converter={StaticResource MatchValueConverter}, ConverterParameter={StaticResource WindowsOS}}" />
