@@ -40,6 +40,7 @@
         <entry key="KBGodotBuilderWizard/App.axaml" value="KBGodotBuilderWizard/KBGodotBuilderWizard.csproj" />
         <entry key="KBGodotBuilderWizard/Views/ConfigurationWidow.axaml" value="KBGodotBuilderWizard/KBGodotBuilderWizard.csproj" />
         <entry key="KBGodotBuilderWizard/Views/ConfigurationWindow.axaml" value="KBGodotBuilderWizard/KBGodotBuilderWizard.csproj" />
+        <entry key="KBGodotBuilderWizard/Views/GodotVersionHubControl.axaml" value="KBGodotBuilderWizard/KBGodotBuilderWizard.csproj" />
         <entry key="KBGodotBuilderWizard/Views/MainWindow.axaml" value="KBGodotBuilderWizard/KBGodotBuilderWizard.csproj" />
         <entry key="KBGodotBuilderWizard/Views/VersionUpdaterView.axaml" value="KBGodotBuilderWizard/KBGodotBuilderWizard.csproj" />
       </map>

@@ -19,6 +19,7 @@
 
     <ItemGroup>
         <Folder Include="Controls\TextBoxPath\ViewModels\" />
+        <Folder Include="Injection\" />
     </ItemGroup>
 
     <ItemGroup>
