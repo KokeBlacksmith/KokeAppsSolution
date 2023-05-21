@@ -1,9 +1,13 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Runtime.Serialization;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
 using KBAvaloniaCore.IO;
 
 namespace KBGodotBuilderWizard.Models;
 
+[DataContract]
 public class GodotVersion
 {
     public GodotVersion(string version)
@@ -11,7 +15,9 @@ public class GodotVersion
         Version = version;
     }
     
+    [DataMember]
     public string Version { get; set; }
+    [DataMember]
     public List<GodotExecutable> Executables { get; set; } = new List<GodotExecutable>();
     
     public Task FetchAvailableDownloads()

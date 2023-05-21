@@ -10,20 +10,20 @@ using KBAvaloniaCore.Miscellaneous;
 namespace KBGodotBuilderWizard.Models;
 
 [Serializable]
-[XmlRoot(nameof(ConfigurationFileData))]
-public class ConfigurationFileData
+[XmlRoot(nameof(ConfigurationData))]
+public class ConfigurationData
 {
     public readonly static Path DefaultConfigurationFile = Path.Combine(System.IO.Path.GetTempPath(), Assembly.GetCallingAssembly().GetName().Name!, "SaveDataConfiguration.xml");
-    private Path _installVersionsPath;
+    private Path? _installVersionsPath;
     
     
-    [XmlElement(nameof(ConfigurationFileData.InstallVersionsPath))]
+    [XmlElement(nameof(ConfigurationData.InstallVersionsPath))]
     [RequiredPath(ErrorMessage = "Please enter the path to install Godot executables.", AllowNonExistingPath = false)]
     public string InstallVersionsPath 
     {
         get
         {
-            return _installVersionsPath.FullPath;
+            return _installVersionsPath?.FullPath ?? String.Empty;
         }
         set
         {
@@ -41,17 +41,17 @@ public class ConfigurationFileData
 
     public Result Save()
     {
-        ConfigurationFileData.DefaultConfigurationFile.CreateDirectory();
-        return XmlSerializableHelper.Save(this, (string)ConfigurationFileData.DefaultConfigurationFile);
+        ConfigurationData.DefaultConfigurationFile.CreateDirectory();
+        return XmlSerializableHelper.Save(this, (string)ConfigurationData.DefaultConfigurationFile);
     }
 
     public Result Load()
     {
-        if (!ConfigurationFileData.DefaultConfigurationFile.Exists())
+        if (!ConfigurationData.DefaultConfigurationFile.Exists())
         {
-            return Result.CreateFailure($"Configuration file '{ConfigurationFileData.DefaultConfigurationFile}' does not exist.");
+            return Result.CreateFailure($"Configuration file '{ConfigurationData.DefaultConfigurationFile}' does not exist.");
         }
 
-        return XmlSerializableHelper.Load((string)ConfigurationFileData.DefaultConfigurationFile, this);
+        return XmlSerializableHelper.Load((string)ConfigurationData.DefaultConfigurationFile, this);
     }
 }

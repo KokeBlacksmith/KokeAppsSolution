@@ -94,7 +94,11 @@ public class GodotExecutableViewModel : BaseViewModel, IReactiveModel<GodotExecu
 
     public void Launch()
     {
-        Model.Launch();
+        Result result = Model.Launch();
+        if (result.IsFailure)
+        {
+            MessageBoxHelper.ShowErrorDialog(result);
+        }
     }
 
     #region IReactiveModel

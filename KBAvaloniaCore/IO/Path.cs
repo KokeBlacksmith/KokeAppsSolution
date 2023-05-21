@@ -44,6 +44,8 @@ public class Path
         return false;
     }
 
+    public static Path Empty { get; } = new Path(String.Empty);
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Path Combine(params string[] paths)
     {
@@ -53,19 +55,19 @@ public class Path
         bool endsWithSeparator = !System.IO.Path.HasExtension(paths[^1]) && !paths[^1].EndsWith(System.IO.Path.DirectorySeparatorChar);
         return new Path(System.IO.Path.Combine(paths) + (endsWithSeparator ? System.IO.Path.DirectorySeparatorChar.ToString() : default(string)));
     }
-    
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Path Join(Path join1, string join2)
     {
         return Path.Combine(join1.FullPath, join2);
     }
-    
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Path Join(Path join1, Path join2)
     {
         return Path.Combine(join1.FullPath, join2.FullPath);
     }
-    
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Path Join(string join1, string join2)
     {
@@ -89,7 +91,6 @@ public class Path
     {
         try
         {
-            
             System.IO.Path.GetFullPath(this.FullPath);
             return true;
         }
@@ -116,7 +117,7 @@ public class Path
     {
         return System.IO.Path.GetDirectoryName(FullPath);
     }
-    
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public string? GetShortDirectoryName()
     {

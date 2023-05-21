@@ -20,15 +20,15 @@ public partial class MainWindow : Window
 
     private void _CheckForSaveDataConfiguration()
     {
-        ConfigurationFileData configurationFileData = new ConfigurationFileData();
-        Result loadResult = configurationFileData.Load();
+        ConfigurationData configurationData = new ConfigurationData();
+        Result loadResult = configurationData.Load();
         if (loadResult.IsFailure)
         {
             KBAvaloniaCore.Miscellaneous.MessageBoxHelper.ShowErrorDialog(loadResult);
             return;
         }
         
-        if (configurationFileData.IsValid(out _))
+        if (configurationData.IsValid(out _))
         {
             return;
         }

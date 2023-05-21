@@ -1,13 +1,16 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO.Compression;
+using System.Runtime.Serialization;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
 using KBAvaloniaCore.IO;
 using KBAvaloniaCore.Miscellaneous;
 using KBGodotBuilderWizard.Enums;
 
 namespace KBGodotBuilderWizard.Models;
 
+[DataContract]
 public class GodotExecutable
 {
     private GodotExecutable()
@@ -23,13 +26,21 @@ public class GodotExecutable
         _Initialize();
     }
 
+    [DataMember]
     public string Version { get; set; }
+    [DataMember]
     public string FileName { get; set; }
+    [DataMember]
     public EOperatingSystem OperatingSystem { get; set; }
+    [DataMember]
     public EProcessor Processor { get; set; }
+    [DataMember]
     public string? InstallPath { get; set; }
+    [DataMember]
     public string UrlParentFolderName { get; set; }
+    [DataMember]
     public bool IsMonoVersion { get; set; }
+    [DataMember]
     public bool IsInstalled { get; set; }
 
     public string GetPartialUrl()
@@ -80,8 +91,8 @@ public class GodotExecutable
     {
         return Task.Run(async () =>
         {
-            ConfigurationFileData configurationFileData = new ConfigurationFileData();
-            Result result = configurationFileData.Load();
+            ConfigurationData configurationData = new ConfigurationData();
+            Result result = configurationData.Load();
 
             if (result.IsFailure)
             {
@@ -101,7 +112,7 @@ public class GodotExecutable
             }
 
             // string fileName = FileName.Replace('.', '_');
-            Path versionInstallPath = Path.Combine(configurationFileData.InstallVersionsPath, Version.Replace('.', '_'));
+            Path versionInstallPath = Path.Combine(configurationData.InstallVersionsPath, Version.Replace('.', '_'));
             Path installFolderPath = Path.Join(versionInstallPath, fileName);
             installFolderPath = installFolderPath.ConvertToDirectory();
             // Delete previous install if existed

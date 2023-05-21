@@ -30,9 +30,9 @@ public class ConfigurationWindowViewModel : BaseViewModel
 
     private void _SaveCommandExecute()
     {
-        ConfigurationFileData configurationFileData = new ConfigurationFileData();
-        configurationFileData.InstallVersionsPath = InstallsPath;
-        configurationFileData.Save();
+        ConfigurationData configurationData = new ConfigurationData();
+        configurationData.InstallVersionsPath = InstallsPath;
+        configurationData.Save();
     }
 
     private void _CancelCommandExecute() { }
