@@ -12,7 +12,7 @@ namespace KBGodotBuilderWizard.ViewModels;
 
 public class GodotVersionViewModel : BaseViewModel, IReactiveModel<GodotVersion>
 {
-    private AvaloniaList<GodotExecutableViewModel> _installs = new AvaloniaList<GodotExecutableViewModel>();
+    private AvaloniaList<GodotExecutableViewModel> _executables = new AvaloniaList<GodotExecutableViewModel>();
     private string _version;
 
     public GodotVersionViewModel(GodotVersion model)
@@ -27,16 +27,16 @@ public class GodotVersionViewModel : BaseViewModel, IReactiveModel<GodotVersion>
         set { this.RaiseAndSetIfChanged(ref _version, value); }
     }
 
-    public AvaloniaList<GodotExecutableViewModel> Installs
+    public AvaloniaList<GodotExecutableViewModel> Executables
     {
-        get { return _installs; }
-        private set { this.RaiseAndSetIfChanged(ref _installs, value); }
+        get { return _executables; }
+        private set { this.RaiseAndSetIfChanged(ref _executables, value); }
     }
     
     public async Task FetchAvailableDownloads()
     {
         await Model.FetchAvailableDownloads();
-        this.Installs = new AvaloniaList<GodotExecutableViewModel>(Model.Executables.Select(exe => new GodotExecutableViewModel(exe)));
+        this.Executables = new AvaloniaList<GodotExecutableViewModel>(Model.Executables.Select(exe => new GodotExecutableViewModel(exe)));
     }
 
 
@@ -47,15 +47,15 @@ public class GodotVersionViewModel : BaseViewModel, IReactiveModel<GodotVersion>
     public void FromModel(GodotVersion model)
     {
         this.Version = model.Version;
-        this.Installs = new AvaloniaList<GodotExecutableViewModel>(Model.Executables.Select(exe => new GodotExecutableViewModel(exe)));
+        this.Executables = new AvaloniaList<GodotExecutableViewModel>(Model.Executables.Select(exe => new GodotExecutableViewModel(exe)));
     }
 
     public void UpdateModel()
     {
         Model.Version = this.Version;
 
-        List<GodotExecutable> executables = new List<GodotExecutable>(this.Installs.Count);
-        foreach (GodotExecutableViewModel vm in Installs)
+        List<GodotExecutable> executables = new List<GodotExecutable>(this.Executables.Count);
+        foreach (GodotExecutableViewModel vm in Executables)
         {
             vm.UpdateModel();
             executables.Add(vm.Model);

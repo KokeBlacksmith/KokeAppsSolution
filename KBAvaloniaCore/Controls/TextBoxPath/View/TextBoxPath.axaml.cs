@@ -22,8 +22,21 @@ public partial class TextBoxPath : UserControl
     public string PathText
     {
         get { return GetValue(TextBoxPath.PathTextProperty); }
-        set { SetValue(TextBoxPath.PathTextProperty, value); }
+        set
+        {
+            SetValue(TextBoxPath.PathTextProperty, value);
+            if (String.IsNullOrWhiteSpace(value))
+            {
+                Path = null;
+            }
+            else
+            {
+                Path = new KBAvaloniaCore.IO.Path(value);
+            }
+        }
     }
+    
+    public KBAvaloniaCore.IO.Path? Path { get; private set; }
 
     public EPathType PathType
     {

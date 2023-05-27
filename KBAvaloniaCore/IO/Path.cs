@@ -1,6 +1,6 @@
 ﻿using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
-using KBAvaloniaCore.Miscellaneous;
+using KBAvaloniaCore.MessageBox;
 
 namespace KBAvaloniaCore.IO;
 
@@ -31,6 +31,11 @@ public class Path
 
     public string FullPath { get; }
 
+    public static string FullPathOrEmpty(Path? path)
+    {
+        return path?.FullPath ?? String.Empty;
+    }
+    
     public bool TryGetParent(out Path parentPath)
     {
         DirectoryInfo? parent = Directory.GetParent(FullPath);

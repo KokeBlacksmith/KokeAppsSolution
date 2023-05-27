@@ -7,7 +7,8 @@
         <entry key="AvaloniaTestApp/Views/MainWindow.axaml" value="AvaloniaTestApp/AvaloniaTestApp.csproj" />
         <entry key="KBAvaloniaCore/Controls/MessageBox/MessageBoxWindow.axaml" value="KBBehaviourTree/KBBehaviourTree.csproj" />
         <entry key="KBAvaloniaCore/Controls/TextBoxPath.axaml" value="KBBehaviourTree/KBBehaviourTree.csproj" />
-        <entry key="KBAvaloniaCore/Controls/TextBoxPath/View/TextBoxPath.axaml" value="KBBehaviourTree/KBBehaviourTree.csproj" />
+        <entry key="KBAvaloniaCore/Controls/TextBoxPath/View/TextBoxPath.axaml" value="KBGodotBuilderWizard/KBGodotBuilderWizard.csproj" />
+        <entry key="KBAvaloniaCore/Controls/TextBoxPath/View/TextBoxPathDialog.axaml" value="KBGodotBuilderWizard/KBGodotBuilderWizard.csproj" />
         <entry key="KBAvaloniaCore/Themes/ConstantsResourceDictionary.axaml" value="KBBehaviourTree/KBBehaviourTree.csproj" />
         <entry key="KBAvaloniaCore/Themes/ConvertersResourceDictionary.axaml" value="KBBehaviourTree/KBBehaviourTree.csproj" />
         <entry key="KBAvaloniaCore/Themes/Dark/DarkButtonSpinnerStyle.axaml" value="KBBehaviourTree/KBBehaviourTree.csproj" />
@@ -42,6 +43,7 @@
         <entry key="KBGodotBuilderWizard/Views/ConfigurationWindow.axaml" value="KBGodotBuilderWizard/KBGodotBuilderWizard.csproj" />
         <entry key="KBGodotBuilderWizard/Views/GodotVersionHubControl.axaml" value="KBGodotBuilderWizard/KBGodotBuilderWizard.csproj" />
         <entry key="KBGodotBuilderWizard/Views/MainWindow.axaml" value="KBGodotBuilderWizard/KBGodotBuilderWizard.csproj" />
+        <entry key="KBGodotBuilderWizard/Views/RequestPathWindow.axaml" value="KBGodotBuilderWizard/KBGodotBuilderWizard.csproj" />
         <entry key="KBGodotBuilderWizard/Views/VersionUpdaterView.axaml" value="KBGodotBuilderWizard/KBGodotBuilderWizard.csproj" />
       </map>
     </option>

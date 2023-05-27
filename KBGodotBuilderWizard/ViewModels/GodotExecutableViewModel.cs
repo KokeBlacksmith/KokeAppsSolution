@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using KBAvaloniaCore.IO;
-using KBAvaloniaCore.Miscellaneous;
+using KBAvaloniaCore.MessageBox;
 using KBAvaloniaCore.ReactiveUI;
 using KBGodotBuilderWizard.Enums;
 using KBGodotBuilderWizard.Models;
@@ -80,9 +80,14 @@ public class GodotExecutableViewModel : BaseViewModel, IReactiveModel<GodotExecu
         set { this.RaiseAndSetIfChanged(ref _isInstalled, value); }
     }
     
-    public async Task<Result> DownloadAsync()
+    public async Task<Result> DownloadAsync(Path installsPath)
     {
-        Result result = await Model.DownloadAsync();
+        if (installsPath == null)
+        {
+            return Result.CreateFailure("installsPath is null");
+        }
+
+        Result result = await Model.DownloadAsync(installsPath);
         this.IsInstalled = Model.IsInstalled;
         return result;
     }
@@ -97,7 +102,7 @@ public class GodotExecutableViewModel : BaseViewModel, IReactiveModel<GodotExecu
         Result result = Model.Launch();
         if (result.IsFailure)
         {
-            MessageBoxHelper.ShowErrorDialog(result);
+            MessageBoxHelper.ShowResultMessageDialog(result);
         }
     }
 

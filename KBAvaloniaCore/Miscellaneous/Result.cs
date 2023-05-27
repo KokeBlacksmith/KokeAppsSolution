@@ -1,19 +1,19 @@
 ﻿using System.Runtime.CompilerServices;
 
-namespace KBAvaloniaCore.Miscellaneous;
+namespace KBAvaloniaCore.MessageBox;
 
 public readonly struct Result
 {
     private Result(bool isSuccess)
     {
         IsSuccess = isSuccess;
-        Errors = null;
+        Messages = null;
     }
 
-    private Result(params string[] errors)
+    private Result(params string[] messages)
     {
         IsSuccess = false;
-        Errors = errors;
+        Messages = messages;
     }
 
     public bool IsSuccess { get; }
@@ -23,7 +23,7 @@ public readonly struct Result
         get { return !IsSuccess; }
     }
 
-    public string[]? Errors { get; }
+    public string[]? Messages { get; }
 
     public static Result CreateFailure(params string[] errors)
     {
@@ -48,14 +48,14 @@ public readonly struct Result<T>
     {
         Value = value;
         IsSuccess = isSuccess;
-        Errors = null;
+        Messages = null;
     }
 
-    private Result(params string[] errors)
+    private Result(params string[] messages)
     {
         Value = default(T);
         IsSuccess = false;
-        Errors = errors;
+        Messages = messages;
     }
 
     public bool IsSuccess { get; }
@@ -67,20 +67,20 @@ public readonly struct Result<T>
 
     public T Value { get; }
 
-    public string[] Errors { get; }
+    public string[] Messages { get; }
 
     public Result ToResult()
     {
-        return IsSuccess ? Result.CreateSuccess() : Result.CreateFailure(Errors);
+        return IsSuccess ? Result.CreateSuccess() : Result.CreateFailure(Messages);
     }
     
     public static Result<T> CreateFailure(params string[] errors)
     {
 // #if DEBUG
 //         System.Diagnostics.StackTrace t = new System.Diagnostics.StackTrace();
-//         List<string> errorsList = new List<string>(errors.Length + 1);
+//         List<string> errorsList = new List<string>(messages.Length + 1);
 //         errorsList.Add($"StackTrace: {t}");
-//         errors = errorsList.Concat(errors).ToArray();
+//         messages = errorsList.Concat(messages).ToArray();
 // #endif
         
         return new Result<T>(errors);

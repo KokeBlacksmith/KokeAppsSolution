@@ -1,6 +1,6 @@
 using System;
 using Avalonia.Controls;
-using KBAvaloniaCore.Miscellaneous;
+using KBAvaloniaCore.MessageBox;
 using KBGodotBuilderWizard.Models;
 
 namespace KBGodotBuilderWizard.Views;

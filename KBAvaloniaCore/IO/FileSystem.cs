@@ -1,5 +1,5 @@
 ﻿using System.Runtime.CompilerServices;
-using KBAvaloniaCore.Miscellaneous;
+using KBAvaloniaCore.MessageBox;
 
 namespace KBAvaloniaCore.IO;
 

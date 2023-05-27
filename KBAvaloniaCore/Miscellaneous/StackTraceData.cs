@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics;
 using Avalonia.Rendering;
 
-namespace KBAvaloniaCore.Miscellaneous;
+namespace KBAvaloniaCore.MessageBox;
 
 public ref struct StackTraceData
 {

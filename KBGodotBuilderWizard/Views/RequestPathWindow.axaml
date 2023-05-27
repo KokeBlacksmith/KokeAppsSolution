@@ -1,0 +1,26 @@
+﻿<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:controls="clr-namespace:KBAvaloniaCore.Controls;assembly=KBAvaloniaCore"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="KBGodotBuilderWizard.Views.RequestPathWindow"
+        Title="RequestPathWindow">
+    
+        <Grid RowDefinitions="50, 50">
+                <controls:TextBoxPath x:FieldModifier="private" x:Name="tb_path"
+                                      HorizontalAlignment="Center"
+                                      VerticalContentAlignment="Stretch"
+                                      Margin="{StaticResource AllMargin}" />
+                <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right">
+                        <Button Content="Confirm" x:FieldModifier="private" x:Name="bt_confirm"
+                                Margin="{StaticResource AllMargin}" 
+                                Click="_OnConfirmButtonClick"/>
+                        <Button Content="Cancel" x:FieldModifier="private" x:Name="bt_cancel"
+                                Margin="{StaticResource AllMargin}" 
+                                Click="_OnCancelButtonClick"/>
+                </StackPanel>
+        </Grid>
+        
+        
+</Window>

@@ -1,7 +1,7 @@
 ﻿using System.Reflection;
 using System.Xml.Serialization;
 using JetBrains.Annotations;
-using KBAvaloniaCore.Miscellaneous;
+using KBAvaloniaCore.MessageBox;
 
 namespace KBAvaloniaCore.IO;
 

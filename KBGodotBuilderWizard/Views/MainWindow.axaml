@@ -12,6 +12,6 @@
     <!--     <vm:MainWindowViewModel /> -->
     <!-- </Design.DataContext> -->
 
-    <views:GodotVersionHubControl />
+    <views:GodotVersionHubView />
     
 </Window>

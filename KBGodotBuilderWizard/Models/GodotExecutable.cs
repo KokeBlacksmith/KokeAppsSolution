@@ -5,7 +5,7 @@ using System.Runtime.Serialization;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
 using KBAvaloniaCore.IO;
-using KBAvaloniaCore.Miscellaneous;
+using KBAvaloniaCore.MessageBox;
 using KBGodotBuilderWizard.Enums;
 
 namespace KBGodotBuilderWizard.Models;
@@ -87,18 +87,15 @@ public class GodotExecutable
         }
     }
 
-    public Task<Result> DownloadAsync()
+    public Task<Result> DownloadAsync(Path installsPath)
     {
+        if (installsPath == null)
+        {
+            throw new ArgumentNullException(nameof(installsPath));
+        }
+        
         return Task.Run(async () =>
         {
-            ConfigurationData configurationData = new ConfigurationData();
-            Result result = configurationData.Load();
-
-            if (result.IsFailure)
-            {
-                return result;
-            }
-
             string fileName = FileName;
             if (System.IO.Path.HasExtension(FileName))
             {
@@ -112,7 +109,7 @@ public class GodotExecutable
             }
 
             // string fileName = FileName.Replace('.', '_');
-            Path versionInstallPath = Path.Combine(configurationData.InstallVersionsPath, Version.Replace('.', '_'));
+            Path versionInstallPath = Path.Combine(installsPath.FullPath, Version.Replace('.', '_'));
             Path installFolderPath = Path.Join(versionInstallPath, fileName);
             installFolderPath = installFolderPath.ConvertToDirectory();
             // Delete previous install if existed
@@ -121,7 +118,7 @@ public class GodotExecutable
 
             fileName += ".zip";
             Path zipFilePath = Path.Join(versionInstallPath, fileName);
-            result = await GodotVersionFetcher.DownloadVersion(zipFilePath, GetPartialUrl());
+            Result result = await GodotVersionFetcher.DownloadVersion(zipFilePath, GetPartialUrl());
 
             if (result.IsFailure)
             {
