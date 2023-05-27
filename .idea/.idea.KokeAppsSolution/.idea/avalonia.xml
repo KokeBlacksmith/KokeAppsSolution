@@ -9,8 +9,8 @@
         <entry key="KBAvaloniaCore/Controls/TextBoxPath.axaml" value="KBBehaviourTree/KBBehaviourTree.csproj" />
         <entry key="KBAvaloniaCore/Controls/TextBoxPath/View/TextBoxPath.axaml" value="KBGodotBuilderWizard/KBGodotBuilderWizard.csproj" />
         <entry key="KBAvaloniaCore/Controls/TextBoxPath/View/TextBoxPathDialog.axaml" value="KBGodotBuilderWizard/KBGodotBuilderWizard.csproj" />
-        <entry key="KBAvaloniaCore/Themes/ConstantsResourceDictionary.axaml" value="KBBehaviourTree/KBBehaviourTree.csproj" />
-        <entry key="KBAvaloniaCore/Themes/ConvertersResourceDictionary.axaml" value="KBBehaviourTree/KBBehaviourTree.csproj" />
+        <entry key="KBAvaloniaCore/Themes/ConstantsResourceDictionary.axaml" value="KBGodotBuilderWizard/KBGodotBuilderWizard.csproj" />
+        <entry key="KBAvaloniaCore/Themes/ConvertersResourceDictionary.axaml" value="KBGodotBuilderWizard/KBGodotBuilderWizard.csproj" />
         <entry key="KBAvaloniaCore/Themes/Dark/DarkButtonSpinnerStyle.axaml" value="KBBehaviourTree/KBBehaviourTree.csproj" />
         <entry key="KBAvaloniaCore/Themes/Dark/DarkButtonStyle.axaml" value="KBBehaviourTree/KBBehaviourTree.csproj" />
         <entry key="KBAvaloniaCore/Themes/Dark/DarkCheckBoxStyle.axaml" value="KBBehaviourTree/KBBehaviourTree.csproj" />
@@ -18,14 +18,14 @@
         <entry key="KBAvaloniaCore/Themes/Dark/DarkGridSplitterStyle.axaml" value="KBGodotBuilderWizard/KBGodotBuilderWizard.csproj" />
         <entry key="KBAvaloniaCore/Themes/Dark/DarkImplicitStyles.axaml" value="KBBehaviourTree/KBBehaviourTree.csproj" />
         <entry key="KBAvaloniaCore/Themes/Dark/DarkListBoxStyle.axaml" value="KBBehaviourTree/KBBehaviourTree.csproj" />
-        <entry key="KBAvaloniaCore/Themes/Dark/DarkStyles.axaml" value="KBBehaviourTree/KBBehaviourTree.csproj" />
+        <entry key="KBAvaloniaCore/Themes/Dark/DarkStyles.axaml" value="KBGodotBuilderWizard/KBGodotBuilderWizard.csproj" />
         <entry key="KBAvaloniaCore/Themes/Dark/DarkTabControlStyle.axaml" value="KBBehaviourTree/KBBehaviourTree.csproj" />
         <entry key="KBAvaloniaCore/Themes/Dark/DarkTextBlockStyle.axaml" value="KBBehaviourTree/KBBehaviourTree.csproj" />
         <entry key="KBAvaloniaCore/Themes/Dark/DarkTextBoxStyle.axaml" value="KBBehaviourTree/KBBehaviourTree.csproj" />
         <entry key="KBAvaloniaCore/Themes/Dark/DarkThemeColors.axaml" value="KBBehaviourTree/KBBehaviourTree.csproj" />
         <entry key="KBAvaloniaCore/Themes/Dark/DarkWindowStyle.axaml" value="KBBehaviourTree/KBBehaviourTree.csproj" />
         <entry key="KBAvaloniaCore/Themes/Dark/ProgressBarStyle.axaml" value="KBBehaviourTree/KBBehaviourTree.csproj" />
-        <entry key="KBAvaloniaCore/Themes/Dark/ThemeColors.axaml" value="AvaloniaTestApp/AvaloniaTestApp.csproj" />
+        <entry key="KBAvaloniaCore/Themes/Dark/ThemeColors.axaml" value="KBGodotBuilderWizard/KBGodotBuilderWizard.csproj" />
         <entry key="KBAvaloniaCore/Themes/Dark/WindowStyle.axaml" value="KBBehaviourTree/KBBehaviourTree.csproj" />
         <entry key="KBAvaloniaCore/Themes/DarkButtonSpinnerStyle.axaml" value="AvaloniaTestApp/AvaloniaTestApp.csproj" />
         <entry key="KBAvaloniaCore/Themes/DarkButtonStyle.axaml" value="AvaloniaTestApp/AvaloniaTestApp.csproj" />
@@ -39,9 +39,11 @@
         <entry key="KBAvaloniaCore/Themes/ImplicitStyles.axaml" value="AvaloniaTestApp/AvaloniaTestApp.csproj" />
         <entry key="KBAvaloniaCore/Themes/ThemeColors.axaml" value="AvaloniaTestApp/AvaloniaTestApp.csproj" />
         <entry key="KBGodotBuilderWizard/App.axaml" value="KBGodotBuilderWizard/KBGodotBuilderWizard.csproj" />
+        <entry key="KBGodotBuilderWizard/Themes/IconsResourceDictionary.axaml" value="KBGodotBuilderWizard/KBGodotBuilderWizard.csproj" />
         <entry key="KBGodotBuilderWizard/Views/ConfigurationWidow.axaml" value="KBGodotBuilderWizard/KBGodotBuilderWizard.csproj" />
         <entry key="KBGodotBuilderWizard/Views/ConfigurationWindow.axaml" value="KBGodotBuilderWizard/KBGodotBuilderWizard.csproj" />
         <entry key="KBGodotBuilderWizard/Views/GodotVersionHubControl.axaml" value="KBGodotBuilderWizard/KBGodotBuilderWizard.csproj" />
+        <entry key="KBGodotBuilderWizard/Views/GodotVersionHubView.axaml" value="KBGodotBuilderWizard/KBGodotBuilderWizard.csproj" />
         <entry key="KBGodotBuilderWizard/Views/MainWindow.axaml" value="KBGodotBuilderWizard/KBGodotBuilderWizard.csproj" />
         <entry key="KBGodotBuilderWizard/Views/RequestPathWindow.axaml" value="KBGodotBuilderWizard/KBGodotBuilderWizard.csproj" />
         <entry key="KBGodotBuilderWizard/Views/VersionUpdaterView.axaml" value="KBGodotBuilderWizard/KBGodotBuilderWizard.csproj" />

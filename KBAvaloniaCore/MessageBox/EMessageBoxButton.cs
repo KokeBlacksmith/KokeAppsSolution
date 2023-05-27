@@ -2,6 +2,8 @@
 
 namespace KBAvaloniaCore.MessageBox;
 
+#region MessageBoxAvaloniaEnumWrapper
+
 public enum EMessageBoxButton
 {
     Ok,
@@ -22,6 +24,8 @@ public enum EMessageBoxButtonResult
     Cancel = 4,
     None = EMessageBoxButtonResult.Cancel | EMessageBoxButtonResult.Yes, // 0x00000005
 }
+
+#endregion
 
 /// <summary>
 /// Convert the wrapper enum to the Avalonia enum
