@@ -170,12 +170,13 @@ public class GodotVersionHubViewModel : BaseViewModel, IReactiveModel<GodotVersi
                 return;
             }
 
-            // Ask for a path where the installs will be located
-            EMessageBoxButtonResult mbResult = await MessageBoxHelper.ShowResultMessageDialog("Installs path missing", "Do you want to go to configuration and set the new installs path?.", EMessageBoxButton.OkCancel);
-            if (mbResult == EMessageBoxButtonResult.Ok)
-            {
-                                    
-            }
+        }
+        
+        // Ask for a path where the installs will be located
+        EMessageBoxButtonResult mbResult = await MessageBoxHelper.ShowResultMessageDialog("Installs path missing", "Do you want to go to configuration and set the new installs path?.", EMessageBoxButton.OkCancel);
+        if (mbResult == EMessageBoxButtonResult.Ok)
+        {
+                                
         }
     }
 
