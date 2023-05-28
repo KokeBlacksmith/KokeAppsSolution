@@ -120,12 +120,12 @@
                     <Button Grid.Column="0" Width="100" HorizontalContentAlignment="Center"
                             Command="{Binding DownloadVersionCommand}">
                         <StackPanel Orientation="Horizontal">
-                            <Label Content="Download" />
-                            <Image Margin="{StaticResource HorizontalMargin}">
+                            <Image Margin="{StaticResource HorizontalMargin}" Width="16" Height="16">
                                 <Image.Source>
                                     <DrawingImage Drawing="{DynamicResource BoxIcons.RegularDownload}" />
                                 </Image.Source>
                             </Image>
+                            <Label Content="Download" />
                         </StackPanel>
                     </Button>
                     <Button Grid.Column="1" Content="Launch" Width="100" HorizontalContentAlignment="Center" 
