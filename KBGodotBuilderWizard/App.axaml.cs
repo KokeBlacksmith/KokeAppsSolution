@@ -3,7 +3,7 @@ using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 using Avalonia.Threading;
-using KBAvaloniaCore.MessageBox;
+using KB.AvaloniaCore.MessageBox;
 using KBGodotBuilderWizard.ViewModels;
 using KBGodotBuilderWizard.Views;
 

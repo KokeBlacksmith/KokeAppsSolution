@@ -4,9 +4,9 @@ using System.ComponentModel.DataAnnotations;
 using System.Reflection;
 using System.Runtime.Serialization;
 using System.Threading.Tasks;
-using KBAvaloniaCore.DataAnnotations;
-using KBAvaloniaCore.IO;
-using KBAvaloniaCore.MessageBox;
+using KB.AvaloniaCore.DataAnnotations;
+using KB.AvaloniaCore.IO;
+using KB.AvaloniaCore.MessageBox;
 
 namespace KBGodotBuilderWizard.Models;
 

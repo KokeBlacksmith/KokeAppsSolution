@@ -1,10 +1,12 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KBAvaloniaCore", "KBAvaloniaCore\KBAvaloniaCore.csproj", "{1E8F9C08-E7BE-4AC0-AE59-86B2A3E8B3F8}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KB.AvaloniaCore", "KB.AvaloniaCore\KB.AvaloniaCore.csproj", "{1E8F9C08-E7BE-4AC0-AE59-86B2A3E8B3F8}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "KBGodotBuilderWizard", "KBGodotBuilderWizard", "{159E1479-8DAB-47E9-BBA4-D6A94FF5FF29}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KBGodotBuilderWizard", "KBGodotBuilderWizard\KBGodotBuilderWizard.csproj", "{A3786112-7E38-41CD-B15D-9FC9A36359DF}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "KB.BehaviourTree", "KB.BehaviourTree", "{886DD779-010E-4FAC-960A-21A05E476805}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

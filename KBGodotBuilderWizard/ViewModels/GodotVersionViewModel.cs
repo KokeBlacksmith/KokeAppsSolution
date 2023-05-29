@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Avalonia.Collections;
-using KBAvaloniaCore.ReactiveUI;
+using KB.AvaloniaCore.ReactiveUI;
 using KBGodotBuilderWizard.Models;
 using ReactiveUI;
 

@@ -4,8 +4,8 @@ using System.IO.Compression;
 using System.Runtime.Serialization;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
-using KBAvaloniaCore.IO;
-using KBAvaloniaCore.MessageBox;
+using KB.AvaloniaCore.IO;
+using KB.AvaloniaCore.MessageBox;
 using KBGodotBuilderWizard.Enums;
 
 namespace KBGodotBuilderWizard.Models;

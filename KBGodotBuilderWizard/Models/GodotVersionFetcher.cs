@@ -6,8 +6,8 @@ using System.Net.Http;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using HtmlAgilityPack;
-using KBAvaloniaCore.MessageBox;
-using Path = KBAvaloniaCore.IO.Path;
+using KB.AvaloniaCore.MessageBox;
+using Path = KB.AvaloniaCore.IO.Path;
 
 namespace KBGodotBuilderWizard.Models;
 

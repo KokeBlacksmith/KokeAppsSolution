@@ -5,9 +5,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Avalonia.Collections;
-using KBAvaloniaCore.MessageBox;
-using KBAvaloniaCore.IO;
-using KBAvaloniaCore.ReactiveUI;
+using KB.AvaloniaCore.MessageBox;
+using KB.AvaloniaCore.IO;
+using KB.AvaloniaCore.ReactiveUI;
 using KBGodotBuilderWizard.Models;
 using ReactiveUI;
 

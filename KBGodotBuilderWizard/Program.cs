@@ -3,7 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.ReactiveUI;
-using KBAvaloniaCore.MessageBox;
+using KB.AvaloniaCore.MessageBox;
 
 namespace KBGodotBuilderWizard;
 

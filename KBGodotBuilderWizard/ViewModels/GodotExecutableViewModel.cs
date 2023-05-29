@@ -5,13 +5,13 @@ using System.IO.Compression;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using KBAvaloniaCore.IO;
-using KBAvaloniaCore.MessageBox;
-using KBAvaloniaCore.ReactiveUI;
+using KB.AvaloniaCore.IO;
+using KB.AvaloniaCore.MessageBox;
+using KB.AvaloniaCore.ReactiveUI;
 using KBGodotBuilderWizard.Enums;
 using KBGodotBuilderWizard.Models;
 using ReactiveUI;
-using Path = KBAvaloniaCore.IO.Path;
+using Path = KB.AvaloniaCore.IO.Path;
 
 namespace KBGodotBuilderWizard.ViewModels;
 

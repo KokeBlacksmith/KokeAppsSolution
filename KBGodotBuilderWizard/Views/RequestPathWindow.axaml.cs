@@ -2,8 +2,8 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
-using KBAvaloniaCore.Controls;
-using KBAvaloniaCore.IO;
+using KB.AvaloniaCore.Controls;
+using KB.AvaloniaCore.IO;
 
 namespace KBGodotBuilderWizard.Views;
 

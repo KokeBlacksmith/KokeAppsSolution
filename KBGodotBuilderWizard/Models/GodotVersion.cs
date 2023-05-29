@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Runtime.Serialization;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
-using KBAvaloniaCore.IO;
+using KB.AvaloniaCore.IO;
 
 namespace KBGodotBuilderWizard.Models;
 

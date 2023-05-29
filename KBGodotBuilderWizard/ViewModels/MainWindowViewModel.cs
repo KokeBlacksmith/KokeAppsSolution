@@ -5,8 +5,8 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using Avalonia.Collections;
 using JetBrains.Annotations;
-using KBAvaloniaCore.MessageBox;
-using KBAvaloniaCore.ReactiveUI;
+using KB.AvaloniaCore.MessageBox;
+using KB.AvaloniaCore.ReactiveUI;
 using KBGodotBuilderWizard.Models;
 using ReactiveUI;
 

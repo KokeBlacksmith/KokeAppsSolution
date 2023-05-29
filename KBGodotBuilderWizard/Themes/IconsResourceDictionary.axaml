@@ -3,7 +3,7 @@
     
     
     <ResourceDictionary.MergedDictionaries>
-        <ResourceInclude Source="avares://KBAvaloniaCore/Themes/Dark/ThemeColors.axaml" />
+        <ResourceInclude Source="avares://KB.AvaloniaCore/Themes/Dark/ThemeColors.axaml" />
     </ResourceDictionary.MergedDictionaries>
     
     <!--Special thanks to Avalonia.IconPacks-->

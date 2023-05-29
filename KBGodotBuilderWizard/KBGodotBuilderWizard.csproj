@@ -29,7 +29,7 @@
         <PackageReference Include="XamlNameReferenceGenerator" Version="1.3.4" />
     </ItemGroup>
     <ItemGroup>
-        <ProjectReference Include="..\KBAvaloniaCore\KBAvaloniaCore.csproj" />
+        <ProjectReference Include="..\KB.AvaloniaCore\KB.AvaloniaCore.csproj" />
     </ItemGroup>
     <ItemGroup>
       <Folder Include="Assets\" />
