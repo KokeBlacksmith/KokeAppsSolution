@@ -6,6 +6,7 @@
         <entry key="AvaloniaTestApp/App.axaml" value="AvaloniaTestApp/AvaloniaTestApp.csproj" />
         <entry key="AvaloniaTestApp/Views/MainWindow.axaml" value="AvaloniaTestApp/AvaloniaTestApp.csproj" />
         <entry key="KB.AvaloniaCore/Controls/TextBoxPath/View/TextBoxPath.axaml" value="KBGodotBuilderWizard/KBGodotBuilderWizard.csproj" />
+        <entry key="KB.AvaloniaCore/Themes/Dark/ThemeColors.axaml" value="KBGodotBuilderWizard/KBGodotBuilderWizard.csproj" />
         <entry key="KBAvaloniaCore/Controls/MessageBox/MessageBoxWindow.axaml" value="KBBehaviourTree/KBBehaviourTree.csproj" />
         <entry key="KBAvaloniaCore/Controls/TextBoxPath.axaml" value="KBBehaviourTree/KBBehaviourTree.csproj" />
         <entry key="KBAvaloniaCore/Controls/TextBoxPath/View/TextBoxPath.axaml" value="KBGodotBuilderWizard/KBGodotBuilderWizard.csproj" />
