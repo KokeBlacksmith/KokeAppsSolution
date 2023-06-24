@@ -23,7 +23,9 @@
     </Styles.Resources>
 
     <Style Selector="ListBox">
-        <Setter Property="VirtualizationMode" Value="Simple" />
+        <Setter Property="ItemsPanel">
+            <VirtualizingStackPanel />
+        </Setter>
         <Setter Property="Background" Value="{StaticResource DarkestBackgroundColor}" />
     </Style>
 

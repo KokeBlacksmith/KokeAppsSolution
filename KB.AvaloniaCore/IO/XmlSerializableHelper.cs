@@ -1,6 +1,6 @@
-﻿using System.Reflection;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Reflection;
 using System.Xml.Serialization;
-using JetBrains.Annotations;
 using KB.AvaloniaCore.MessageBox;
 
 namespace KB.AvaloniaCore.IO;

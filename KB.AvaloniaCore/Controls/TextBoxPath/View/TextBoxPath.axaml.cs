@@ -76,22 +76,22 @@ public partial class TextBoxPath : UserControl
         }
     }
     
-    protected override void OnPropertyChanged<T>(AvaloniaPropertyChangedEventArgs<T> change)
+    protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)
     {
         base.OnPropertyChanged(change);
 
         TextBoxPath textBoxPath = (TextBoxPath)change.Sender;
         if (change.Property == TextBoxPath.PathTextProperty)
         {
-            textBoxPath._tbPath.Text = change.NewValue.GetValueOrDefault() as string;
+            textBoxPath._tbPath.Text = change.GetNewValue<string>();
         }
         else if (change.Property == TextBoxPath.HorizontalAlignmentProperty)
         {
-            textBoxPath._container.HorizontalAlignment = change.NewValue.GetValueOrDefault<HorizontalAlignment>();
+            textBoxPath._container.HorizontalAlignment = change.GetNewValue<HorizontalAlignment>();
         }
         else if (change.Property == TextBoxPath.VerticalAlignmentProperty)
         {
-            textBoxPath._container.VerticalAlignment = change.NewValue.GetValueOrDefault<VerticalAlignment>();
+            textBoxPath._container.VerticalAlignment = change.GetNewValue<VerticalAlignment>();
         }
     }
 }
