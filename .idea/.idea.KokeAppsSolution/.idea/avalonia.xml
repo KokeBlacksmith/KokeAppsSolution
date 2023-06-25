@@ -9,6 +9,9 @@
         <entry key="KB.AvaloniaCore/Themes/Dark/ThemeColors.axaml" value="KBGodotBuilderWizard/KBGodotBuilderWizard.csproj" />
         <entry key="KB.BehaviourTree/KB.BehaviourTree/App.axaml" value="KB.BehaviourTree/KB.BehaviourTree/KB.BehaviourTree.csproj" />
         <entry key="KB.ConsoleCompanion/KB.ConsoleCompanion/App.axaml" value="KB.ConsoleCompanion/KB.ConsoleCompanion/KB.ConsoleCompanion.csproj" />
+        <entry key="KB.RealStateAgencyCompanion/KB.RealStateAgencyCompanion/App.axaml" value="KB.RealStateAgencyCompanion/KB.RealStateAgencyCompanion/KB.RealStateAgencyCompanion.csproj" />
+        <entry key="KB.TestApp/App.axaml" value="KB.TestApp/KB.TestApp.csproj" />
+        <entry key="KB.TestApp/Views/MainWindow.axaml" value="KB.TestApp/KB.TestApp.csproj" />
         <entry key="KBAvaloniaCore/Controls/MessageBox/MessageBoxWindow.axaml" value="KBBehaviourTree/KBBehaviourTree.csproj" />
         <entry key="KBAvaloniaCore/Controls/TextBoxPath.axaml" value="KBBehaviourTree/KBBehaviourTree.csproj" />
         <entry key="KBAvaloniaCore/Controls/TextBoxPath/View/TextBoxPath.axaml" value="KBGodotBuilderWizard/KBGodotBuilderWizard.csproj" />

@@ -10,6 +10,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "KB.ConsoleCompanion", "KB.C
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KB.ConsoleCompanion", "KB.ConsoleCompanion\KB.ConsoleCompanion\KB.ConsoleCompanion.csproj", "{30F15CBE-48A5-4E41-BDB4-408EF518391C}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "KB.RealStateAgencyCompanion", "KB.RealStateAgencyCompanion", "{D82F7678-5F58-45C6-B2CA-7655BE43A68F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KB.RealStateAgencyCompanion", "KB.RealStateAgencyCompanion\KB.RealStateAgencyCompanion\KB.RealStateAgencyCompanion.csproj", "{226FCF57-F6E0-4D0F-AA31-4AEB64987689}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -28,9 +32,14 @@ Global
 		{30F15CBE-48A5-4E41-BDB4-408EF518391C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{30F15CBE-48A5-4E41-BDB4-408EF518391C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{30F15CBE-48A5-4E41-BDB4-408EF518391C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{226FCF57-F6E0-4D0F-AA31-4AEB64987689}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{226FCF57-F6E0-4D0F-AA31-4AEB64987689}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{226FCF57-F6E0-4D0F-AA31-4AEB64987689}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{226FCF57-F6E0-4D0F-AA31-4AEB64987689}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{CE6ECADA-E875-48E3-A74E-F44D8CBA4C11} = {886DD779-010E-4FAC-960A-21A05E476805}
 		{30F15CBE-48A5-4E41-BDB4-408EF518391C} = {10950257-0AF1-4B42-991C-863A4CFE2247}
+		{226FCF57-F6E0-4D0F-AA31-4AEB64987689} = {D82F7678-5F58-45C6-B2CA-7655BE43A68F}
 	EndGlobalSection
 EndGlobal
