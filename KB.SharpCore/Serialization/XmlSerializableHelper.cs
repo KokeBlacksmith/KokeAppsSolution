@@ -1,9 +1,9 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Xml.Serialization;
-using KB.AvaloniaCore.MessageBox;
+using KB.SharpCore.Extensions;
 
-namespace KB.AvaloniaCore.IO;
+namespace KB.SharpCore.Serialization;
 
 public static class XmlSerializableHelper
 {

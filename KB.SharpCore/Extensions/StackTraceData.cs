@@ -1,7 +1,6 @@
 ﻿using System.Diagnostics;
-using Avalonia.Rendering;
 
-namespace KB.AvaloniaCore.MessageBox;
+namespace KB.SharpCore;
 
 public ref struct StackTraceData
 {

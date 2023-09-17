@@ -1,7 +1,7 @@
 ﻿using System.Runtime.CompilerServices;
-using KB.AvaloniaCore.MessageBox;
+using KB.SharpCore.Extensions;
 
-namespace KB.AvaloniaCore.IO;
+namespace KB.SharpCore.IO;
 
 public static class FileSystem
 {

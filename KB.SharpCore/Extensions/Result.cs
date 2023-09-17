@@ -1,6 +1,4 @@
-﻿using System.Runtime.CompilerServices;
-
-namespace KB.AvaloniaCore.MessageBox;
+﻿namespace KB.SharpCore.Extensions;
 
 public readonly struct Result
 {

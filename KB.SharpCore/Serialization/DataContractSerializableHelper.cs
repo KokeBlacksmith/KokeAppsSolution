@@ -4,9 +4,10 @@ using System.Runtime.Serialization.Json;
 using System.Text;
 using System.Text.Json;
 using System.Xml;
-using KB.AvaloniaCore.MessageBox;
+using KB.SharpCore.Extensions;
+using Path = KB.SharpCore.IO.Path;
 
-namespace KB.AvaloniaCore.IO;
+namespace KB.SharpCore.Serialization;
 
 public static class DataContractSerializableHelper
 {

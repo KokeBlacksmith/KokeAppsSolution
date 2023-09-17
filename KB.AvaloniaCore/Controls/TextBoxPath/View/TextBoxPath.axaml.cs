@@ -4,7 +4,7 @@ using Avalonia.Interactivity;
 using Avalonia.Layout;
 using Avalonia.Markup.Xaml;
 using Avalonia.VisualTree;
-using KB.AvaloniaCore.IO;
+using KB.SharpCore.IO;
 
 namespace KB.AvaloniaCore.Controls;
 
@@ -31,12 +31,12 @@ public partial class TextBoxPath : UserControl
             }
             else
             {
-                Path = new KB.AvaloniaCore.IO.Path(value);
+                Path = new KB.SharpCore.IO.Path(value);
             }
         }
     }
     
-    public KB.AvaloniaCore.IO.Path? Path { get; private set; }
+    public KB.SharpCore.IO.Path? Path { get; private set; }
 
     public EPathType PathType
     {

@@ -1,4 +1,4 @@
-﻿namespace KB.AvaloniaCore.IO;
+﻿namespace KB.SharpCore.IO;
 
 public enum EPathType
 {

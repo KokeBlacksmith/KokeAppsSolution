@@ -1,8 +1,8 @@
 ﻿using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
-using KB.AvaloniaCore.MessageBox;
+using KB.SharpCore.Extensions;
 
-namespace KB.AvaloniaCore.IO;
+namespace KB.SharpCore.IO;
 
 public class Path
 {

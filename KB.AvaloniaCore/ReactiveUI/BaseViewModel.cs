@@ -6,7 +6,7 @@ public abstract class BaseViewModel : ReactiveObject
 {
     protected readonly BusyOperation m_busyOperation;
 
-    public BaseViewModel()
+    private BaseViewModel()
     {
         m_busyOperation = new BusyOperation(this, nameof(BaseViewModel.IsBusy));
     }

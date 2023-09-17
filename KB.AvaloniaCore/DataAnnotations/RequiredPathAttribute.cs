@@ -1,6 +1,6 @@
 ﻿#nullable enable
 using System.ComponentModel.DataAnnotations;
-using Path = KB.AvaloniaCore.IO.Path;
+using Path = KB.SharpCore.IO.Path;
 
 namespace KB.AvaloniaCore.DataAnnotations;
 
