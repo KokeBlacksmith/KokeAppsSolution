@@ -1,10 +1,10 @@
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
-using KB.ConsoleCompanion.ViewModels;
-using KB.ConsoleCompanion.Views;
+using KB.ConsoleCompanionStandalone.ViewModels;
+using KB.ConsoleCompanionStandalone.Views;
 
-namespace KB.ConsoleCompanion
+namespace KB.ConsoleCompanionStandalone
 {
     public partial class App : Application
     {

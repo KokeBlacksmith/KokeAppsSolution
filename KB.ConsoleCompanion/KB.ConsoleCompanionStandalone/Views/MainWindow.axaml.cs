@@ -1,6 +1,6 @@
 using Avalonia.Controls;
 
-namespace KB.ConsoleCompanion.Views
+namespace KB.ConsoleCompanionStandalone.Views
 {
     public partial class MainWindow : Window
     {

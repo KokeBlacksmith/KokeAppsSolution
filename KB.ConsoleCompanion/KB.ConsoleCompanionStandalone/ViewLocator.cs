@@ -2,9 +2,10 @@ using System;
 using System.ComponentModel;
 using Avalonia.Controls;
 using Avalonia.Controls.Templates;
-using KB.ConsoleCompanion.ViewModels;
+using KB.AvaloniaCore.ReactiveUI;
+using KB.ConsoleCompanionStandalone.ViewModels;
 
-namespace KB.ConsoleCompanion
+namespace KB.ConsoleCompanionStandalone
 {
     public class ViewLocator : IDataTemplate
     {
@@ -25,7 +26,7 @@ namespace KB.ConsoleCompanion
 
         public bool Match(object data)
         {
-            return data is ViewModelBase;
+            return data is BaseViewModel;
         }
     }
 }

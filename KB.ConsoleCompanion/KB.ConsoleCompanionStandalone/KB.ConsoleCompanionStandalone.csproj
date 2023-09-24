@@ -27,4 +27,8 @@
         <PackageReference Include="Avalonia.ReactiveUI" Version="11.0.4" />
         <PackageReference Include="Avalonia.Themes.Fluent" Version="11.0.4" />
     </ItemGroup>
+    <ItemGroup>
+      <ProjectReference Include="..\..\KB.AvaloniaCore\KB.AvaloniaCore.csproj" />
+      <ProjectReference Include="..\..\KB.SharpCore\KB.SharpCore.csproj" />
+    </ItemGroup>
 </Project>

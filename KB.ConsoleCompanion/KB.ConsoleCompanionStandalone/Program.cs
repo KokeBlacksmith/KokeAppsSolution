@@ -2,7 +2,7 @@
 using Avalonia.ReactiveUI;
 using System;
 
-namespace KB.ConsoleCompanion
+namespace KB.ConsoleCompanionStandalone
 {
     internal class Program
     {
@@ -13,11 +13,6 @@ namespace KB.ConsoleCompanion
         public static void Main(string[] args) => Program.BuildAvaloniaApp().StartWithClassicDesktopLifetime(args);
 
         // Avalonia configuration, don't remove; also used by visual designer.
-        public static AppBuilder BuildAvaloniaApp() 
-                                    => AppBuilder
-                                        .Configure<App>()
-                                        .UsePlatformDetect()
-                                        .LogToTrace()
-                                        .UseReactiveUI();
+        public static AppBuilder BuildAvaloniaApp() => AppBuilder.Configure<App>().UsePlatformDetect().LogToTrace().UseReactiveUI();
     }
 }

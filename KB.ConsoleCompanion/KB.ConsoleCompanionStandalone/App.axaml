@@ -1,0 +1,27 @@
+<Application xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="using:KB.ConsoleCompanionStandalone"
+             x:Class="KB.ConsoleCompanionStandalone.App">
+    <Application.DataTemplates>
+        <local:ViewLocator/>
+    </Application.DataTemplates>
+
+    
+    <Application.Styles>
+        <FluentTheme />
+        <!-- <StyleInclude Source="avares://KB.AvaloniaCore/Themes/Dark/DarkStyles.axaml" /> -->
+    </Application.Styles>
+
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceInclude Source="avares://KB.AvaloniaCore/Themes/ConstantsResourceDictionary.axaml" />
+                <ResourceInclude Source="avares://KB.AvaloniaCore/Themes/ConvertersResourceDictionary.axaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Application.Resources>
+    
+    <!-- <Application.Styles> -->
+    <!--     <FluentTheme Mode="Light"/> -->
+    <!-- </Application.Styles> -->
+</Application>
