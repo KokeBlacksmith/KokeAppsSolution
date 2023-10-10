@@ -8,6 +8,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KB.SharpCore", "KB.SharpCor
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KB.ConsoleCompanionStandalone", "KB.ConsoleCompanion\KB.ConsoleCompanionStandalone\KB.ConsoleCompanionStandalone.csproj", "{E4F57D06-57C6-40A8-B421-EC58B3E63553}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KB.ConsoleCompanion", "KB.ConsoleCompanion\KB.ConsoleCompanion\KB.ConsoleCompanion.csproj", "{ADDBA591-B5CA-4718-A2AA-D6BE19EDF59F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -26,8 +28,13 @@ Global
 		{E4F57D06-57C6-40A8-B421-EC58B3E63553}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E4F57D06-57C6-40A8-B421-EC58B3E63553}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E4F57D06-57C6-40A8-B421-EC58B3E63553}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ADDBA591-B5CA-4718-A2AA-D6BE19EDF59F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ADDBA591-B5CA-4718-A2AA-D6BE19EDF59F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ADDBA591-B5CA-4718-A2AA-D6BE19EDF59F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ADDBA591-B5CA-4718-A2AA-D6BE19EDF59F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{E4F57D06-57C6-40A8-B421-EC58B3E63553} = {10950257-0AF1-4B42-991C-863A4CFE2247}
+		{ADDBA591-B5CA-4718-A2AA-D6BE19EDF59F} = {10950257-0AF1-4B42-991C-863A4CFE2247}
 	EndGlobalSection
 EndGlobal

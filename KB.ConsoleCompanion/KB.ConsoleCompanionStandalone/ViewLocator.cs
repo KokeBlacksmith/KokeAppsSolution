@@ -1,9 +1,7 @@
 using System;
-using System.ComponentModel;
 using Avalonia.Controls;
 using Avalonia.Controls.Templates;
 using KB.AvaloniaCore.ReactiveUI;
-using KB.ConsoleCompanionStandalone.ViewModels;
 
 namespace KB.ConsoleCompanionStandalone
 {

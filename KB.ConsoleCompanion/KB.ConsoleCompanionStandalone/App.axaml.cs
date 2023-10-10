@@ -1,7 +1,6 @@
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
-using KB.ConsoleCompanionStandalone.ViewModels;
 using KB.ConsoleCompanionStandalone.Views;
 
 namespace KB.ConsoleCompanionStandalone
@@ -18,10 +17,10 @@ namespace KB.ConsoleCompanionStandalone
             if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             {
                 desktop.MainWindow = new MainWindow {
-                    DataContext = new MainWindowViewModel(),
+                    DataContext = null,
                 };
             }
-
+        
             base.OnFrameworkInitializationCompleted();
         }
     }

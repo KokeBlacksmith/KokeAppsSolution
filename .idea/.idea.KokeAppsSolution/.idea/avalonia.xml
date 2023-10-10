@@ -5,7 +5,8 @@
       <map>
         <entry key="AvaloniaTestApp/App.axaml" value="AvaloniaTestApp/AvaloniaTestApp.csproj" />
         <entry key="AvaloniaTestApp/Views/MainWindow.axaml" value="AvaloniaTestApp/AvaloniaTestApp.csproj" />
-        <entry key="KB.AvaloniaCore/Controls/TextBoxPath/View/TextBoxPath.axaml" value="KBGodotBuilderWizard/KBGodotBuilderWizard.csproj" />
+        <entry key="KB.AvaloniaCore/Controls/Log/View/LogView.axaml" value="KB.ConsoleCompanion/KB.ConsoleCompanionStandalone/KB.ConsoleCompanionStandalone.csproj" />
+        <entry key="KB.AvaloniaCore/Controls/TextBoxPath/View/TextBoxPath.axaml" value="KB.ConsoleCompanion/KB.ConsoleCompanionStandalone/KB.ConsoleCompanionStandalone.csproj" />
         <entry key="KB.AvaloniaCore/Themes/Dark/BorderStyle.axaml" value="KB.ConsoleCompanion/KB.ConsoleCompanionStandalone/KB.ConsoleCompanionStandalone.csproj" />
         <entry key="KB.AvaloniaCore/Themes/Dark/ButtonSpinnerStyle.axaml" value="KB.ConsoleCompanion/KB.ConsoleCompanionStandalone/KB.ConsoleCompanionStandalone.csproj" />
         <entry key="KB.AvaloniaCore/Themes/Dark/DarkStyles.axaml" value="KB.ConsoleCompanion/KB.ConsoleCompanionStandalone/KB.ConsoleCompanionStandalone.csproj" />
@@ -15,6 +16,8 @@
         <entry key="KB.AvaloniaCore/Themes/Dark/ThemeColors.axaml" value="KB.ConsoleCompanion/KB.ConsoleCompanionStandalone/KB.ConsoleCompanionStandalone.csproj" />
         <entry key="KB.BehaviourTree/KB.BehaviourTree/App.axaml" value="KB.BehaviourTree/KB.BehaviourTree/KB.BehaviourTree.csproj" />
         <entry key="KB.ConsoleCompanion/KB.ConsoleCompanion/App.axaml" value="KB.ConsoleCompanion/KB.ConsoleCompanion/KB.ConsoleCompanion.csproj" />
+        <entry key="KB.ConsoleCompanion/KB.ConsoleCompanion/CommandView/View/CommandView.axaml" value="KB.ConsoleCompanion/KB.ConsoleCompanionStandalone/KB.ConsoleCompanionStandalone.csproj" />
+        <entry key="KB.ConsoleCompanion/KB.ConsoleCompanion/MainConsoleCompanion.axaml" value="KB.ConsoleCompanion/KB.ConsoleCompanionStandalone/KB.ConsoleCompanionStandalone.csproj" />
         <entry key="KB.ConsoleCompanion/KB.ConsoleCompanion/Views/MainWindow.axaml" value="KB.ConsoleCompanion/KB.ConsoleCompanion/KB.ConsoleCompanion.csproj" />
         <entry key="KB.ConsoleCompanion/KB.ConsoleCompanionStandalone/App.axaml" value="KB.ConsoleCompanion/KB.ConsoleCompanionStandalone/KB.ConsoleCompanionStandalone.csproj" />
         <entry key="KB.ConsoleCompanion/KB.ConsoleCompanionStandalone/Views/MainWindow.axaml" value="KB.ConsoleCompanion/KB.ConsoleCompanionStandalone/KB.ConsoleCompanionStandalone.csproj" />

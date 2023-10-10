@@ -1,4 +1,5 @@
-﻿using KB.SharpCore.Synchronization;
+﻿using System.Runtime.CompilerServices;
+using KB.SharpCore.Synchronization;
 using ReactiveUI;
 
 namespace KB.AvaloniaCore.ReactiveUI;
@@ -15,5 +16,16 @@ public abstract class BaseViewModel : ReactiveObject
     public bool IsBusy
     {
         get { return m_busyOperation.HasEnters; }
+    }
+    
+    protected void m_SetProperty<T>(ref T store, T value, [CallerMemberName] string propertyName = null)
+    {
+        if (EqualityComparer<T>.Default.Equals(store, value))
+        {
+            return;
+        }
+
+        store = value;
+        this.RaisePropertyChanged(propertyName);
     }
 }
