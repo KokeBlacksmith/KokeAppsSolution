@@ -10,11 +10,7 @@ namespace KB.AvaloniaCore.Controls;
 
 public partial class LogView : UserControl
 {
-    public readonly static StyledProperty<ICollection<LogMessage>> MessagesProperty = 
-        AvaloniaProperty.Register<LogView, ICollection<LogMessage>>(nameof(LogView.Messages));
-    
-    public readonly static StyledProperty<bool> ColorizeMessagesProperty = 
-        AvaloniaProperty.Register<LogView, bool>(nameof(LogView.ColorizeMessages), true);
+    private readonly IDisposable[] _disposableObservers = new IDisposable[2];
     
     public LogView()
     {
@@ -24,9 +20,22 @@ public partial class LogView : UserControl
     private void InitializeComponent()
     {
         AvaloniaXamlLoader.Load(this);
+        
+        // styled properties
+        _disposableObservers[0] = this.SubscribeToStyledPropertyChanged(LogView.MessagesProperty, _OnMessagesPropertyChanged);
+        _disposableObservers[1] = this.SubscribeToStyledPropertyChanged(LogView.ColorizeMessagesProperty, _OnColorizeMessagesPropertyChanged);
+        
+        // xaml controls
         _messagesListView = this.FindControl<ItemsControl>(nameof(LogView._messagesListView));
     }
+
+    #region StyledProperties
+
+    public readonly static StyledProperty<ICollection<LogMessage>> MessagesProperty = 
+        AvaloniaProperty.Register<LogView, ICollection<LogMessage>>(nameof(LogView.Messages));
     
+    public readonly static StyledProperty<bool> ColorizeMessagesProperty = 
+        AvaloniaProperty.Register<LogView, bool>(nameof(LogView.ColorizeMessages), true);
     
     public ICollection<LogMessage> Messages
     {
@@ -40,30 +49,23 @@ public partial class LogView : UserControl
         set { SetValue(LogView.ColorizeMessagesProperty, value); }
     }
 
-
-    protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)
+    #endregion
+    
+    #region StyledPropertyChanged
+    
+    private void _OnMessagesPropertyChanged(LogView sender, AvaloniaPropertyChangedEventArgs args)
     {
-        base.OnPropertyChanged(change);
-
-        LogView self = (LogView)change.Sender;
-        if (change.Property == LogView.MessagesProperty)
-        {
-            self._messagesListView.ItemsSource = change.GetNewValue<ICollection<LogMessage>>();
-        }
-        else if (change.Property == LogView.ColorizeMessagesProperty)
-        {
-            //self._messagesListView.ItemTemplate = self._messagesListView.ItemTemplate;
-        }
-        
-        // else if (change.Property == TextBoxPath.HorizontalAlignmentProperty)
-        // {
-        //     textBoxPath._container.HorizontalAlignment = change.GetNewValue<HorizontalAlignment>();
-        // }
-        // else if (change.Property == TextBoxPath.VerticalAlignmentProperty)
-        // {
-        //     textBoxPath._container.VerticalAlignment = change.GetNewValue<VerticalAlignment>();
-        // }
+        _messagesListView.ItemsSource = args.GetNewValue<ICollection<LogMessage>>();
     }
+    
+    private void _OnColorizeMessagesPropertyChanged(LogView sender, AvaloniaPropertyChangedEventArgs args)
+    {
+        
+    }
+    
+    #endregion
+    
+    #region ViewMethods
     
     private void _OnClearButtonClick(object sender, RoutedEventArgs e)
     {
@@ -72,14 +74,7 @@ public partial class LogView : UserControl
             return;
         }
 
-        if(this.StyledPropertyHasBindingMode(LogView.MessagesProperty, BindingMode.TwoWay))
-        {
-            Messages = (Activator.CreateInstance(Messages.GetType()) as ICollection<LogMessage>)!;
-        }
-        else
-        {
-            Messages.Clear();
-        }
+        Messages.Clear();
     }
     
     private void _OnSaveButtonClick(object sender, RoutedEventArgs e)
@@ -89,4 +84,16 @@ public partial class LogView : UserControl
             return;
         }
     }
+    
+    protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
+    {
+        base.OnDetachedFromVisualTree(e);
+
+        foreach (IDisposable observer in _disposableObservers)
+        {
+            observer.Dispose();
+        }
+    }
+    
+    #endregion
 }
