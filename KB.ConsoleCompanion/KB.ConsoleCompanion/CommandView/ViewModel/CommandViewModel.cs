@@ -1,4 +1,6 @@
 ﻿using System.Collections.ObjectModel;
+using Avalonia;
+using Avalonia.Threading;
 using KB.AvaloniaCore.Controls.Log;
 using KB.AvaloniaCore.ReactiveUI;
 
@@ -30,12 +32,19 @@ internal class CommandViewModel : BaseViewModel
                 Random random = new Random();
                 LogMessage.SeverityLevel randomSeverity = (LogMessage.SeverityLevel)random.Next(0, 4);
                 await Task.Delay(50);
-                LogMessages.Add(new LogMessage(
-                    "Test message",
-                    "Test extended message",
-                    randomSeverity
-                ));
+
+                Dispatcher.UIThread.Invoke(() =>
+                {
+                    LogMessages.Add(new LogMessage(
+                        "Test message",
+                        "Test extended message",
+                        randomSeverity
+                    ));
+                });
             }
-        });
+        })
+        .ContinueWith((t) => {
+            throw new Exception(t.Exception.Message);
+        }, TaskContinuationOptions.OnlyOnFaulted);
     }
 }

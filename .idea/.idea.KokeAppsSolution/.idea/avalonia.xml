@@ -5,7 +5,9 @@
       <map>
         <entry key="AvaloniaTestApp/App.axaml" value="AvaloniaTestApp/AvaloniaTestApp.csproj" />
         <entry key="AvaloniaTestApp/Views/MainWindow.axaml" value="AvaloniaTestApp/AvaloniaTestApp.csproj" />
+        <entry key="KB.AvaloniaCore/Controls/Log/View/ItemsControlLogView.axaml" value="KB.ConsoleCompanion/KB.ConsoleCompanionStandalone/KB.ConsoleCompanionStandalone.csproj" />
         <entry key="KB.AvaloniaCore/Controls/Log/View/LogView.axaml" value="KB.ConsoleCompanion/KB.ConsoleCompanionStandalone/KB.ConsoleCompanionStandalone.csproj" />
+        <entry key="KB.AvaloniaCore/Controls/Log/View/TextLogView.axaml" value="KB.ConsoleCompanion/KB.ConsoleCompanionStandalone/KB.ConsoleCompanionStandalone.csproj" />
         <entry key="KB.AvaloniaCore/Controls/TextBoxPath/View/TextBoxPath.axaml" value="KB.ConsoleCompanion/KB.ConsoleCompanionStandalone/KB.ConsoleCompanionStandalone.csproj" />
         <entry key="KB.AvaloniaCore/Themes/Dark/BorderStyle.axaml" value="KB.ConsoleCompanion/KB.ConsoleCompanionStandalone/KB.ConsoleCompanionStandalone.csproj" />
         <entry key="KB.AvaloniaCore/Themes/Dark/ButtonSpinnerStyle.axaml" value="KB.ConsoleCompanion/KB.ConsoleCompanionStandalone/KB.ConsoleCompanionStandalone.csproj" />

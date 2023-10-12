@@ -18,7 +18,6 @@
 
     <ItemGroup>
         <Folder Include="Injection\" />
-        <Folder Include="IO\" />
         <Folder Include="Miscellaneous\" />
     </ItemGroup>
 
