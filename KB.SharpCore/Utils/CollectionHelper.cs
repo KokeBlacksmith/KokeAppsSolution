@@ -7,7 +7,7 @@ public static class CollectionHelper
 {
     public static bool IsEmpty(ICollection? enumerable)
     {
-        return enumerable is { Count: 0 };
+        return enumerable == null || enumerable.Count == 0;
     }
     
     public static bool HasAny(ICollection? enumerable)

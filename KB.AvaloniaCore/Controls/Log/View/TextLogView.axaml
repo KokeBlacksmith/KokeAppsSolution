@@ -9,6 +9,7 @@
     
     <local:SmartTextBox x:FieldModifier="private" x:Name="_smartTextBox"
                         IsReadOnly="True" TextWrapping="Wrap"
-                        HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+                        HorizontalAlignment="Stretch" VerticalAlignment="Stretch" 
+                        UpdateCaretPositionAtEnd="True"/>
     
 </UserControl>

@@ -31,7 +31,7 @@ internal class CommandViewModel : BaseViewModel
             {
                 Random random = new Random();
                 LogMessage.SeverityLevel randomSeverity = (LogMessage.SeverityLevel)random.Next(0, 4);
-                await Task.Delay(50);
+                await Task.Delay(500);
 
                 Dispatcher.UIThread.Invoke(() =>
                 {

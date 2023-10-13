@@ -14,7 +14,6 @@ namespace KB.AvaloniaCore.Controls;
 
 public partial class LogView : UserControl
 {
-    private readonly DisposableList _disposableObservers = new DisposableList();
     private ILogView _currentLogView;
 
     public LogView()
@@ -27,12 +26,12 @@ public partial class LogView : UserControl
         AvaloniaXamlLoader.Load(this);
 
         // styled properties
-        _disposableObservers.Add(this.SubscribeToStyledPropertyChanged(LogView.MessagesProperty, _OnMessagesPropertyChanged));
-        _disposableObservers.Add(this.SubscribeToStyledPropertyChanged(LogView.ColorizeMessagesProperty, _OnColorizeMessagesPropertyChanged));
+        this.SubscribeToStyledPropertyChanged(LogView.MessagesProperty, _OnMessagesPropertyChanged);
+        this.SubscribeToStyledPropertyChanged(LogView.ColorizeMessagesProperty, _OnColorizeMessagesPropertyChanged);
 
         // xaml controls
-        // _messagesListView = this.FindControl<ItemsControl>(nameof(LogView._messagesListView));
-        _currentLogView = (ILogView)this.FindControl<TextLogView>(nameof(LogView._logTextBlock));
+        // _messagessListView = this.FindControl<ItemsControl>(nameof(LogView._messagesListView));
+        _currentLogView = this.FindControl<TextLogView>(nameof(LogView._logTextBlock))!;
     }
 
     #region StyledProperties
@@ -96,6 +95,7 @@ public partial class LogView : UserControl
         }
 
         Messages.Clear();
+        _currentLogView.Clear();
     }
 
     private void _OnSaveButtonClick(object sender, RoutedEventArgs e)
@@ -104,13 +104,6 @@ public partial class LogView : UserControl
         {
             return;
         }
-    }
-
-    protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
-    {
-        base.OnDetachedFromVisualTree(e);
-
-        _disposableObservers.Dispose();
     }
 
     #endregion
