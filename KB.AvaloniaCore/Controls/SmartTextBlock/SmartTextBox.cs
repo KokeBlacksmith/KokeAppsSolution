@@ -16,32 +16,45 @@ namespace KB.AvaloniaCore.Controls;
 
 public class SmartTextBox : TextBox
 {
+
+    #region Fields
+    
     // Parent TextBox has [TemplatePart("PART_ScrollViewer", typeof(ScrollViewer))]
     private ScrollViewer? _scrollViewer;
-
-    #region Gestures
-
     private readonly KeyGesture _goToEndGesture = new KeyGesture(Key.End, KeyModifiers.Control);
+    private readonly KeyGesture _confirmGesture = new KeyGesture(Key.Enter);
 
     #endregion
-    
-    // So this class is a TextBox with some extra functionality.
-    // Without this, the SmartTextBox would not be rendered.
-    protected override Type StyleKeyOverride
+
+    public SmartTextBox()
     {
-        get { return typeof(TextBox); }
+        
+    }
+    
+    #region StyledProperties
+
+    public readonly static StyledProperty<bool> UpdateCaretPositionAtEndProperty = AvaloniaProperty.Register<SmartTextBox, bool>(nameof(SmartTextBox.UpdateCaretPositionAtEnd));
+    public readonly static StyledProperty<bool> IsCaretAtEndProperty = AvaloniaProperty.Register<SmartTextBox, bool>(nameof(SmartTextBox.IsCaretAtEnd));
+
+    public bool UpdateCaretPositionAtEnd
+    {
+        get { return GetValue(SmartTextBox.UpdateCaretPositionAtEndProperty); }
+        set { SetValue(SmartTextBox.UpdateCaretPositionAtEndProperty, value); }
     }
 
-    #region PublicMembers
-    
-    public void Clear()
+    public bool IsCaretAtEnd
     {
-        Text = String.Empty;
+        get { return GetValue(SmartTextBox.IsCaretAtEndProperty); }
+        private set { SetValue(SmartTextBox.IsCaretAtEndProperty, value); }
     }
+
+    #endregion
+
+    #region PublicMembers
 
     public void AppendLine(string line)
     {
-        Text += Environment.NewLine + line;
+        Text += line + Environment.NewLine;
     }
 
     public void AppendLines(IEnumerable<string> lines)
@@ -51,52 +64,59 @@ public class SmartTextBox : TextBox
             AppendLine(line);
         }
     }
-    
+
     #endregion
-    
+
     #region PrivateMembers
-    
-    private void _ScrollToEnd()
-    {
-        _scrollViewer?.ScrollToEnd();
-        CaretIndex = Text?.Length ?? 0;
-    }
-    
-    #endregion
 
-    #region StyledProperties
-
-    public readonly static StyledProperty<bool> UpdateCaretPositionAtEndProperty = AvaloniaProperty.Register<SmartTextBox, bool>(nameof(SmartTextBox.UpdateCaretPositionAtEnd));
-
-    public bool UpdateCaretPositionAtEnd
-    {
-        get { return GetValue(SmartTextBox.UpdateCaretPositionAtEndProperty); }
-        set { SetValue(SmartTextBox.UpdateCaretPositionAtEndProperty, value); }
-    }
-    
     private void _OnTextPropertyChanged(AvaloniaPropertyChangedEventArgs args)
     {
         // True if the caret is at the end of the text or text was empty
-        bool wasCaretAtEnd = CaretIndex >= (args.GetOldValue<string>()?.Length ?? CaretIndex);
-        if (!wasCaretAtEnd || !UpdateCaretPositionAtEnd)
+        if (!IsCaretAtEnd || !UpdateCaretPositionAtEnd)
         {
             return;
         }
 
         _ScrollToEnd();
     }
-    
+
+    private void _ScrollToEnd()
+    {
+        _scrollViewer?.ScrollToEnd();
+        CaretIndex = Text?.Length ?? 0;
+        _UpdateIsCaretAtEnd();
+    }
+
+    private void _UpdateIsCaretAtEnd()
+    {
+        IsCaretAtEnd = CaretIndex >= (Text?.Length ?? 0);
+    }
+
     #endregion
+
+    #region InheritedMembers
+
+    // So this class is a TextBox with some extra functionality.
+    // Without this, the SmartTextBox would not be rendered.
+    protected override Type StyleKeyOverride
+    {
+        get { return typeof(TextBox); }
+    }
     
     protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)
     {
         base.OnPropertyChanged(change);
 
-        if (change.Property == SmartTextBox.TextProperty)
+        if (change.Property == TextBox.TextProperty)
         {
             _OnTextPropertyChanged(change);
         }
+        else if (change.Property == TextBox.CaretIndexProperty)
+        {
+            _UpdateIsCaretAtEnd();
+        }
     }
+
 
     protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
     {
@@ -107,10 +127,12 @@ public class SmartTextBox : TextBox
     protected override void OnKeyDown(KeyEventArgs e)
     {
         base.OnKeyDown(e);
-        
+
         if (_goToEndGesture.Matches(e))
         {
             _ScrollToEnd();
         }
     }
+    
+    #endregion
 }

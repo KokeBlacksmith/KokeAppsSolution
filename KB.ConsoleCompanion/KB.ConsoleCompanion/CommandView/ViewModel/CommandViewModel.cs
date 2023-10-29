@@ -1,50 +1,48 @@
 ﻿using System.Collections.ObjectModel;
+using System.Collections.Specialized;
+using System.Windows.Input;
 using Avalonia;
+using Avalonia.Input;
 using Avalonia.Threading;
 using KB.AvaloniaCore.Controls.Log;
 using KB.AvaloniaCore.ReactiveUI;
+using KB.ConsoleCompanion.DataModels;
+using KB.SharpCore.Utils;
+using ReactiveUI;
 
 namespace KB.ConsoleCompanion.CommandView;
 
 internal class CommandViewModel : BaseViewModel
 {
-    private ObservableCollection<LogMessage> _logMessages;
-
+    private ObservableCollection<ConsoleCommand> _commandsCollection;
+    private ICommand _addCommandLineCommand;
+    
     public CommandViewModel()
     {
-        _logMessages = new ObservableCollection<LogMessage>();
-        TestMessagesPerformance();
+        _commandsCollection = new ObservableCollection<ConsoleCommand>();
+        _addCommandLineCommand = ReactiveCommand.Create<ConsoleCommand>(_OnUserCommandExecuted);
     }
 
-    public ObservableCollection<LogMessage> LogMessages
+    public ObservableCollection<ConsoleCommand> CommandsCollection
     {
-        get { return _logMessages; }
-        set { m_SetProperty(ref _logMessages, value); }
+        get { return _commandsCollection; }
+        set { m_SetProperty(ref _commandsCollection, value); }
     }
 
-
-    private void TestMessagesPerformance()
+    public ICommand AddCommandLineCommand
     {
-        Task.Run(async () =>
+        get { return _addCommandLineCommand; }
+    }
+
+    private void _OnUserCommandExecuted(ConsoleCommand parameter)
+    {
+        if (parameter == null)
         {
-            while (true)
-            {
-                Random random = new Random();
-                LogMessage.SeverityLevel randomSeverity = (LogMessage.SeverityLevel)random.Next(0, 4);
-                await Task.Delay(500);
+            throw new ArgumentNullException(nameof(parameter));
+        }
 
-                Dispatcher.UIThread.Invoke(() =>
-                {
-                    LogMessages.Add(new LogMessage(
-                        "Test message",
-                        "Test extended message",
-                        randomSeverity
-                    ));
-                });
-            }
-        })
-        .ContinueWith((t) => {
-            throw new Exception(t.Exception.Message);
-        }, TaskContinuationOptions.OnlyOnFaulted);
+        //TODO: Check if it is a valid command
+
+        CommandsCollection.Add(parameter);
     }
 }

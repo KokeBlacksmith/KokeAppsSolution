@@ -3,14 +3,15 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:coreControls="clr-namespace:KB.AvaloniaCore.Controls;assembly=KB.AvaloniaCore"
+			 xmlns:coreConverters="clr-namespace:KB.AvaloniaCore.Converters;assembly=KB.AvaloniaCore"
              xmlns:vm="clr-namespace:KB.ConsoleCompanion.CommandView;assembly=KB.ConsoleCompanion"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="KB.ConsoleCompanion.CommandView.CommandView">
     
     <UserControl.DataContext>
-        <vm:CommandViewModel/>
+        <vm:CommandViewModel />
     </UserControl.DataContext>
-    
+	
     <Grid RowDefinitions="30,*,30">
 
         <!-- Toolbar -->
@@ -19,10 +20,30 @@
         </StackPanel>
         
         <!-- Content -->
-        <Grid Grid.Row="1">
-            <coreControls:LogView Messages="{Binding LogMessages}" />
-        </Grid>
-        
-        <TextBox Grid.Row="2"/>
+		<ListBox Grid.Row="1" x:FieldModifier="private" x:Name="_listBox"
+				 ItemsSource="{Binding CommandsCollection}"
+		    ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+			<ListBox.ItemTemplate>
+				<DataTemplate>
+					<!--Row-->
+					<Border>
+						<StackPanel Orientation="Horizontal">
+							<TextBlock Text="{Binding Command}"/>
+						</StackPanel>
+					</Border>
+				</DataTemplate>
+			</ListBox.ItemTemplate>
+		</ListBox>
+
+		<!--Textbox to write commands and a button to send them. Textbox should occupy nearly whole view horizontally-->
+		<Grid Grid.Row="2" ColumnDefinitions="*, 80">
+            <TextBox Grid.Column="0" x:FieldModifier="private" x:Name="_commandInputTextBox"
+					 HorizontalAlignment="Stretch"/>
+			<Button Grid.Column="1" x:FieldModifier="private" x:Name="_sendCommandButton"
+					IsEnabled="{Binding #_commandInputTextBox.Text, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
+					Content="Send" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
+					Click="_OnSendCommandClick"/>
+			
+		</Grid>
     </Grid>
 </UserControl>
