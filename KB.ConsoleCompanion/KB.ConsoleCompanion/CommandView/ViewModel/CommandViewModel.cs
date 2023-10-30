@@ -15,12 +15,12 @@ namespace KB.ConsoleCompanion.CommandView;
 internal class CommandViewModel : BaseViewModel
 {
     private ObservableCollection<ConsoleCommand> _commandsCollection;
-    private ICommand _addCommandLineCommand;
+    private GenericCommand<string?> _addCommandLineCommand;
     
     public CommandViewModel()
     {
         _commandsCollection = new ObservableCollection<ConsoleCommand>();
-        _addCommandLineCommand = ReactiveCommand.Create<ConsoleCommand>(_OnUserCommandExecuted);
+        _addCommandLineCommand = new GenericCommand<string?>(_OnUserCommandExecuted, null);
     }
 
     public ObservableCollection<ConsoleCommand> CommandsCollection
@@ -29,20 +29,20 @@ internal class CommandViewModel : BaseViewModel
         set { m_SetProperty(ref _commandsCollection, value); }
     }
 
-    public ICommand AddCommandLineCommand
+    public GenericCommand<string?> AddCommandLineCommand
     {
         get { return _addCommandLineCommand; }
     }
 
-    private void _OnUserCommandExecuted(ConsoleCommand parameter)
+    private void _OnUserCommandExecuted(string? parameter)
     {
-        if (parameter == null)
+        if (String.IsNullOrEmpty(parameter))
         {
-            throw new ArgumentNullException(nameof(parameter));
+            return;
         }
 
         //TODO: Check if it is a valid command
-
-        CommandsCollection.Add(parameter);
+        ConsoleCommand newCommand = new ConsoleCommand(parameter!, ConsoleCommand.ECommandType.UserInput);
+        CommandsCollection.Add(newCommand);
     }
 }

@@ -7,6 +7,7 @@ using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using KB.AvaloniaCore.Controls;
 using KB.AvaloniaCore.Controls.Log;
+using KB.AvaloniaCore.ReactiveUI;
 using KB.ConsoleCompanion.DataModels;
 using KB.SharpCore.Utils;
 
@@ -20,21 +21,25 @@ public partial class CommandView : UserControl
 {
     private readonly CommandViewModel _viewModel;
 
-    private readonly ICommand _addCommandLineCommand;
-
     public CommandView()
     {
         InitializeComponent();
-        _viewModel = DataContext as CommandViewModel ?? throw new NullReferenceException(nameof(_viewModel));
-        _addCommandLineCommand = _viewModel.AddCommandLineCommand;
     }
 
     private void _OnSendCommandClick(object sender, RoutedEventArgs args)
     {
-        ConsoleCommand newCommand = new ConsoleCommand(_commandInputTextBox.Text!, ConsoleCommand.ECommandType.UserInput);
-        _addCommandLineCommand?.Execute(newCommand);
-        _commandInputTextBox.Text = String.Empty;
+        _SendUserCommand();
+    }
 
+    private void _OnCommandInputTextBoxSendsCommand(object sender, RoutedEventArgs args)
+    {
+        _SendUserCommand();
+    }
+
+    private void _SendUserCommand()
+    {
+        _commandInputTextBox.ConfirmOnReturnCommand?.Execute(_commandInputTextBox.Text);
+        _commandInputTextBox.Text = String.Empty;
         _commandInputTextBox.Focus();
     }
 }

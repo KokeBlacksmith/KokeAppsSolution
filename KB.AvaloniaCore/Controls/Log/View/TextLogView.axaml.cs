@@ -15,7 +15,7 @@ internal partial class TextLogView : UserControl, ILogView
     private void InitializeComponent()
     {
         AvaloniaXamlLoader.Load(this);
-        _smartTextBox = this.FindControl<SmartTextBox>(nameof(TextLogView._smartTextBox));
+        _smartTextBox = this.FindControl<EnchancedTextBox>(nameof(TextLogView._smartTextBox));
     }
 
     public void AddMessage(LogMessage message)

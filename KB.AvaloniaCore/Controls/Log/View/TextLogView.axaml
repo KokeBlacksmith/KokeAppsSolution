@@ -7,7 +7,7 @@
              x:Class="KB.AvaloniaCore.Controls.TextLogView">
     
     
-    <local:SmartTextBox x:FieldModifier="private" x:Name="_smartTextBox"
+    <local:EnchancedTextBox x:FieldModifier="private" x:Name="_smartTextBox"
                         IsReadOnly="True" TextWrapping="Wrap"
                         HorizontalAlignment="Stretch" VerticalAlignment="Stretch" 
                         UpdateCaretPositionAtEnd="True"/>

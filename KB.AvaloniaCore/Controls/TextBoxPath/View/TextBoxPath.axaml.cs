@@ -50,12 +50,12 @@ public partial class TextBoxPath : UserControl
         _container = this.FindControl<Grid>(nameof(TextBoxPath._container));
         _tbPath = this.FindControl<TextBox>(nameof(TextBoxPath._tbPath));
         _btSearchPath = this.FindControl<Button>(nameof(TextBoxPath._btSearchPath));
-        _btSearchPath.Click += _OnSearchPathClick;
+        _btSearchPath!.Click += _OnSearchPathClick;
     }
 
     private async void _OnSearchPathClick(object sender, RoutedEventArgs e)
     {
-        Window parentWindow = this.FindAncestorOfType<Window>();
+        Window parentWindow = this.FindAncestorOfType<Window>()!;
         string selectedDirectory = null;
 
         if (PathType == EPathType.Directory)
