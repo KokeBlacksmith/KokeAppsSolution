@@ -9,7 +9,7 @@ using System.Text;
 
 namespace ConsoleCompanionAPI.Protocols;
 
-internal class TCPServerProtocol : IServerProtocolAPI
+internal class TCPServerProtocol : BaseTCPProtocol, IServerProtocolAPI
 {
     private bool _isDisposed;
     public event Func<ConsoleCommand, ConsoleCommand>? OnCommandReceived;
@@ -85,19 +85,12 @@ internal class TCPServerProtocol : IServerProtocolAPI
         }
     }
 
-    private void _HandleClient(TcpClient client)
+    private async void _HandleClient(TcpClient client)
     {
         try
         {
-            NetworkStream stream = client.GetStream();
-            byte[] buffer = new byte[1024];
-            int bytesRead = stream.Read(buffer, 0, buffer.Length);
-            string clientMessage = Encoding.UTF8.GetString(buffer, 0, bytesRead);
-            Result<ConsoleCommand> clientCommandResult = XmlSerializableHelper.LoadFromXMLString<ConsoleCommand>(clientMessage);
-            if (clientCommandResult.IsFailure)
-            {
-                throw new InvalidOperationException(clientCommandResult.MessagesAsString);
-            }
+            await using NetworkStream stream = client.GetStream();
+            ConsoleCommand clientCommand = m_ReceiveResponse(stream);
 
             // Process message
             ConsoleCommand responseToClient;
@@ -107,18 +100,11 @@ internal class TCPServerProtocol : IServerProtocolAPI
             }
             else
             {
-                responseToClient = OnCommandReceived!.Invoke(clientCommandResult.Value!);
+                responseToClient = OnCommandReceived!.Invoke(clientCommand);
             }
 
             // Respond to client
-            Result<string> responseMessageResult = XmlSerializableHelper.SaveToXMLString(responseToClient);
-            if (responseMessageResult.IsFailure)
-            {
-                throw new InvalidOperationException(responseMessageResult.MessagesAsString);
-            }
-
-            byte[] responseData = Encoding.UTF8.GetBytes(responseMessageResult.Value!);
-            stream.Write(responseData, 0, responseData.Length);
+            m_SendCommand(stream, responseToClient);
         }
         finally
         {
