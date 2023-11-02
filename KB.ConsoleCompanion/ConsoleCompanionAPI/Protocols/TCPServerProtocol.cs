@@ -26,15 +26,7 @@ internal class TCPServerProtocol : BaseTCPProtocol, IServerProtocolAPI
 
     public void Start(string ip, string port)
     {
-        if (!RegexHelper.Network.IsIPAddress(ip))
-        {
-            throw new ArgumentException("IP address is not valid", nameof(ip));
-        }
-
-        if (!RegexHelper.Network.IsPort(port))
-        {
-            throw new ArgumentException("Port is not valid", nameof(port));
-        }
+        m_AssertConnectionEndPoint(ip, port);
 
         IPEndPoint endPoint = new IPEndPoint(IPAddress.Parse(ip), Int32.Parse(port));
         _listener = new TcpListener(endPoint);

@@ -14,15 +14,7 @@ internal class TCPClientProtocol : BaseTCPProtocol, IClientProtocolAPI
 
     public TCPClientProtocol(string ip, string port)
     {
-        if (!RegexHelper.Network.IsIPAddress(ip))
-        {
-            throw new ArgumentException("IP address is not valid", nameof(ip));
-        }
-
-        if (!RegexHelper.Network.IsPort(port))
-        {
-            throw new ArgumentException("Port is not valid", nameof(port));
-        }
+        m_AssertConnectionEndPoint(ip, port);
 
         _endPoint = new IPEndPoint(IPAddress.Parse(ip), Int32.Parse(port));
     }

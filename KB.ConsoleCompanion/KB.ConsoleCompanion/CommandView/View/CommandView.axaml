@@ -5,6 +5,8 @@
              xmlns:coreControls="clr-namespace:KB.AvaloniaCore.Controls;assembly=KB.AvaloniaCore"
 			 xmlns:coreConverters="clr-namespace:KB.AvaloniaCore.Converters;assembly=KB.AvaloniaCore"
              xmlns:vm="clr-namespace:KB.ConsoleCompanion.CommandView;assembly=KB.ConsoleCompanion"
+			 xmlns:companionAPI="clr-namespace:KB.ConsoleCompanionAPI.Data;assembly=KB.ConsoleCompanionAPI"
+			 xmlns:local="clr-namespace:KB.ConsoleCompanion.CommandView"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="KB.ConsoleCompanion.CommandView.CommandView">
     
@@ -21,16 +23,11 @@
         
         <!-- Content -->
 		<ListBox Grid.Row="1" x:FieldModifier="private" x:Name="_listBox"
-				 ItemsSource="{Binding CommandsCollection}"
-		    ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+				 ItemsSource="{Binding CommandsCollection}" SelectionMode="Single"
+				 ScrollViewer.HorizontalScrollBarVisibility="Disabled">
 			<ListBox.ItemTemplate>
 				<DataTemplate>
-					<!--Row-->
-					<Border>
-						<StackPanel Orientation="Horizontal">
-							<TextBlock Text="{Binding Command}"/>
-						</StackPanel>
-					</Border>
+					<local:CommandItemView ConsoleCommand="{Binding }"/>
 				</DataTemplate>
 			</ListBox.ItemTemplate>
 		</ListBox>

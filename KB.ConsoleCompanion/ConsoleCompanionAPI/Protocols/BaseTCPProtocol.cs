@@ -1,16 +1,18 @@
 ﻿using ConsoleCompanionAPI.Data;
 using KB.SharpCore.Extensions;
 using KB.SharpCore.Serialization;
+using KB.SharpCore.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Sockets;
+using System.Security;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace ConsoleCompanionAPI.Protocols
 {
-    internal class BaseTCPProtocol
+    internal abstract class BaseTCPProtocol
     {
         protected void m_SendCommand(NetworkStream stream, ConsoleCommand command)
         {
@@ -43,6 +45,19 @@ namespace ConsoleCompanionAPI.Protocols
             }
 
             return responseCommandResult.Value!;
+        }
+
+        protected void m_AssertConnectionEndPoint(string ip, string port)
+        {
+            if (!RegexHelper.Network.IsIPAddress(ip))
+            {
+                throw new ArgumentException("IP address is not valid", nameof(ip));
+            }
+
+            if (!RegexHelper.Network.IsPort(port))
+            {
+                throw new ArgumentException("Port is not valid", nameof(port));
+            }
         }
     }
 }
