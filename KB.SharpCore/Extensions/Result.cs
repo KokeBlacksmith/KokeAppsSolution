@@ -1,4 +1,6 @@
-﻿namespace KB.SharpCore.Extensions;
+﻿using KB.SharpCore.Utils;
+
+namespace KB.SharpCore.Extensions;
 
 public readonly struct Result
 {
@@ -22,6 +24,14 @@ public readonly struct Result
     }
 
     public string[]? Messages { get; }
+
+    public string? MessagesAsString
+    {
+        get
+        {
+            return CollectionHelper.StringArrayToNewLinesString(Messages);
+        }
+    }
 
     public static Result CreateFailure(params string[] errors)
     {
@@ -63,9 +73,17 @@ public readonly struct Result<T>
         get { return !IsSuccess; }
     }
 
-    public T Value { get; }
+    public T? Value { get; }
 
-    public string[] Messages { get; }
+    public string[]? Messages { get; }
+
+    public string? MessagesAsString
+    {
+        get 
+        { 
+            return CollectionHelper.StringArrayToNewLinesString(Messages);
+        }
+    }
 
     public Result ToResult()
     {

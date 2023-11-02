@@ -1,78 +1,71 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Input;
+﻿using System.Windows.Input;
 
-namespace KB.AvaloniaCore.ReactiveUI
+namespace KB.AvaloniaCore.ReactiveUI;
+public sealed class GenericCommand<T> : ICommand
 {
-    public sealed class GenericCommand<T> : ICommand
+    private readonly Action<T> _execute;
+    private readonly Func<T, bool>? _canExecute;
+
+    public GenericCommand(Action<T> execute, Func<T, bool>? canExecute)
     {
-        private readonly Action<T> _execute;
-        private readonly Func<T, bool>? _canExecute;
+        _execute = execute ?? throw new ArgumentNullException(nameof(execute));
+        _canExecute = canExecute;
+    }
 
-        public GenericCommand(Action<T> execute, Func<T, bool>? canExecute)
+    public event EventHandler? CanExecuteChanged;
+
+    public bool CanExecute(T parameter)
+    {
+        if(_canExecute != null)
         {
-            _execute = execute ?? throw new ArgumentNullException(nameof(execute));
-            _canExecute = canExecute;
+            return _canExecute(parameter);
         }
-
-        public event EventHandler? CanExecuteChanged;
-
-        public bool CanExecute(T parameter)
+        else
         {
-            if(_canExecute != null)
+            return true;
+        }
+    }
+
+    public void Execute(T parameter)
+    {
+        _execute(parameter);
+    }
+
+    bool ICommand.CanExecute(object? parameter)
+    {
+        if(typeof(T).IsAssignableFrom(parameter?.GetType() ?? null))
+        {
+            if(parameter == null)
             {
-                return _canExecute(parameter);
+                return CanExecute(default(T));
             }
             else
             {
-                return true;
+                return CanExecute(((T)parameter)!);
             }
         }
-
-        public void Execute(T parameter)
+        else
         {
-            _execute(parameter);
+            throw new ArgumentException($"Parameter must be of type {typeof(T)}");
         }
+    }
 
-        bool ICommand.CanExecute(object? parameter)
+    void ICommand.Execute(object? parameter)
+    {
+        if (typeof(T).IsAssignableFrom(parameter?.GetType() ?? null))
         {
-            if(typeof(T).IsAssignableFrom(parameter?.GetType() ?? null))
+            if (parameter == null)
             {
-                if(parameter == null)
-                {
-                    return CanExecute(default(T));
-                }
-                else
-                {
-                    return CanExecute(((T)parameter)!);
-                }
+                Execute(default(T));
             }
             else
             {
-                throw new ArgumentException($"Parameter must be of type {typeof(T)}");
+                Execute(((T)parameter)!);
             }
         }
-
-        void ICommand.Execute(object? parameter)
+        else
         {
-            if (typeof(T).IsAssignableFrom(parameter?.GetType() ?? null))
-            {
-                if (parameter == null)
-                {
-                    Execute(default(T));
-                }
-                else
-                {
-                    Execute(((T)parameter)!);
-                }
-            }
-            else
-            {
-                throw new ArgumentException($"Parameter must be of type {typeof(T)}");
-            }
+            throw new ArgumentException($"Parameter must be of type {typeof(T)}");
         }
     }
 }

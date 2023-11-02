@@ -1,4 +1,5 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using System.Data.SqlTypes;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Xml.Serialization;
 using KB.SharpCore.Extensions;
@@ -53,6 +54,44 @@ public static class XmlSerializableHelper
         }
 
         return deserializedResult.ToResult();
+    }
+
+    public static Result<string> SaveToXMLString<T>(T dataObject)
+    {
+        try
+        {
+            XmlSerializer serializer = new XmlSerializer(typeof(T));
+            // Create a StringWriter to hold the XML data
+            StringWriter writer = new StringWriter();
+            // Serialize the object to XML
+            serializer.Serialize(writer, dataObject);
+
+            return Result<string>.CreateSuccess(writer.ToString());
+        }
+        catch(Exception e)
+        {
+            return Result<string>.CreateFailure(e);
+        }
+    }
+
+    public static Result<T> LoadFromXMLString<T>(string xml)
+    {
+        try
+        {
+            // Create an XmlSerializer for your object type
+            XmlSerializer serializer = new XmlSerializer(typeof(T));
+
+            // Create a StringReader to read the XML data
+            using (StringReader reader = new StringReader(xml))
+            {
+                // Deserialize the XML to an object
+                return Result<T>.CreateSuccess((T)serializer.Deserialize(reader)!);
+            }
+        }
+        catch(Exception e)
+        {
+            return Result<T>.CreateFailure(e);
+        }
     }
 
     private static void _Load<T>(T toFillObject, T dataObject)

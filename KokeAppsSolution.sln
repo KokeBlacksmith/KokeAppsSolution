@@ -1,14 +1,19 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KB.AvaloniaCore", "KB.AvaloniaCore\KB.AvaloniaCore.csproj", "{1E8F9C08-E7BE-4AC0-AE59-86B2A3E8B3F8}"
+# Visual Studio Version 17
+VisualStudioVersion = 17.7.34031.279
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KB.AvaloniaCore", "KB.AvaloniaCore\KB.AvaloniaCore.csproj", "{1E8F9C08-E7BE-4AC0-AE59-86B2A3E8B3F8}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "KB.ConsoleCompanion", "KB.ConsoleCompanion", "{10950257-0AF1-4B42-991C-863A4CFE2247}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KB.SharpCore", "KB.SharpCore\KB.SharpCore.csproj", "{E3E44999-4ABA-4CF2-8CB1-DEDD907C072B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KB.SharpCore", "KB.SharpCore\KB.SharpCore.csproj", "{E3E44999-4ABA-4CF2-8CB1-DEDD907C072B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KB.ConsoleCompanionStandalone", "KB.ConsoleCompanion\KB.ConsoleCompanionStandalone\KB.ConsoleCompanionStandalone.csproj", "{E4F57D06-57C6-40A8-B421-EC58B3E63553}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KB.ConsoleCompanionStandalone", "KB.ConsoleCompanion\KB.ConsoleCompanionStandalone\KB.ConsoleCompanionStandalone.csproj", "{E4F57D06-57C6-40A8-B421-EC58B3E63553}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KB.ConsoleCompanion", "KB.ConsoleCompanion\KB.ConsoleCompanion\KB.ConsoleCompanion.csproj", "{ADDBA591-B5CA-4718-A2AA-D6BE19EDF59F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KB.ConsoleCompanion", "KB.ConsoleCompanion\KB.ConsoleCompanion\KB.ConsoleCompanion.csproj", "{ADDBA591-B5CA-4718-A2AA-D6BE19EDF59F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleCompanionAPI", "KB.ConsoleCompanion\ConsoleCompanionAPI\ConsoleCompanionAPI.csproj", "{9E3C21BE-3C28-461C-A2EA-09F7F3B0BBA0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -32,9 +37,20 @@ Global
 		{ADDBA591-B5CA-4718-A2AA-D6BE19EDF59F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{ADDBA591-B5CA-4718-A2AA-D6BE19EDF59F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{ADDBA591-B5CA-4718-A2AA-D6BE19EDF59F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9E3C21BE-3C28-461C-A2EA-09F7F3B0BBA0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9E3C21BE-3C28-461C-A2EA-09F7F3B0BBA0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9E3C21BE-3C28-461C-A2EA-09F7F3B0BBA0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9E3C21BE-3C28-461C-A2EA-09F7F3B0BBA0}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{E4F57D06-57C6-40A8-B421-EC58B3E63553} = {10950257-0AF1-4B42-991C-863A4CFE2247}
 		{ADDBA591-B5CA-4718-A2AA-D6BE19EDF59F} = {10950257-0AF1-4B42-991C-863A4CFE2247}
+		{9E3C21BE-3C28-461C-A2EA-09F7F3B0BBA0} = {10950257-0AF1-4B42-991C-863A4CFE2247}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {380B93C6-7EE0-469B-A661-F9864CF1A0FA}
 	EndGlobalSection
 EndGlobal

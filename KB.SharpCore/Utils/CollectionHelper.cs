@@ -14,4 +14,16 @@ public static class CollectionHelper
     {
         return !CollectionHelper.IsEmpty(enumerable);
     }
+
+    public static string? StringArrayToNewLinesString(string[]? array)
+    {
+        if(CollectionHelper.HasAny(array))
+        {
+            return String.Join(Environment.NewLine, array!);
+        }
+        else
+        {
+            return null;
+        }
+    }
 }

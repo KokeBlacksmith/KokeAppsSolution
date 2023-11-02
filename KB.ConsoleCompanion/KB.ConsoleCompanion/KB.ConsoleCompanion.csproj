@@ -18,9 +18,13 @@
     <ItemGroup>
       <ProjectReference Include="..\..\KB.AvaloniaCore\KB.AvaloniaCore.csproj" />
       <ProjectReference Include="..\..\KB.SharpCore\KB.SharpCore.csproj" />
+      <ProjectReference Include="..\ConsoleCompanionAPI\ConsoleCompanionAPI.csproj" />
     </ItemGroup>
 
     <ItemGroup>
+      <Folder Include="DataModels\" />
+      <Folder Include="Models\" />
+      <Folder Include="Tests\" />
       <Folder Include="Resources\" />
     </ItemGroup>
 
