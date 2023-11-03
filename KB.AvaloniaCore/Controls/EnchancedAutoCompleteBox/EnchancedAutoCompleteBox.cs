@@ -4,11 +4,6 @@ using Avalonia.Controls.Primitives;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using KB.AvaloniaCore.ReactiveUI;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace KB.AvaloniaCore.Controls;
 
@@ -46,9 +41,21 @@ public class EnchancedAutoCompleteBox : AutoCompleteBox
         set { SetValue(EnchancedAutoCompleteBox.SilenceTabKeyProperty, value); }
     }
 
-
-
     #endregion
+
+    public void SelectAllText()
+    {
+        _textBox!.SelectAll();
+    }
+
+    public void UnselectAllText()
+    {
+        if(_textBox!.Text != null)
+        {
+            _textBox.SelectionStart = _textBox.Text.Length;
+            _textBox.SelectionEnd = _textBox.Text.Length;
+        }
+    }
 
     #region InheritedMembers
 

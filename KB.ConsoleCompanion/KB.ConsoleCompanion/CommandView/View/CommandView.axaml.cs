@@ -49,4 +49,11 @@ public partial class CommandView : UserControl
         _commandInputTextBox.Text = String.Empty;
         _commandInputTextBox.Focus();
     }
+    private void _OnAvailableListBoxItemDoubleTapped(object sender, RoutedEventArgs args)
+    {
+        string? command = _availableCommandsListBox.SelectedItem as string;
+        _commandInputTextBox.Text = command ?? String.Empty;
+        _commandInputTextBox.Focus();
+        _commandInputTextBox.UnselectAllText();
+    }
 }

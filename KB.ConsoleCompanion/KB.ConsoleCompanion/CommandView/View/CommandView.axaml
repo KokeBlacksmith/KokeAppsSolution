@@ -6,11 +6,18 @@
 			 xmlns:coreConverters="clr-namespace:KB.AvaloniaCore.Converters;assembly=KB.AvaloniaCore"
              xmlns:vm="clr-namespace:KB.ConsoleCompanion.CommandView;assembly=KB.ConsoleCompanion"
 			 xmlns:companionAPI="clr-namespace:KB.ConsoleCompanionAPI.Data;assembly=KB.ConsoleCompanionAPI"
+			 
+			 xmlns:i="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity"
+			 xmlns:kbIav="clr-namespace:KB.AvaloniaCore.Behaviors.Events;assembly=KB.AvaloniaCore"
+			 xmlns:iav="clr-namespace:Avalonia.Xaml.Interactions.Events;assembly=Avalonia.Xaml.Interactions.Events"
+			 
 			 xmlns:local="clr-namespace:KB.ConsoleCompanion.CommandView"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="KB.ConsoleCompanion.CommandView.CommandView">
-    
-    <UserControl.DataContext>
+
+	<!--xmlns:i="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity"
+	xmlns:iav="clr-namespace:Avalonia.Xaml.Interactions.Events;assembly=Avalonia.Xaml.Behaviors"-->
+	<UserControl.DataContext>
         <vm:CommandViewModel />
     </UserControl.DataContext>
 	
@@ -70,8 +77,25 @@
 			</Grid>
 			<GridSplitter Grid.Row="1"/>
 			<!-- Available Commands-->
-			<Grid Grid.Row="2" Background="Blue">
-
+			<Grid Grid.Row="2" >
+				<Grid.RowDefinitions>
+					<RowDefinition Height="30" />
+					<RowDefinition Height="*" />
+				</Grid.RowDefinitions>
+				
+				<TextBlock Grid.Row="0" Text="Available Commands" />
+				<ListBox Grid.Row="1" x:FieldModifier="private" x:Name="_availableCommandsListBox" ItemsSource="{Binding AvailableCommands}">
+					<ListBox.ItemTemplate>
+						<DataTemplate>
+							<Border Background="Transparent">
+								<TextBlock Text="{Binding }" />
+								<i:Interaction.Behaviors>
+									<kbIav:DoubleTappedEventSubscriber DoubleTapped="_OnAvailableListBoxItemDoubleTapped"/>
+								</i:Interaction.Behaviors>
+							</Border>
+						</DataTemplate>
+					</ListBox.ItemTemplate>
+				</ListBox>
 			</Grid>
 			<GridSplitter Grid.Row="3"/>
 			<!-- Macros -->
