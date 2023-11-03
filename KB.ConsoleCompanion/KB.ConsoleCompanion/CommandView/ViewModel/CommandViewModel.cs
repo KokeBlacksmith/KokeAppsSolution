@@ -12,13 +12,14 @@ internal sealed class CommandViewModel : BaseViewModel
     private IClientProtocolAPI? _client;
     private ObservableCollection<ConsoleCommand> _commandsCollection;
     private GenericCommand<string?> _addCommandLineCommand;
-    private string[] _availableCommands;
+    private EmptyCommand _clearCommandCollectionCommand;
+    private string[]? _availableCommands;
  
     public CommandViewModel()
     {
         _commandsCollection = new ObservableCollection<ConsoleCommand>();
         _addCommandLineCommand = new GenericCommand<string?>(_OnUserCommandExecuted, null);
-
+        _clearCommandCollectionCommand = new EmptyCommand(_OnClearCommandCollectionExecuted, null);
 
         if (!Design.IsDesignMode)
         {
@@ -38,7 +39,12 @@ internal sealed class CommandViewModel : BaseViewModel
         get { return _addCommandLineCommand; }
     }
 
-    public string[] AvailableCommands
+    public EmptyCommand ClearCommandCollectionCommand
+    {
+        get { return _clearCommandCollectionCommand; }
+    }
+
+    public string[]? AvailableCommands
     {
         get { return _availableCommands; }
         set { m_SetProperty(ref _availableCommands, value); }
@@ -78,6 +84,11 @@ internal sealed class CommandViewModel : BaseViewModel
         }
 
         CommandsCollection.Add(response);
+    }
+
+    private void _OnClearCommandCollectionExecuted()
+    {
+        CommandsCollection.Clear();
     }
 
     private async void _RequestAvailableCommands()

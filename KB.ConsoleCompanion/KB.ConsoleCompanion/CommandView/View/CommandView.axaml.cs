@@ -1,9 +1,6 @@
 ﻿using Avalonia.Controls;
-using Avalonia.Controls.Templates;
 using Avalonia.Interactivity;
-using Avalonia.Metadata;
 using ConsoleCompanionAPI.Data;
-using DynamicData.Binding;
 using System.Collections.Specialized;
 
 namespace KB.ConsoleCompanion.CommandView;

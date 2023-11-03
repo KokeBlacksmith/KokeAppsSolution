@@ -31,9 +31,38 @@
 		
 		<Grid Grid.Column="0" RowDefinitions="30,*,30">
 			<!-- Toolbar -->
-			<StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Stretch" Background="Aqua">
-				<TextBlock Text="TOOL_BAR" HorizontalAlignment="Stretch" VerticalAlignment="Center"/>
-			</StackPanel>
+			<Grid Grid.Row="0" ColumnDefinitions="*, 40" Background="Gray">
+				<StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch">
+					<Menu>
+						<MenuItem Header="File">
+							
+							
+							<MenuItem Header="Test1">
+								
+							</MenuItem>
+
+							<MenuItem Header="Test2">
+
+							</MenuItem>
+
+							<MenuItem Header="Test3">
+
+							</MenuItem>
+
+							<MenuItem Header="Test4">
+
+							</MenuItem>
+						</MenuItem>
+
+						<MenuItem Header="Clear" Command="{Binding ClearCommandCollectionCommand}">
+							
+						</MenuItem>
+					</Menu>
+				</StackPanel>
+				
+				<Button Grid.Column="1" HorizontalAlignment="Right"
+						Content="Settings"/>
+			</Grid>
         
 			<!-- Content -->
 			<ListBox Grid.Row="1" x:FieldModifier="private" x:Name="_listBox"
