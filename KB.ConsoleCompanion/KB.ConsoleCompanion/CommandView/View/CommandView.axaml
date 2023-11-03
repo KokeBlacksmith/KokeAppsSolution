@@ -41,9 +41,11 @@
 
 			<!--Textbox to write commands and a button to send them. Textbox should occupy nearly whole view horizontally-->
 			<Grid Grid.Row="2" ColumnDefinitions="*, 80">
-				<coreControls:EnchancedTextBox Grid.Column="0" x:FieldModifier="private" x:Name="_commandInputTextBox"
+				<coreControls:EnchancedAutoCompleteBox Grid.Column="0" x:FieldModifier="private" x:Name="_commandInputTextBox"
 						 HorizontalAlignment="Stretch"
-						 ConfirmOnReturn="True" ConfirmOnReturnCommand="{Binding AddCommandLineCommand}" ConfirmReturn="_OnCommandInputTextBoxSendsCommand" />
+						 ConfirmOnReturn="True" ConfirmOnReturnCommand="{Binding AddCommandLineCommand}" ConfirmReturn="_OnCommandInputTextBoxSendsCommand"
+						 ItemsSource="{Binding AvailableCommands}" SilenceTabKey="True"
+						 Watermark="Send commands..."/>
 				<Button Grid.Column="1" x:FieldModifier="private" x:Name="_sendCommandButton"
 						IsEnabled="{Binding #_commandInputTextBox.Text, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
 						Content="Send" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
