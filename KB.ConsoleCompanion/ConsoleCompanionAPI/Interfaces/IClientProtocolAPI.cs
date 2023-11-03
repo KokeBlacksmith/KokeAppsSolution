@@ -10,4 +10,10 @@ public interface IClientProtocolAPI
     /// <param name="command">Command to send</param>
     /// <returns>Response from the sent command</returns>
     Task<ConsoleCommand> SendCommand(ConsoleCommand command);
+    /// <summary>
+    /// Request to the server the available commands to be sent
+    /// </summary>
+    /// <param name="commands"></param>
+    /// <returns></returns>
+    Task<IEnumerable<ConsoleCommand>> RequestAvailableCommands();
 }

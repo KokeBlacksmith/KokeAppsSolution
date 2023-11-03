@@ -19,15 +19,32 @@ public partial class MainConsoleCompanion : UserControl
         InitializeComponent();
     }
 
+    private string[] _availableCommands = { 
+        "Throw Error",
+        "Throw Warning",
+        "Throw Info",
+        "Say Hello",
+        "Say Goodbye",
+        "Say How are you?",
+    }; 
+
     private void _InitServer()
     {
         _server = ProtocolFactory.CreateServer();
         _server.Start("127.0.0.1", "55555");
 
-        _server.OnCommandReceived += (command) =>
-        {
-            ConsoleCommand response = new ConsoleCommand($"Response from command '{command.Command}' received sucessfully!", ConsoleCommand.ECommandType.Info);
-            return response;
-        };
+        _server.OnCommandReceived += OnCommandReceived;
+        _server.OnRequestAvailableCommandsReceived += OnRequestAvailableCommandsReceived;
+    }
+
+    private ConsoleCommand OnCommandReceived(ConsoleCommand clientCommand)
+    {
+        ConsoleCommand response = new ConsoleCommand($"Response from command '{clientCommand.Command}' received sucessfully!", ConsoleCommand.ECommandType.Info);
+        return response;
+    }
+
+    private ConsoleCommand OnRequestAvailableCommandsReceived()
+    {
+        return ConsoleCommand.CreateRequestAvailableCommandsResponse(_availableCommands);
     }
 }

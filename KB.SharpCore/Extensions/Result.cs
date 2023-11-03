@@ -29,7 +29,7 @@ public readonly struct Result
     {
         get
         {
-            return CollectionHelper.StringArrayToNewLinesString(Messages);
+            return CollectionHelper.StringEnumerableToNewLinesString(Messages);
         }
     }
 
@@ -81,7 +81,7 @@ public readonly struct Result<T>
     {
         get 
         { 
-            return CollectionHelper.StringArrayToNewLinesString(Messages);
+            return CollectionHelper.StringEnumerableToNewLinesString(Messages);
         }
     }
 

@@ -11,6 +11,7 @@ internal sealed class CommandViewModel : BaseViewModel
     private IClientProtocolAPI? _client;
     private ObservableCollection<ConsoleCommand> _commandsCollection;
     private GenericCommand<string?> _addCommandLineCommand;
+    private string[] _availableCommands;
  
     public CommandViewModel()
     {
@@ -18,6 +19,8 @@ internal sealed class CommandViewModel : BaseViewModel
         _addCommandLineCommand = new GenericCommand<string?>(_OnUserCommandExecuted, null);
 
         _client = ProtocolFactory.CreateClient("127.0.0.1", "55555");
+
+        _RequestAvailableCommands();
     }
 
     public ObservableCollection<ConsoleCommand> CommandsCollection
@@ -29,6 +32,12 @@ internal sealed class CommandViewModel : BaseViewModel
     public GenericCommand<string?> AddCommandLineCommand
     {
         get { return _addCommandLineCommand; }
+    }
+
+    public string[] AvailableCommands
+    {
+        get { return _availableCommands; }
+        set { m_SetProperty(ref _availableCommands, value); }
     }
 
     private async void _OnUserCommandExecuted(string? parameter)
@@ -45,13 +54,13 @@ internal sealed class CommandViewModel : BaseViewModel
             return;
         }
 
-        ConsoleCommand newCommand = new ConsoleCommand(parameter!, ConsoleCommand.ECommandType.UserInput);
+        ConsoleCommand userCommand = ConsoleCommand.CreateUserInput(parameter!);
         
         // Add command to collection and to view
-        CommandsCollection.Add(newCommand);
+        CommandsCollection.Add(userCommand);
 
         // Send Command to desired application
-        Task<ConsoleCommand> responseTask = _client.SendCommand(newCommand);
+        Task<ConsoleCommand> responseTask = _client.SendCommand(userCommand);
         Task _ = responseTask.ContinueWith((t) => { }, TaskContinuationOptions.OnlyOnFaulted);
         await responseTask;
         ConsoleCommand response;
@@ -61,9 +70,15 @@ internal sealed class CommandViewModel : BaseViewModel
         }
         else
         {
-            response = new ConsoleCommand(responseTask.Exception!.Message, ConsoleCommand.ECommandType.Error);
+            response = ConsoleCommand.CreateResponseError(userCommand, responseTask.Exception!.Message);
         }
 
         CommandsCollection.Add(response);
+    }
+
+    private async void _RequestAvailableCommands()
+    {
+        IEnumerable<ConsoleCommand> availableCommands = await _client!.RequestAvailableCommands();
+        AvailableCommands = availableCommands.Select(c => c.Command).ToArray();
     }
 }

@@ -13,6 +13,7 @@ internal class TCPServerProtocol : BaseTCPProtocol, IServerProtocolAPI
 {
     private bool _isDisposed;
     public event Func<ConsoleCommand, ConsoleCommand>? OnCommandReceived;
+    public event Func<ConsoleCommand>? OnRequestAvailableCommandsReceived;
 
     private TcpListener? _listener;
     private Task? _listenerTask;
@@ -86,9 +87,21 @@ internal class TCPServerProtocol : BaseTCPProtocol, IServerProtocolAPI
 
             // Process message
             ConsoleCommand responseToClient;
-            if (OnCommandReceived == null)
+
+            if(clientCommand.Id == ConsoleCommand.REQUEST_AVAILABLE_COMMANDS_ID)
             {
-                responseToClient = new ConsoleCommand("Server received command but is not listening to commands", ConsoleCommand.ECommandType.Error);
+                if (OnRequestAvailableCommandsReceived == null)
+                {
+                    responseToClient = ConsoleCommand.CreateResponseError(clientCommand, "Server received command but is not listening to commands");
+                }
+                else
+                {
+                    responseToClient = OnRequestAvailableCommandsReceived!.Invoke();
+                }
+            }
+            else if (OnCommandReceived == null)
+            {
+                responseToClient = ConsoleCommand.CreateResponseError(clientCommand, "Server received command but is not listening to commands");
             }
             else
             {

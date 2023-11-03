@@ -9,6 +9,7 @@ namespace ConsoleCompanionAPI.Interfaces;
 public interface IServerProtocolAPI
 {
     event Func<ConsoleCommand, ConsoleCommand>? OnCommandReceived;
+    event Func<ConsoleCommand>? OnRequestAvailableCommandsReceived;
 
     bool IsConnected { get; }
 

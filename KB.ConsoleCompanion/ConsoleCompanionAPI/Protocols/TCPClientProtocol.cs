@@ -21,6 +21,7 @@ internal class TCPClientProtocol : BaseTCPProtocol, IClientProtocolAPI
 
     public event Action<ConsoleCommand>? OnCommandReceived;
 
+
     public Task<ConsoleCommand> SendCommand(ConsoleCommand command)
     {
         return Task.Run(async () => { 
@@ -37,5 +38,11 @@ internal class TCPClientProtocol : BaseTCPProtocol, IClientProtocolAPI
             m_SendCommand(stream, command);
             return m_ReceiveResponse(stream);
         });
+    }
+
+    public async Task<IEnumerable<ConsoleCommand>> RequestAvailableCommands()
+    {
+        ConsoleCommand response = await SendCommand(ConsoleCommand.CreateRequestAvailableCommands());
+        return ConsoleCommand.ParseAvailableCommandsResponse(response);
     }
 }

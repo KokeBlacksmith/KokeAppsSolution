@@ -15,9 +15,19 @@ public static class CollectionHelper
         return !CollectionHelper.IsEmpty(enumerable);
     }
 
-    public static string? StringArrayToNewLinesString(string[]? array)
+    public static bool IsEmpty<T>(IEnumerable<T>? enumerable)
     {
-        if(CollectionHelper.HasAny(array))
+        return enumerable == null || !enumerable.Any();
+    }
+
+    public static bool HasAny<T>(IEnumerable<T>? enumerable)
+    {
+        return !CollectionHelper.IsEmpty(enumerable);
+    }
+
+    public static string? StringEnumerableToNewLinesString(IEnumerable<string>? array)
+    {
+        if (CollectionHelper.HasAny(array))
         {
             return String.Join(Environment.NewLine, array!);
         }
