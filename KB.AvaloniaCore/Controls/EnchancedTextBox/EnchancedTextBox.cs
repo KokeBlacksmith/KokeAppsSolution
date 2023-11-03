@@ -47,6 +47,9 @@ public class EnchancedTextBox : TextBox
     public readonly static StyledProperty<bool> ConfirmOnReturnProperty = AvaloniaProperty.Register<EnchancedTextBox, bool>(nameof(EnchancedTextBox.ConfirmOnReturn));
     public readonly static StyledProperty<GenericCommand<string?>> ConfirmOnReturnCommandProperty = AvaloniaProperty.Register<EnchancedTextBox, GenericCommand<string?>>(nameof(EnchancedTextBox.ConfirmOnReturnCommand));
 
+    public readonly static StyledProperty<bool> AutoCompletionEnabledProperty = AvaloniaProperty.Register<EnchancedTextBox, bool>(nameof(EnchancedTextBox.AutoCompletionEnabled));
+    public readonly static StyledProperty<IEnumerable<string>> AutoCompletionCollectionProperty = AvaloniaProperty.Register<EnchancedTextBox, IEnumerable<string>>(nameof(EnchancedTextBox.AutoCompletionCollection));
+
     public bool UpdateCaretPositionAtEnd
     {
         get { return GetValue(EnchancedTextBox.UpdateCaretPositionAtEndProperty); }
@@ -69,6 +72,18 @@ public class EnchancedTextBox : TextBox
     {
         get { return GetValue(EnchancedTextBox.ConfirmOnReturnCommandProperty); }
         set { SetValue(EnchancedTextBox.ConfirmOnReturnCommandProperty, value); }
+    }
+
+    public bool AutoCompletionEnabled
+    {
+        get { return GetValue(EnchancedTextBox.AutoCompletionEnabledProperty); }
+        set { SetValue(EnchancedTextBox.AutoCompletionEnabledProperty, value); }
+    }
+
+    public IEnumerable<string> AutoCompletionCollection
+    {
+        get { return GetValue(EnchancedTextBox.AutoCompletionCollectionProperty); }
+        set { SetValue(EnchancedTextBox.AutoCompletionCollectionProperty, value); }
     }
 
     #endregion

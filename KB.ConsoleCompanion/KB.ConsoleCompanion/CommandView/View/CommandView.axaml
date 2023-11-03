@@ -14,33 +14,68 @@
         <vm:CommandViewModel />
     </UserControl.DataContext>
 	
-    <Grid RowDefinitions="30,*,30">
+    <Grid>
 
-        <!-- Toolbar -->
-        <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Stretch" Background="Aqua">
-            <TextBlock Text="TOOL_BAR" HorizontalAlignment="Stretch" VerticalAlignment="Center"/>
-        </StackPanel>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="*" MinWidth="300"/>
+			<ColumnDefinition Width="2"/>
+			<ColumnDefinition Width="200" MinWidth="150"/>
+		</Grid.ColumnDefinitions>
+		
+		<Grid Grid.Column="0" RowDefinitions="30,*,30">
+			<!-- Toolbar -->
+			<StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Stretch" Background="Aqua">
+				<TextBlock Text="TOOL_BAR" HorizontalAlignment="Stretch" VerticalAlignment="Center"/>
+			</StackPanel>
         
-        <!-- Content -->
-		<ListBox Grid.Row="1" x:FieldModifier="private" x:Name="_listBox"
-				 ItemsSource="{Binding CommandsCollection}" SelectionMode="Single"
-				 ScrollViewer.HorizontalScrollBarVisibility="Disabled">
-			<ListBox.ItemTemplate>
-				<DataTemplate>
-					<local:CommandItemView ConsoleCommand="{Binding }"/>
-				</DataTemplate>
-			</ListBox.ItemTemplate>
-		</ListBox>
+			<!-- Content -->
+			<ListBox Grid.Row="1" x:FieldModifier="private" x:Name="_listBox"
+					 ItemsSource="{Binding CommandsCollection}" SelectionMode="Single"
+					 ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+				<ListBox.ItemTemplate>
+					<DataTemplate>
+						<local:CommandItemView ConsoleCommand="{Binding }"/>
+					</DataTemplate>
+				</ListBox.ItemTemplate>
+			</ListBox>
 
-		<!--Textbox to write commands and a button to send them. Textbox should occupy nearly whole view horizontally-->
-		<Grid Grid.Row="2" ColumnDefinitions="*, 80">
-			<coreControls:EnchancedTextBox Grid.Column="0" x:FieldModifier="private" x:Name="_commandInputTextBox"
-					 HorizontalAlignment="Stretch"
-					 ConfirmOnReturn="True" ConfirmOnReturnCommand="{Binding AddCommandLineCommand}" ConfirmReturn="_OnCommandInputTextBoxSendsCommand" />
-			<Button Grid.Column="1" x:FieldModifier="private" x:Name="_sendCommandButton"
-					IsEnabled="{Binding #_commandInputTextBox.Text, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
-					Content="Send" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
-					Click="_OnSendCommandClick"/>
+			<!--Textbox to write commands and a button to send them. Textbox should occupy nearly whole view horizontally-->
+			<Grid Grid.Row="2" ColumnDefinitions="*, 80">
+				<coreControls:EnchancedTextBox Grid.Column="0" x:FieldModifier="private" x:Name="_commandInputTextBox"
+						 HorizontalAlignment="Stretch"
+						 ConfirmOnReturn="True" ConfirmOnReturnCommand="{Binding AddCommandLineCommand}" ConfirmReturn="_OnCommandInputTextBoxSendsCommand" />
+				<Button Grid.Column="1" x:FieldModifier="private" x:Name="_sendCommandButton"
+						IsEnabled="{Binding #_commandInputTextBox.Text, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
+						Content="Send" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
+						Click="_OnSendCommandClick"/>
+			</Grid>
+		</Grid>
+		<GridSplitter Grid.Column="1"/>
+		
+		<!-- Available commands and macros -->
+		<Grid Grid.Column="2">
+			<Grid.RowDefinitions>
+				<RowDefinition Height="*" MinHeight="80" />
+				<RowDefinition Height="2" />
+				<RowDefinition Height="*" MinHeight="80" />
+				<RowDefinition Height="2" />
+				<RowDefinition Height="*" MinHeight="80" />
+			</Grid.RowDefinitions>
+			
+			<!-- Running Macros -->
+			<Grid Grid.Row="0" Background="Red">
+				
+			</Grid>
+			<GridSplitter Grid.Row="1"/>
+			<!-- Available Commands-->
+			<Grid Grid.Row="2" Background="Blue">
+
+			</Grid>
+			<GridSplitter Grid.Row="3"/>
+			<!-- Macros -->
+			<Grid Grid.Row="4" Background="Yellow">
+
+			</Grid>
 		</Grid>
     </Grid>
 </UserControl>

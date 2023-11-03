@@ -18,6 +18,8 @@ namespace KB.ConsoleCompanionStandalone
             {
                 desktop.MainWindow = new MainWindow {
                     DataContext = null,
+                    MinWidth = 600,
+                    MinHeight = 400,
                 };
             }
         

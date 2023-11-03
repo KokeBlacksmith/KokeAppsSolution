@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+using Avalonia.Controls;
 using ConsoleCompanionAPI;
 using ConsoleCompanionAPI.Data;
 using ConsoleCompanionAPI.Interfaces;
@@ -18,9 +19,12 @@ internal sealed class CommandViewModel : BaseViewModel
         _commandsCollection = new ObservableCollection<ConsoleCommand>();
         _addCommandLineCommand = new GenericCommand<string?>(_OnUserCommandExecuted, null);
 
-        _client = ProtocolFactory.CreateClient("127.0.0.1", "55555");
 
-        _RequestAvailableCommands();
+        if (!Design.IsDesignMode)
+        {
+            _client = ProtocolFactory.CreateClient("127.0.0.1", "55555");
+            _RequestAvailableCommands();
+        }
     }
 
     public ObservableCollection<ConsoleCommand> CommandsCollection
