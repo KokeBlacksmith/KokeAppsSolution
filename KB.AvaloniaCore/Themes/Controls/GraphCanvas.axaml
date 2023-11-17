@@ -19,7 +19,7 @@
 						<ContentPresenter x:Name="PART_ContentPresenter" />
 					</kbControls:ZoomDecorator>
 				
-			</ScrollViewer>
+				</ScrollViewer>
 			</ControlTemplate>
 		</Setter>
 	</ControlTheme>
