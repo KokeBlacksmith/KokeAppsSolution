@@ -2,6 +2,7 @@
 using Avalonia.Interactivity;
 using ConsoleCompanionAPI.Data;
 using KB.AvaloniaCore.Controls.GraphEditor;
+using KB.ConsoleCompanion.Nodes;
 using System.Collections.Specialized;
 
 namespace KB.ConsoleCompanion.CommandView;
@@ -39,7 +40,9 @@ public partial class CommandView : UserControl
     private void _OnAddMacroButtonClick(object sender, RoutedEventArgs args)
     {
         Window graphWindow = new Window();
-        graphWindow.Content = new GraphCanvas();
+        GraphCanvas graphCanvas = new GraphCanvas();
+        graphCanvas.ChildNodes = new Node[] { new TimerNode() };
+        graphWindow.Content = graphCanvas;
         graphWindow.Show();
     }
 

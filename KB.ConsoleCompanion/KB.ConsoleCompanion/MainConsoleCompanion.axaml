@@ -5,6 +5,16 @@
              xmlns:command_view="clr-namespace:KB.ConsoleCompanion.CommandView;assembly=KB.ConsoleCompanion"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="KB.ConsoleCompanion.MainConsoleCompanion">
-    
+
+	<!--<UserControl.Resources>
+		<ResourceDictionary>
+			<ResourceDictionary.MergedDictionaries>
+				<ResourceInclude Source="avares://KB.AvaloniaCore/Themes/ConstantsResourceDictionary.axaml" />
+				<ResourceInclude Source="avares://KB.AvaloniaCore/Themes/ConvertersResourceDictionary.axaml" />
+				<ResourceInclude Source="avares://KB.AvaloniaCore/Themes/Controls/ControlsThemesResourceDictionary.axaml" />
+			</ResourceDictionary.MergedDictionaries>
+		</ResourceDictionary>
+	</UserControl.Resources>-->
+	
     <command_view:CommandView />
 </UserControl>

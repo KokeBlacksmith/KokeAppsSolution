@@ -1,18 +1,7 @@
 <ResourceDictionary xmlns="https://github.com/avaloniaui"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 					xmlns:kbGraph="clr-namespace:KB.AvaloniaCore.Controls.GraphEditor;assembly=KB.AvaloniaCore"
-					xmlns:kbControls="clr-namespace:KB.AvaloniaCore.Controls;assembly=KB.AvaloniaCore"
-					x:ClassModifier="internal">
-
-	<Design.PreviewWith>
-		<Border Width="600" Height="600">
-			<kbGraph:GraphCanvas>
-				<kbGraph:GraphCanvas.ChildNodes>
-					<!--<kbGraph:Node />-->
-				</kbGraph:GraphCanvas.ChildNodes>
-			</kbGraph:GraphCanvas>
-		</Border>
-	</Design.PreviewWith>
+					xmlns:kbControls="clr-namespace:KB.AvaloniaCore.Controls;assembly=KB.AvaloniaCore">
 
 	<ControlTheme x:Key="{x:Type kbGraph:GraphCanvas}" TargetType="kbGraph:GraphCanvas">
 		<Setter Property="ClipToBounds" Value="False" />

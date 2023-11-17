@@ -31,6 +31,7 @@ public class GraphCanvas : TemplatedControl
 
     public GraphCanvas()
     {
+        
     }
 
     #region StyledProperties
@@ -41,7 +42,10 @@ public class GraphCanvas : TemplatedControl
     public IEnumerable<Node> ChildNodes
     {
         get { return GetValue(GraphCanvas.ChildNodesProperty); }
-        set { SetValue(GraphCanvas.ChildNodesProperty, value); }
+        set 
+        { 
+            SetValue(GraphCanvas.ChildNodesProperty, value);
+        }
     }
 
     #endregion
@@ -90,6 +94,7 @@ public class GraphCanvas : TemplatedControl
     {
         if (addToCanvas)
         {
+            
             //_zoomDecorator!.Children.Add(node);
         }
 
@@ -128,6 +133,7 @@ public class GraphCanvas : TemplatedControl
 
     protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
     {
+        base.OnApplyTemplate(e);
         _zoomDecorator = e.NameScope.Get<ZoomDecorator>("PART_ZoomDecorator");
         _scrollViewer = e.NameScope.Find<ScrollViewer>("PART_ScrollViewer");
         _contentPresenter = e.NameScope.Get<ContentPresenter>("PART_ContentPresenter");

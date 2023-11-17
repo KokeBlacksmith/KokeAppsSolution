@@ -88,7 +88,7 @@ namespace KB.AvaloniaCore.Controls
                 _offset = value;
 
                 _matrix = MatrixMath.CreateScaleAndTranslate(_zoomX, _zoomY, _matrix.GetTranslateX() + dx, _matrix.GetTranslateY() + dy);
-                Invalidate(!this.IsPointerOver);
+                _Invalidate(!this.IsPointerOver);
 
                 _updating = false;
             }

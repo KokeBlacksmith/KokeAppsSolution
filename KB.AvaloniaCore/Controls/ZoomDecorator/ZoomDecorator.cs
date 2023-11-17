@@ -130,7 +130,7 @@ public partial class ZoomDecorator : Decorator
 
     private void Border_PointerMoved(object? sender, PointerEventArgs e)
     {
-        Moved(e);
+        _Moved(e);
     }
 
     private void BoundsChanged(Rect bounds)
@@ -228,7 +228,7 @@ public partial class ZoomDecorator : Decorator
         _isPanning = false;
     }
 
-    private void Moved(PointerEventArgs e)
+    private void _Moved(PointerEventArgs e)
     {
         if (!IsPanEnabled)
         {
@@ -248,18 +248,18 @@ public partial class ZoomDecorator : Decorator
     /// Raises <see cref="ZoomChanged"/> event.
     /// </summary>
     /// <param name="e">Zoom changed event arguments.</param>
-    protected virtual void OnZoomChanged(ZoomChangedEventArgs e)
+    protected virtual void m_OnZoomChanged(ZoomChangedEventArgs e)
     {
         ZoomChanged?.Invoke(this, e);
     }
 
-    private void RaiseZoomChanged()
+    private void _RaiseZoomChanged()
     {
         var args = new ZoomChangedEventArgs(_zoomX, _zoomY, _offsetX, _offsetY);
-        OnZoomChanged(args);
+        m_OnZoomChanged(args);
     }
 
-    private void Constrain()
+    private void _Constrain()
     {
         var zoomX = System.Math.Clamp(_matrix.GetScaleX(), MinZoomX, MaxZoomX);
         var zoomY = System.Math.Clamp(_matrix.GetScaleY(), MinZoomY, MaxZoomY);
@@ -272,7 +272,7 @@ public partial class ZoomDecorator : Decorator
     /// Invalidate pan and zoom control.
     /// </summary>
     /// <param name="skipTransitions">The flag indicating whether transitions on the child element should be temporarily disabled.</param>
-    private void Invalidate(bool skipTransitions = false)
+    private void _Invalidate(bool skipTransitions = false)
     {
         if (_element == null)
         {
@@ -281,13 +281,13 @@ public partial class ZoomDecorator : Decorator
 
         if (EnableConstrains)
         {
-            Constrain();
+            _Constrain();
         }
 
         InvalidateProperties();
         InvalidateScrollable();
         InvalidateElement(skipTransitions);
-        RaiseZoomChanged();
+        _RaiseZoomChanged();
     }
 
     /// <summary>
@@ -357,7 +357,7 @@ public partial class ZoomDecorator : Decorator
         _updating = true;
 
         _matrix = matrix;
-        Invalidate(skipTransitions);
+        _Invalidate(skipTransitions);
 
         _updating = false;
     }
@@ -395,7 +395,7 @@ public partial class ZoomDecorator : Decorator
         _updating = true;
 
         _matrix = MatrixMath.CreateScaleAt(zoom, zoom, x, y);
-        Invalidate(skipTransitions);
+        _Invalidate(skipTransitions);
 
         _updating = false;
     }
@@ -416,7 +416,7 @@ public partial class ZoomDecorator : Decorator
         _updating = true;
 
         _matrix = MatrixMath.CreateScaleAtPrepend(_matrix, ratio, ratio, x, y);
-        Invalidate(skipTransitions);
+        _Invalidate(skipTransitions);
 
         _updating = false;
     }
@@ -481,7 +481,7 @@ public partial class ZoomDecorator : Decorator
         _updating = true;
 
         _matrix = MatrixMath.CreateScaleAndTranslate(_zoomX, _zoomY, _matrix.GetTranslateX() + dx, _matrix.GetTranslateY() + dy);
-        Invalidate(skipTransitions);
+        _Invalidate(skipTransitions);
 
         _updating = false;
     }
@@ -501,7 +501,7 @@ public partial class ZoomDecorator : Decorator
         _updating = true;
 
         _matrix = MatrixMath.CreateScaleAndTranslate(_zoomX, _zoomY, x, y);
-        Invalidate(skipTransitions);
+        _Invalidate(skipTransitions);
 
         _updating = false;
     }
@@ -537,7 +537,7 @@ public partial class ZoomDecorator : Decorator
         _previous = new Point(x, y);
         _pan = new Point(_pan.X + delta.X, _pan.Y + delta.Y);
         _matrix = MatrixMath.CreateTranslatePrepend(_matrix, _pan.X, _pan.Y);
-        Invalidate(skipTransitions);
+        _Invalidate(skipTransitions);
 
         _updating = false;
     }
@@ -565,7 +565,7 @@ public partial class ZoomDecorator : Decorator
         }
 
         _matrix = CalculateMatrix(panelWidth, panelHeight, elementWidth, elementHeight, Stretch.None);
-        Invalidate(skipTransitions);
+        _Invalidate(skipTransitions);
 
         _updating = false;
     }
@@ -593,7 +593,7 @@ public partial class ZoomDecorator : Decorator
         }
 
         _matrix = CalculateMatrix(panelWidth, panelHeight, elementWidth, elementHeight, Stretch.Fill);
-        Invalidate(skipTransitions);
+        _Invalidate(skipTransitions);
 
         _updating = false;
     }
@@ -621,7 +621,7 @@ public partial class ZoomDecorator : Decorator
         }
 
         _matrix = CalculateMatrix(panelWidth, panelHeight, elementWidth, elementHeight, Stretch.Uniform);
-        Invalidate(skipTransitions);
+        _Invalidate(skipTransitions);
 
         _updating = false;
     }
@@ -650,7 +650,7 @@ public partial class ZoomDecorator : Decorator
         }
 
         _matrix = CalculateMatrix(panelWidth, panelHeight, elementWidth, elementHeight, Stretch.UniformToFill);
-        Invalidate(skipTransitions);
+        _Invalidate(skipTransitions);
 
         _updating = false;
     }
