@@ -1,0 +1,39 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+					xmlns:kbGraph="clr-namespace:KB.AvaloniaCore.Controls.GraphEditor;assembly=KB.AvaloniaCore"
+					xmlns:kbControls="clr-namespace:KB.AvaloniaCore.Controls;assembly=KB.AvaloniaCore"
+					x:ClassModifier="internal">
+
+	<Design.PreviewWith>
+		<Border Width="600" Height="600">
+			<kbGraph:GraphCanvas>
+				<kbGraph:GraphCanvas.ChildNodes>
+					<!--<kbGraph:Node />-->
+				</kbGraph:GraphCanvas.ChildNodes>
+			</kbGraph:GraphCanvas>
+		</Border>
+	</Design.PreviewWith>
+
+	<ControlTheme x:Key="{x:Type kbGraph:GraphCanvas}" TargetType="kbGraph:GraphCanvas">
+		<Setter Property="ClipToBounds" Value="False" />
+		<Setter Property="HorizontalAlignment" Value="Stretch" />
+		<Setter Property="VerticalAlignment" Value="Stretch" />
+		
+		<Setter Property="Template">
+			<ControlTemplate>
+				<ScrollViewer x:Name="PART_ScrollViewer" 
+								HorizontalScrollBarVisibility="Auto"
+								VerticalScrollBarVisibility="Auto"
+								HorizontalAlignment="Stretch"
+								VerticalAlignment="Stretch">
+					<kbControls:ZoomDecorator x:Name="PART_ZoomDecorator">
+						<ContentPresenter x:Name="PART_ContentPresenter" />
+					</kbControls:ZoomDecorator>
+				
+			</ScrollViewer>
+			</ControlTemplate>
+		</Setter>
+	</ControlTheme>
+	
+	
+</ResourceDictionary>

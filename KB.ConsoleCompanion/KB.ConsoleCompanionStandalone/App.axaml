@@ -17,6 +17,7 @@
             <ResourceDictionary.MergedDictionaries>
                 <ResourceInclude Source="avares://KB.AvaloniaCore/Themes/ConstantsResourceDictionary.axaml" />
                 <ResourceInclude Source="avares://KB.AvaloniaCore/Themes/ConvertersResourceDictionary.axaml" />
+				<ResourceInclude Source="avares://KB.AvaloniaCore/Themes/Controls/ControlsThemesResourceDictionary.axaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>

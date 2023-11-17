@@ -1,6 +1,7 @@
 ﻿using Avalonia.Controls;
 using Avalonia.Interactivity;
 using ConsoleCompanionAPI.Data;
+using KB.AvaloniaCore.Controls.GraphEditor;
 using System.Collections.Specialized;
 
 namespace KB.ConsoleCompanion.CommandView;
@@ -33,6 +34,18 @@ public partial class CommandView : UserControl
     private void _OnSendCommandClick(object sender, RoutedEventArgs args)
     {
         _SendUserCommand();
+    }
+
+    private void _OnAddMacroButtonClick(object sender, RoutedEventArgs args)
+    {
+        Window graphWindow = new Window();
+        graphWindow.Content = new GraphCanvas();
+        graphWindow.Show();
+    }
+
+    private void _OnEditMacroButtonClick(object sender, RoutedEventArgs args)
+    {
+
     }
 
     private void _OnCommandInputTextBoxSendsCommand(object sender, RoutedEventArgs args)

@@ -43,3 +43,6 @@ Desktop.ini
 *.suo
 *.bin
 *.v2
+.vs/KokeAppsSolution/v17/.suo
+.vs/KokeAppsSolution/v17/.futdcache.v2
+*.v2
