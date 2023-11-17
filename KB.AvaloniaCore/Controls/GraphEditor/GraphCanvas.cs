@@ -110,7 +110,7 @@ public class GraphCanvas : TemplatedControl
     private void _UpdateNodePosition(Node node)
     {
         Canvas.SetLeft(node, node.PositionX);
-        Canvas.SetTop(node, node.PositionY);
+        Canvas.SetBottom(node, node.PositionY);
     }
 
     #endregion

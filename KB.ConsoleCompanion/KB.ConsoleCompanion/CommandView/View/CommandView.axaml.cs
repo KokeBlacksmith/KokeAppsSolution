@@ -42,7 +42,7 @@ public partial class CommandView : UserControl
     {
         Window graphWindow = new Window();
         GraphCanvas graphCanvas = new GraphCanvas();
-        graphCanvas.ChildNodes = new Node[] { new TimerNode() { Width = 50, Height= 100, Background = Brushes.Aqua, PositionX=50, PositionY=100} };
+        graphCanvas.ChildNodes = new Node[] { new TimerNode() { Width = 100, Height= 100, Background = Brushes.Aqua, PositionX=50, PositionY=200} };
         graphWindow.Content = graphCanvas;
         graphWindow.Show();
     }

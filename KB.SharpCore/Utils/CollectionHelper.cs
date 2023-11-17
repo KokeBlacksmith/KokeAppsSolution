@@ -25,6 +25,11 @@ public static class CollectionHelper
         return !CollectionHelper.IsEmpty(enumerable);
     }
 
+    /// <summary>
+    /// Returns a single string with each element of the array on a new line.
+    /// </summary>
+    /// <param name="array">Array of strings</param>
+    /// <returns></returns>
     public static string? StringEnumerableToNewLinesString(IEnumerable<string>? array)
     {
         if (CollectionHelper.HasAny(array))

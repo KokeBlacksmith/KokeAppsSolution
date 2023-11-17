@@ -17,13 +17,13 @@
 	</UserControl.Resources>-->
 
 
-	<UserControl.Resources>
+	<!--<UserControl.Resources>
 		<ResourceDictionary>
 			<ResourceDictionary.MergedDictionaries>
 				<ResourceInclude Source="/Themes/Controls/ControlsThemesResourceDictionary.axaml" />
 			</ResourceDictionary.MergedDictionaries>
 		</ResourceDictionary>
-	</UserControl.Resources>
+	</UserControl.Resources>-->
 	
     <command_view:CommandView />
 </UserControl>

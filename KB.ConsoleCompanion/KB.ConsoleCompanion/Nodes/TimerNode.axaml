@@ -1,0 +1,24 @@
+<kbCommandControls:TimerNode xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+			 xmlns:kbCommandControls="clr-namespace:KB.ConsoleCompanion.Nodes;assembly=KB.ConsoleCompanion"
+             mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="400"
+             x:Class="KB.ConsoleCompanion.Nodes.TimerNode">
+
+	<kbCommandControls:TimerNode.Resources>
+		<ResourceDictionary>
+			<ResourceDictionary.MergedDictionaries>
+				<ResourceInclude Source="avares://KB.ConsoleCompanion/Resources/IconGeometryResources.axaml" />
+			</ResourceDictionary.MergedDictionaries>
+		</ResourceDictionary>
+	</kbCommandControls:TimerNode.Resources>
+	
+	<Panel Background="#B0C4DE" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+		<Image>
+			<Image.Source>
+				<DrawingImage Drawing="{StaticResource Material.ClockTimeFourOutline}"/>
+			</Image.Source>
+		</Image>
+	</Panel>
+</kbCommandControls:TimerNode>
