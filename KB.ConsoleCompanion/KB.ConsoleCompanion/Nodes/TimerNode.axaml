@@ -14,7 +14,7 @@
 		</ResourceDictionary>
 	</kbCommandControls:TimerNode.Resources>
 	
-	<Panel Background="#B0C4DE" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+	<Panel HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
 		<Image>
 			<Image.Source>
 				<DrawingImage Drawing="{StaticResource Material.ClockTimeFourOutline}"/>

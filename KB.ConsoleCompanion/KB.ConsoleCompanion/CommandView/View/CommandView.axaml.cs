@@ -1,4 +1,5 @@
-﻿using Avalonia.Controls;
+﻿using Avalonia;
+using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Media;
 using ConsoleCompanionAPI.Data;
@@ -42,7 +43,10 @@ public partial class CommandView : UserControl
     {
         Window graphWindow = new Window();
         GraphCanvas graphCanvas = new GraphCanvas();
-        graphCanvas.ChildNodes = new Node[] { new TimerNode() { Width = 100, Height= 100, Background = Brushes.Aqua, PositionX=50, PositionY=200} };
+        graphCanvas.ChildNodes = new Node[] { new TimerNode() { 
+            Width = 100, Height= 100, Background = Brushes.Aqua, PositionX=50, PositionY=200, 
+            CornerRadius = new CornerRadius(10d), Padding = new Thickness(10d), BorderThickness = new Thickness(2d), BorderBrush = Brushes.Yellow,
+        }};
         graphWindow.Content = graphCanvas;
         graphWindow.Show();
     }
