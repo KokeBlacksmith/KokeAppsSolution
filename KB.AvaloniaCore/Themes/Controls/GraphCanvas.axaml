@@ -15,10 +15,12 @@
 								VerticalScrollBarVisibility="Auto"
 								HorizontalAlignment="Stretch"
 								VerticalAlignment="Stretch">
-					<kbControls:ZoomDecorator x:Name="PART_ZoomDecorator">
+					<Grid>
+						<kbControls:ZoomDecorator x:Name="PART_ZoomDecorator">
+							<Canvas x:Name="PART_Canvas" Background="Red"/>
+						</kbControls:ZoomDecorator>
 						<ContentPresenter x:Name="PART_ContentPresenter" />
-					</kbControls:ZoomDecorator>
-				
+					</Grid>
 				</ScrollViewer>
 			</ControlTemplate>
 		</Setter>

@@ -18,11 +18,13 @@ namespace KB.AvaloniaCore.Controls.GraphEditor;
 [TemplatePart("PART_ZoomDecorator", typeof(ZoomDecorator))]
 [TemplatePart("PART_ScrollViewer", typeof(ScrollViewer))]
 [TemplatePart("PART_ContentPresenter", typeof(ContentPresenter))]
+[TemplatePart("PART_Canvas", typeof(Canvas))]
 public class GraphCanvas : TemplatedControl
 {
     private ZoomDecorator? _zoomDecorator;
     private ScrollViewer? _scrollViewer;
     private ContentPresenter? _contentPresenter;
+    private Canvas? _canvas;
 
     static GraphCanvas()
     {
@@ -38,7 +40,6 @@ public class GraphCanvas : TemplatedControl
 
     public readonly static StyledProperty<IEnumerable<Node>> ChildNodesProperty = AvaloniaProperty.Register<GraphCanvas, IEnumerable<Node>>(nameof(GraphCanvas.ChildNodes));
 
-    [Content]
     public IEnumerable<Node> ChildNodes
     {
         get { return GetValue(GraphCanvas.ChildNodesProperty); }
@@ -77,7 +78,7 @@ public class GraphCanvas : TemplatedControl
         {
             foreach (var node in e.NewItems.OfType<Node>())
             {
-                _AddNode(node, true);
+                _AddNode(node);
             }
         }
 
@@ -85,19 +86,15 @@ public class GraphCanvas : TemplatedControl
         {
             foreach (var node in e.OldItems.OfType<Node>())
             {
-                _RemoveNode(node, true);
+                _RemoveNode(node);
             }
         }
     }
 
-    private void _AddNode(Node node, bool addToCanvas)
+    private void _AddNode(Node node)
     {
-        if (addToCanvas)
-        {
-            
-            //_zoomDecorator!.Children.Add(node);
-        }
-
+        _canvas!.Children.Add(node);
+        _UpdateNodePosition(node);
     }
 
     private void _DrawConnection(NodeConnection connection)
@@ -105,12 +102,15 @@ public class GraphCanvas : TemplatedControl
 
     }
 
-    private void _RemoveNode(Node node, bool removeFromCanvas)
+    private bool _RemoveNode(Node node)
     {
-        if (removeFromCanvas)
-        {
-            //_zoomDecorator!.Children.Remove(node);
-        }
+        return _canvas!.Children.Remove(node);
+    }
+
+    private void _UpdateNodePosition(Node node)
+    {
+        Canvas.SetLeft(node, node.PositionX);
+        Canvas.SetTop(node, node.PositionY);
     }
 
     #endregion
@@ -123,9 +123,15 @@ public class GraphCanvas : TemplatedControl
 
     public void RebuildView()
     {
+        if(_canvas == null)
+        {
+            return;
+        }
+
+        _canvas.Children.Clear();
         foreach (Node node in ChildNodes)
         {
-            _AddNode(node, false);
+            _AddNode(node);
         }
     }
 
@@ -137,6 +143,8 @@ public class GraphCanvas : TemplatedControl
         _zoomDecorator = e.NameScope.Get<ZoomDecorator>("PART_ZoomDecorator");
         _scrollViewer = e.NameScope.Find<ScrollViewer>("PART_ScrollViewer");
         _contentPresenter = e.NameScope.Get<ContentPresenter>("PART_ContentPresenter");
+        _canvas = e.NameScope.Get<Canvas>("PART_Canvas");
+        RebuildView();
     }
 
     #endregion

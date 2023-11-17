@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 
 namespace KB.ConsoleCompanion.Nodes;
 
-internal class TimerNode : Node
+public class TimerNode : Node
 {
-
 }

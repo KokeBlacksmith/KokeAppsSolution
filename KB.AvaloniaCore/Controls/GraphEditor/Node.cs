@@ -10,14 +10,19 @@ namespace KB.AvaloniaCore.Controls.GraphEditor;
 
 [TemplatePart("PART_ContentPresenter", typeof(ContentPresenter))]
 [TemplatePart("PART_Border", typeof(Border))]
-public abstract class Node : TemplatedControl
+public class Node : TemplatedControl
 {
     private Border? _border;
     private ContentPresenter? _contentPresenter;
 
+    static Node()
+    {
+        Node.ContentProperty.Changed.AddClassHandler<Node>((s, e) => s.m_OnContentPropertyChanged(e));
+    }
+
     #region StyledProperties
 
-    public static readonly StyledProperty<Layoutable?> ContentProperty = AvaloniaProperty.Register<Node, Layoutable?>(nameof(Node.Content));
+    public static readonly StyledProperty<Control?> ContentProperty = AvaloniaProperty.Register<Node, Control?>(nameof(Node.Content));
     public static readonly StyledProperty<double> PositionXProperty = AvaloniaProperty.Register<Node, double>(nameof(Node.PositionX));
     public static readonly StyledProperty<double> PositionYProperty = AvaloniaProperty.Register<Node, double>(nameof(Node.PositionY));
     
@@ -26,7 +31,7 @@ public abstract class Node : TemplatedControl
 
 
     [Content]
-    public Layoutable? Content
+    public Control? Content
     {
         get { return GetValue(Node.ContentProperty); }
         set { SetValue(Node.ContentProperty, value); }
@@ -65,7 +70,18 @@ public abstract class Node : TemplatedControl
         base.OnApplyTemplate(e);
         _border = e.NameScope.Get<Border>("PART_Border");
         _contentPresenter = e.NameScope.Get<ContentPresenter>("PART_ContentPresenter");
+        _contentPresenter.Content = Content;
     }
 
     #endregion
+
+    private void m_OnContentPropertyChanged(AvaloniaPropertyChangedEventArgs e)
+    {
+        if(_contentPresenter == null)
+        {
+            return;
+        }
+
+        _contentPresenter!.Content = e.NewValue;
+    }
 }
