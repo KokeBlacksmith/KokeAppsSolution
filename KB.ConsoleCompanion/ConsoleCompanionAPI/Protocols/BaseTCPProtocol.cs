@@ -1,5 +1,4 @@
 ﻿using ConsoleCompanionAPI.Data;
-using KB.SharpCore.Extensions;
 using KB.SharpCore.Serialization;
 using KB.SharpCore.Utils;
 using System;

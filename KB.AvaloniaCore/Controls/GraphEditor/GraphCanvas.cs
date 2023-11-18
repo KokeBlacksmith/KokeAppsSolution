@@ -18,13 +18,13 @@ namespace KB.AvaloniaCore.Controls.GraphEditor;
 [TemplatePart("PART_ZoomDecorator", typeof(ZoomDecorator))]
 [TemplatePart("PART_ScrollViewer", typeof(ScrollViewer))]
 [TemplatePart("PART_ContentPresenter", typeof(ContentPresenter))]
-[TemplatePart("PART_Canvas", typeof(Canvas))]
+[TemplatePart("PART_Canvas", typeof(EditorCanvas))]
 public class GraphCanvas : TemplatedControl
 {
     private ZoomDecorator? _zoomDecorator;
     private ScrollViewer? _scrollViewer;
     private ContentPresenter? _contentPresenter;
-    private Canvas? _canvas;
+    private EditorCanvas? _canvas;
 
     static GraphCanvas()
     {
@@ -147,7 +147,7 @@ public class GraphCanvas : TemplatedControl
         _zoomDecorator = e.NameScope.Get<ZoomDecorator>("PART_ZoomDecorator");
         _scrollViewer = e.NameScope.Find<ScrollViewer>("PART_ScrollViewer");
         _contentPresenter = e.NameScope.Get<ContentPresenter>("PART_ContentPresenter");
-        _canvas = e.NameScope.Get<Canvas>("PART_Canvas");
+        _canvas = e.NameScope.Get<EditorCanvas>("PART_Canvas");
         RebuildView();
     }
 

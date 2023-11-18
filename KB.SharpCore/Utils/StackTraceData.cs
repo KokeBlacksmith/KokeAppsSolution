@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
 
-namespace KB.SharpCore;
+namespace KB.SharpCore.Utils;
 
 public ref struct StackTraceData
 {

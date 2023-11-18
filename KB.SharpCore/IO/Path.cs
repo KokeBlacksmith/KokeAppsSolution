@@ -1,6 +1,6 @@
 ﻿using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
-using KB.SharpCore.Extensions;
+using KB.SharpCore.Utils;
 
 namespace KB.SharpCore.IO;
 

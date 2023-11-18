@@ -4,7 +4,7 @@ using System.Runtime.Serialization.Json;
 using System.Text;
 using System.Text.Json;
 using System.Xml;
-using KB.SharpCore.Extensions;
+using KB.SharpCore.Utils;
 using Path = KB.SharpCore.IO.Path;
 
 namespace KB.SharpCore.Serialization;

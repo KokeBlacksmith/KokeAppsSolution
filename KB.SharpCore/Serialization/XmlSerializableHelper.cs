@@ -2,7 +2,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Xml.Serialization;
-using KB.SharpCore.Extensions;
+using KB.SharpCore.Utils;
 
 namespace KB.SharpCore.Serialization;
 

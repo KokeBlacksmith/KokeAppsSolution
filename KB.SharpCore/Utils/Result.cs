@@ -1,6 +1,4 @@
-﻿using KB.SharpCore.Utils;
-
-namespace KB.SharpCore.Extensions;
+﻿namespace KB.SharpCore.Utils;
 
 public readonly struct Result
 {

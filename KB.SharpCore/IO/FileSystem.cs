@@ -1,5 +1,5 @@
 ﻿using System.Runtime.CompilerServices;
-using KB.SharpCore.Extensions;
+using KB.SharpCore.Utils;
 
 namespace KB.SharpCore.IO;
 

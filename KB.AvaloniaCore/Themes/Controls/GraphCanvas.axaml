@@ -17,7 +17,7 @@
 								VerticalAlignment="Stretch">
 					<Grid>
 						<kbControls:ZoomDecorator x:Name="PART_ZoomDecorator">
-							<Canvas x:Name="PART_Canvas" Background="Red"/>
+							<kbControls:EditorCanvas x:Name="PART_Canvas" Background="Red"/>
 						</kbControls:ZoomDecorator>
 						<ContentPresenter x:Name="PART_ContentPresenter" />
 					</Grid>
