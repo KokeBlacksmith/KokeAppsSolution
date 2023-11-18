@@ -39,14 +39,18 @@ public class GraphCanvas : TemplatedControl
     #region StyledProperties
 
     public readonly static StyledProperty<IEnumerable<Node>> ChildNodesProperty = AvaloniaProperty.Register<GraphCanvas, IEnumerable<Node>>(nameof(GraphCanvas.ChildNodes));
+    public readonly static StyledProperty<IEnumerable<NodeConnection>> NodeConnectionsProperty = AvaloniaProperty.Register<GraphCanvas, IEnumerable<NodeConnection>>(nameof(GraphCanvas.NodeConnections));
 
     public IEnumerable<Node> ChildNodes
     {
         get { return GetValue(GraphCanvas.ChildNodesProperty); }
-        set 
-        { 
-            SetValue(GraphCanvas.ChildNodesProperty, value);
-        }
+        set { SetValue(GraphCanvas.ChildNodesProperty, value); }
+    }
+
+    public IEnumerable<NodeConnection> NodeConnections
+    {
+        get { return GetValue(GraphCanvas.NodeConnectionsProperty); }
+        set { SetValue(GraphCanvas.NodeConnectionsProperty, value); }
     }
 
     #endregion

@@ -2,19 +2,28 @@
 using Avalonia.Media;
 using Avalonia.Metadata;
 using Avalonia;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace KB.AvaloniaCore.Controls.GraphEditor;
 
 /// <summary>
-/// Styled properties of a node in a graph.
+/// Styled properties and default propeties and accessors of a node in a graph.
+/// It does not contain logic. All the logic is in <see cref="Node"/>.
 /// </summary>
 public abstract partial class Node
 {
+
+    #region Fields
+
+    protected Guid m_id = new Guid();
+
+    protected List<NodeConnectionPin> m_leftConnectionPins = new List<NodeConnectionPin>();
+    protected List<NodeConnectionPin> m_rightConnectionPins = new List<NodeConnectionPin>();
+    protected List<NodeConnectionPin> m_topConnectionPins = new List<NodeConnectionPin>();
+    protected List<NodeConnectionPin> m_bottomConnectionPins = new List<NodeConnectionPin>();
+
+    #endregion
+
+
     static Node()
     {
         Node.ChildProperty.Changed.AddClassHandler<Node>((s, e) => s.m_OnChildPropertyChanged(e));
@@ -103,4 +112,42 @@ public abstract partial class Node
     }
 
     #endregion
+
+    #region Properties
+
+    public Guid Id => m_id;
+    public IReadOnlyList<NodeConnectionPin> LeftConnectionPins => m_leftConnectionPins;
+    public IReadOnlyList<NodeConnectionPin> RightConnectionPins => m_rightConnectionPins;
+    public IReadOnlyList<NodeConnectionPin> TopConnectionPins => m_topConnectionPins;
+    public IReadOnlyList<NodeConnectionPin> BottomConnectionPins => m_bottomConnectionPins;
+
+    #endregion
+
+    /// <summary>
+    /// Returns all the connection pins of this node.
+    /// The order is left, right, top, bottom.
+    /// </summary>
+    /// <returns></returns>
+    public IEnumerable<NodeConnectionPin> GetAllConnectionPins()
+    {
+        foreach(NodeConnectionPin pin in m_leftConnectionPins)
+        {
+            yield return pin;
+        }
+
+        foreach (NodeConnectionPin pin in m_rightConnectionPins)
+        {
+            yield return pin;
+        }
+
+        foreach (NodeConnectionPin pin in m_topConnectionPins)
+        {
+            yield return pin;
+        }
+
+        foreach (NodeConnectionPin pin in m_bottomConnectionPins)
+        {
+            yield return pin;
+        }
+    }
 }

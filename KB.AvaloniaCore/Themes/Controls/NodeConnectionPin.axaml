@@ -1,0 +1,28 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+					xmlns:kbGraph="clr-namespace:KB.AvaloniaCore.Controls.GraphEditor;assembly=KB.AvaloniaCore"
+					xmlns:kbControls="clr-namespace:KB.AvaloniaCore.Controls;assembly=KB.AvaloniaCore">
+
+	<ControlTheme x:Key="{x:Type kbGraph:NodeConnectionPin}" TargetType="kbGraph:NodeConnectionPin">
+		<Setter Property="ClipToBounds" Value="False" />
+
+		<Setter Property="Template">
+			<ControlTemplate>
+				<!--<Viewbox>
+					<Border x:Name="PART_OutterBorder" Background="Transparent" BorderBrush="Green"
+							HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Padding="0">
+						<Border x:Name="PART_InnerBorder" Background="DarkGreen" BorderBrush="Transparent"
+								HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0"/>
+					</Border>
+				</Viewbox>-->
+
+				<Border x:Name="PART_OutterBorder" Background="Transparent" BorderBrush="Green" BorderThickness="5"
+							HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Padding="0">
+					<Border x:Name="PART_InnerBorder" Background="DarkGreen" BorderBrush="Transparent"
+							HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0"/>
+				</Border>
+			</ControlTemplate>
+		</Setter>
+	</ControlTheme>
+	
+</ResourceDictionary>
