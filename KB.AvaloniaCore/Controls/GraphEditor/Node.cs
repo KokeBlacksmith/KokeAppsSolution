@@ -92,49 +92,140 @@ public abstract partial class Node : Control
         }
 
         _connectionsCanvas!.Children.Add(pin);
-        _UpdateConnectionPins();
+
+        m_RepositionConnectionPins();
     }
 
-    private void _UpdateConnectionPins()
+    /// <summary>
+    /// Reposition pins
+    /// </summary>
+    protected virtual void m_RepositionConnectionPins()
     {
-        for (int i = 0; i < m_leftConnectionPins.Count; i++)
+        // Positioning the pins.
+        // It starts from the center and goes outwards to both sides.
+
+        if(Double.IsNaN(Width) || Double.IsNaN(Height))
         {
-            var pin = m_leftConnectionPins[i];
-            double leftPosition = pin.Width / 2.0d;
-            double bottomPosition = pin.Height * (i + 1);
-            Canvas.SetLeft(pin, leftPosition);
-            Canvas.SetBottom(pin, bottomPosition);
+            return;
         }
 
-        for (int i = 0; i < m_rightConnectionPins.Count; i++)
+        double centerX = Width / 2.0d;
+        double centerY = Height / 2.0d;
+        double marginErrorRatio = 0.8d;
+
+        // Left pins
+        int leftPinsCount = m_leftConnectionPins.Count;
+        if(leftPinsCount > 0)
         {
-            var pin = m_rightConnectionPins[i];
-            double rightPosition = pin.Width / 2.0d;
-            double bottomPosition = pin.Height * (i + 1);
-            Canvas.SetRight(pin, rightPosition);
-            Canvas.SetBottom(pin, bottomPosition);
+            double leftPinSeparation = (Height * marginErrorRatio) / leftPinsCount;
+            for (int i = 0; i < leftPinsCount; ++i)
+            {
+                NodeConnectionPin pin = m_leftConnectionPins[i];
+
+                double leftPosition = pin.Width / 2.0d;
+                Canvas.SetLeft(pin, leftPosition);
+
+                double bottomPosition;
+                if(leftPinsCount == 1)
+                {
+                    bottomPosition = centerY;
+                }
+                else
+                {
+                    // Distribute the pins evenly
+                    bottomPosition = leftPinSeparation * (i + 1);
+                }
+
+                Canvas.SetBottom(pin, bottomPosition);
+            }
         }
 
-        for (int i = 0; i < m_topConnectionPins.Count; i++)
+        // Right pins
+        int rightPinsCount = m_rightConnectionPins.Count;
+        if(rightPinsCount > 0)
         {
-            var pin = m_topConnectionPins[i];
-            double topPosition = pin.Height / 2.0d;
-            double leftPosition = pin.Width * (i + 1);
-            Canvas.SetTop(pin, topPosition);
-            Canvas.SetLeft(pin, leftPosition);
+            double rightPinSeparation = (Height * marginErrorRatio) / rightPinsCount;
+            for (int i = 0; i < rightPinsCount; i++)
+            {
+                var pin = m_rightConnectionPins[i];
+                double rightPosition = pin.Width / 2.0d;
+                Canvas.SetRight(pin, rightPosition);
+
+                double bottomPosition;
+                if (rightPinsCount == 1)
+                {
+                    bottomPosition = centerY;
+                }
+                else
+                {
+                    // Distribute the pins evenly
+                    bottomPosition = rightPinSeparation * (i + 1);
+                }
+                
+                Canvas.SetBottom(pin, bottomPosition);
+            }
         }
 
-        for (int i = 0; i < m_bottomConnectionPins.Count; i++)
+        // Top pins
+        int topPinsCount = m_topConnectionPins.Count;
+        if (topPinsCount > 0)
         {
-            var pin = m_bottomConnectionPins[i];
-            double bottomPosition = pin.Height / 2.0d;
-            double leftPosition = pin.Width * (i + 1);
-            Canvas.SetBottom(pin, bottomPosition);
-            Canvas.SetLeft(pin, leftPosition);
+            double topPinSeparation = (Width * marginErrorRatio) / topPinsCount;
+            for (int i = 0; i < m_topConnectionPins.Count; i++)
+            {
+                var pin = m_topConnectionPins[i];
+                double topPosition = pin.Height / 2.0d;
+                Canvas.SetTop(pin, topPosition);
+
+                double leftPosition;
+                if (topPinsCount == 1)
+                {
+                    leftPosition = centerX;
+                }
+                else
+                {
+                    // Distribute the pins evenly
+                    leftPosition = topPinSeparation * (i + 1);
+                }
+
+                Canvas.SetLeft(pin, leftPosition);
+            }
+        }
+
+        // Bottom pins
+        int bottomPinsCount = m_bottomConnectionPins.Count;
+        if (bottomPinsCount > 0)
+        {
+            double bottomPinSeparation = (Width * marginErrorRatio) / bottomPinsCount;
+            for (int i = 0; i < bottomPinsCount; ++i)
+            {
+                var pin = m_bottomConnectionPins[i];
+                double bottomPosition = pin.Height / 2.0d;
+                Canvas.SetBottom(pin, bottomPosition);
+
+                double leftPosition;
+                if (bottomPinsCount == 1)
+                {
+                    leftPosition = centerX;
+                }
+                else
+                {
+                    // Distribute the pins evenly
+                    leftPosition = bottomPinSeparation * (i + 1);
+                }
+
+                Canvas.SetLeft(pin, leftPosition);
+            }
         }
     }
 
     #endregion
+
+    protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
+    {
+        base.OnAttachedToVisualTree(e);
+        m_RepositionConnectionPins();
+    }
 
     #region PropertyChangedEvents
 
