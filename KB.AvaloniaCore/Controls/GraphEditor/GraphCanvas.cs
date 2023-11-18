@@ -5,6 +5,7 @@ using Avalonia.Controls.Presenters;
 using Avalonia.Controls.Primitives;
 using Avalonia.Interactivity;
 using Avalonia.Metadata;
+using KB.SharpCore.Events;
 using SkiaSharp;
 using System;
 using System.Collections.Generic;
@@ -98,6 +99,11 @@ public class GraphCanvas : TemplatedControl
     private void _AddNode(Node node)
     {
         _canvas!.Children.Add(node);
+        node.PositionXChanged += _OnNodePositionChanged;
+        node.PositionYChanged += _OnNodePositionChanged;
+        node.WidthChanged += _OnNodeSizeChanged;
+        node.HeightChanged += _OnNodeSizeChanged;
+
         _UpdateNodePosition(node);
     }
 
@@ -108,6 +114,10 @@ public class GraphCanvas : TemplatedControl
 
     private bool _RemoveNode(Node node)
     {
+        node.PositionXChanged -= _OnNodePositionChanged;
+        node.PositionYChanged -= _OnNodePositionChanged;
+        node.WidthChanged -= _OnNodeSizeChanged;
+        node.HeightChanged -= _OnNodeSizeChanged;
         return _canvas!.Children.Remove(node);
     }
 
@@ -115,6 +125,25 @@ public class GraphCanvas : TemplatedControl
     {
         Canvas.SetLeft(node, node.PositionX);
         Canvas.SetBottom(node, node.PositionY);
+    }
+
+    private void _OnNodePositionChanged(Node node, ValueChangedEventArgs e)
+    {
+        _UpdateNodePosition(node);
+    }
+
+    #endregion
+
+    #region Node Properties Changed
+
+    private void _OnNodePositionChanged(object? sender, ValueChangedEventArgs<double> e)
+    {
+        _UpdateNodePosition((Node)sender!);
+    }
+
+    private void _OnNodeSizeChanged(object? sender, ValueChangedEventArgs<double> e)
+    {
+        _UpdateNodePosition((Node)sender!);
     }
 
     #endregion

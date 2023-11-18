@@ -2,6 +2,7 @@
 using Avalonia.Media;
 using Avalonia.Metadata;
 using Avalonia;
+using KB.SharpCore.Events;
 
 namespace KB.AvaloniaCore.Controls.GraphEditor;
 
@@ -9,7 +10,7 @@ namespace KB.AvaloniaCore.Controls.GraphEditor;
 /// Styled properties and default propeties and accessors of a node in a graph.
 /// It does not contain logic. All the logic is in <see cref="Node"/>.
 /// </summary>
-public abstract partial class Node
+public abstract partial class Node : IEditableControl
 {
 
     #region Fields
@@ -23,6 +24,14 @@ public abstract partial class Node
 
     #endregion
 
+    /// <inheritdoc/>
+    public event EventHandler<ValueChangedEventArgs<double>>? PositionXChanged;
+    /// <inheritdoc/>
+    public event EventHandler<ValueChangedEventArgs<double>>? PositionYChanged;
+    /// <inheritdoc/>
+    public event EventHandler<ValueChangedEventArgs<double>>? WidthChanged;
+    /// <inheritdoc/>
+    public event EventHandler<ValueChangedEventArgs<double>>? HeightChanged;
 
     static Node()
     {
@@ -32,6 +41,11 @@ public abstract partial class Node
         Node.BorderThicknessProperty.Changed.AddClassHandler<Node>((s, e) => s._OnBorderThicknessPropertyChanged(e));
         Node.CornerRadiusProperty.Changed.AddClassHandler<Node>((s, e) => s._OnCornerRadiusPropertyChanged(e));
         Node.PaddingProperty.Changed.AddClassHandler<Node>((s, e) => s._OnPaddingPropertyChanged(e));
+
+        Node.PositionXProperty.Changed.AddClassHandler<Node>((s, e) => s._OnPositionXPropertyChanged(e));
+        Node.PositionYProperty.Changed.AddClassHandler<Node>((s, e) => s._OnPositionYPropertyChanged(e));
+        Node.WidthProperty.Changed.AddClassHandler<Node>((s, e) => s._OnWidthPropertyChanged(e));
+        Node.HeightProperty.Changed.AddClassHandler<Node>((s, e) => s._OnHeightPropertyChanged(e));
     }
 
     #region StyledProperties

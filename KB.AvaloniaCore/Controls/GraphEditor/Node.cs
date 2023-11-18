@@ -7,6 +7,7 @@ using Avalonia.Layout;
 using Avalonia.Media;
 using Avalonia.Metadata;
 using KB.SharpCore.Enums;
+using KB.SharpCore.Events;
 
 namespace KB.AvaloniaCore.Controls.GraphEditor;
 
@@ -258,6 +259,29 @@ public abstract partial class Node : Control
     private void _OnPaddingPropertyChanged(AvaloniaPropertyChangedEventArgs e)
     {
         _childParentBorder!.Padding = (Thickness)e.NewValue!;
+    }
+
+    private void _OnPositionXPropertyChanged(AvaloniaPropertyChangedEventArgs e)
+    {
+        ValueChangedEventArgs<double> args = new ValueChangedEventArgs<double>((double)e.OldValue!, (double)e.NewValue!);
+        PositionXChanged?.Invoke(this, args);
+    }
+    private void _OnPositionYPropertyChanged(AvaloniaPropertyChangedEventArgs e)
+    {
+        ValueChangedEventArgs<double> args = new ValueChangedEventArgs<double>((double)e.OldValue!, (double)e.NewValue!);
+        PositionYChanged?.Invoke(this, args);
+    }
+
+    private void _OnWidthPropertyChanged(AvaloniaPropertyChangedEventArgs e)
+    {
+        ValueChangedEventArgs<double> args = new ValueChangedEventArgs<double>((double)e.OldValue!, (double)e.NewValue!);
+        WidthChanged?.Invoke(this, args);
+    }
+
+    private void _OnHeightPropertyChanged(AvaloniaPropertyChangedEventArgs e)
+    {
+        ValueChangedEventArgs<double> args = new ValueChangedEventArgs<double>((double)e.OldValue!, (double)e.NewValue!);
+        HeightChanged?.Invoke(this, args);
     }
 
     #endregion

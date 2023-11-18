@@ -1,4 +1,5 @@
-﻿using Avalonia.Controls;
+﻿using Avalonia;
+using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Media;
 using Avalonia.VisualTree;
@@ -18,13 +19,16 @@ namespace KB.AvaloniaCore.Controls;
 public class EditorCanvas : Canvas
 {
     private bool _isDraggingElement;
+    private Point _previousMousePosition;
+
     public IEditableControl? SelectedElement { get; private set; }
 
     public EventHandler<ValueChangedEventArgs<IEditableControl>>? SelectedElementChanged;
 
     protected override void OnPointerPressed(PointerPressedEventArgs e)
     {
-        if(e.ClickCount == 1)
+        PointerPointProperties properties = e.GetCurrentPoint(this).Properties;
+        if(e.ClickCount == 1 && properties.IsLeftButtonPressed)
         {
             IEditableControl? editableControl = (e.Source as Control)!.FindAncestorOfType<IEditableControl>();
             if(editableControl != null)
@@ -32,6 +36,7 @@ public class EditorCanvas : Canvas
                 editableControl.IsSelected = !editableControl.IsSelected;
                 SelectedElement = editableControl;
                 _isDraggingElement = true;
+                _previousMousePosition = e.GetPosition(this);
                 e.Handled = true;
             }
             else
@@ -57,10 +62,14 @@ public class EditorCanvas : Canvas
             return;
         }
 
-        var positionPoint = e.GetPosition(this);
+        Point positionPoint = e.GetPosition(this);
+        Point delta = positionPoint - _previousMousePosition;
+        _previousMousePosition = positionPoint;
 
-        Canvas.SetLeft((Control)SelectedElement!, positionPoint.X);
-        Canvas.SetTop((Control)SelectedElement!, positionPoint.Y);
+        SelectedElement!.PositionX += delta.X;
+        // Mouse position is Top Left corner. But canvas may return NaN on GetTop of the element so we negate the delta on Y.
+        // Node is positioned by Bottom Left corner.
+        SelectedElement!.PositionY -= delta.Y;
 
         base.OnPointerMoved(e);
     }
