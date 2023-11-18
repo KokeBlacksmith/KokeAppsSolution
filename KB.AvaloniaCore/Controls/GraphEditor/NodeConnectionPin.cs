@@ -26,6 +26,11 @@ public class NodeConnectionPin : TemplatedControl
         IsConnectedProperty.Changed.AddClassHandler<NodeConnectionPin>((s, e) => s.m_OnIsConnectedPropertyChanged(e));
     }
 
+    public NodeConnectionPin()
+    {
+        ClipToBounds = false;
+    }
+
     #region StyledProperties
 
     public static readonly StyledProperty<bool> IsConnectedProperty = AvaloniaProperty.Register<NodeConnectionPin, bool>(nameof(NodeConnectionPin.IsConnected));

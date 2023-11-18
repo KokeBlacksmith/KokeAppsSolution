@@ -122,7 +122,7 @@ public abstract partial class Node : Control
             {
                 NodeConnectionPin pin = m_leftConnectionPins[i];
 
-                double leftPosition = pin.Width / 2.0d;
+                double leftPosition = (pin.Width / 2.0d) * -1.0d;
                 Canvas.SetLeft(pin, leftPosition);
 
                 double bottomPosition;
@@ -148,7 +148,7 @@ public abstract partial class Node : Control
             for (int i = 0; i < rightPinsCount; i++)
             {
                 var pin = m_rightConnectionPins[i];
-                double rightPosition = pin.Width / 2.0d;
+                double rightPosition = (pin.Width / 2.0d) * -1.0d;
                 Canvas.SetRight(pin, rightPosition);
 
                 double bottomPosition;
@@ -174,7 +174,7 @@ public abstract partial class Node : Control
             for (int i = 0; i < m_topConnectionPins.Count; i++)
             {
                 var pin = m_topConnectionPins[i];
-                double topPosition = pin.Height / 2.0d;
+                double topPosition = (pin.Height / 2.0d) * -1.0d;
                 Canvas.SetTop(pin, topPosition);
 
                 double leftPosition;
@@ -200,7 +200,7 @@ public abstract partial class Node : Control
             for (int i = 0; i < bottomPinsCount; ++i)
             {
                 var pin = m_bottomConnectionPins[i];
-                double bottomPosition = pin.Height / 2.0d;
+                double bottomPosition = (pin.Height / 2.0d) * -1.0d;
                 Canvas.SetBottom(pin, bottomPosition);
 
                 double leftPosition;
