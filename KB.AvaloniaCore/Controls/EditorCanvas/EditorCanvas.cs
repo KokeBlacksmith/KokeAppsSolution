@@ -1,14 +1,14 @@
 ﻿using Avalonia;
+using Avalonia.Collections;
 using Avalonia.Controls;
+using Avalonia.Data;
 using Avalonia.Input;
 using Avalonia.Media;
 using Avalonia.VisualTree;
 using KB.SharpCore.Events;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Collections;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
 
 namespace KB.AvaloniaCore.Controls;
 
@@ -21,9 +21,34 @@ public class EditorCanvas : Canvas
     private bool _isDraggingElement;
     private Point _previousMousePosition;
 
-    public IEditableControl? SelectedElement { get; private set; }
+    private readonly EditorMultiSelectBox _multiSelectBox;
 
-    public EventHandler<ValueChangedEventArgs<IEditableControl>>? SelectedElementChanged;
+    static EditorCanvas()
+    {
+        EditorCanvas.SelectedItemsProperty.Changed.AddClassHandler<EditorCanvas>((s, e) => s.m_OnSelectedItemsPropertyChanged(e));
+    }
+
+    public EditorCanvas()
+    {
+        _isDraggingElement = false;
+        _previousMousePosition = default(Point);
+        _multiSelectBox = new EditorMultiSelectBox();
+    }
+
+    #region StyledProperties
+
+    public static readonly StyledProperty<AvaloniaList<IEditableControl>> SelectedItemsProperty 
+        = AvaloniaProperty.Register<EditorCanvas, AvaloniaList<IEditableControl>>(nameof(EditorCanvas.SelectedItems), 
+                                        defaultValue: new AvaloniaList<IEditableControl>(), defaultBindingMode: BindingMode.OneWayToSource);
+
+
+    public AvaloniaList<IEditableControl> SelectedItems
+    {
+        get { return GetValue(SelectedItemsProperty); }
+        private set { SetValue(SelectedItemsProperty, value); }
+    }
+    
+    #endregion
 
     protected override void OnPointerPressed(PointerPressedEventArgs e)
     {
@@ -34,14 +59,20 @@ public class EditorCanvas : Canvas
             if(editableControl != null)
             {
                 editableControl.IsSelected = !editableControl.IsSelected;
-                SelectedElement = editableControl;
+                SelectedItems.Add(editableControl);
+                editableControl.IsSelected = true;
                 _isDraggingElement = true;
                 _previousMousePosition = e.GetPosition(this);
                 e.Handled = true;
             }
             else
             {
-                SelectedElement = null;
+                foreach(IEditableControl editable in SelectedItems!)
+                {
+                    editable.IsSelected = false;
+                }
+
+                SelectedItems.Clear();
                 _isDraggingElement = false;
             }
         }
@@ -66,11 +97,37 @@ public class EditorCanvas : Canvas
         Point delta = positionPoint - _previousMousePosition;
         _previousMousePosition = positionPoint;
 
-        SelectedElement!.PositionX += delta.X;
-        // Mouse position is Top Left corner. But canvas may return NaN on GetTop of the element so we negate the delta on Y.
-        // Node is positioned by Bottom Left corner.
-        SelectedElement!.PositionY -= delta.Y;
+        foreach(IEditableControl editable in SelectedItems!)
+        {
+            editable.PositionX += delta.X;
+            // Mouse position is Top Left corner. But canvas may return NaN on GetTop of the element so we negate the delta on Y.
+            // Node is positioned by Bottom Left corner.
+            editable.PositionY -= delta.Y;
+        }
 
         base.OnPointerMoved(e);
+    }
+
+    private void m_OnSelectedItemsPropertyChanged(AvaloniaPropertyChangedEventArgs e)
+    {
+        if(e.OldValue is AvaloniaList<IEditableControl> oldList)
+        {
+            foreach(IEditableControl element in oldList)
+            {
+                element.IsSelected = false;
+            }
+
+            //oldList.CollectionChanged -= _OnSelectedItemsCollectionChanged;
+        }
+
+        if(e.NewValue is AvaloniaList<IEditableControl> newList)
+        {
+            foreach(IEditableControl element in newList)
+            {
+                element.IsSelected = true;
+            }
+
+            //newList.CollectionChanged += _OnSelectedItemsCollectionChanged;
+        }
     }
 }

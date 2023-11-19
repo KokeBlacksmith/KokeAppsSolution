@@ -32,6 +32,11 @@ namespace KB.AvaloniaCore.Controls
         /// </summary>
         event EventHandler<ValueChangedEventArgs<double>>? HeightChanged;
 
+        /// <summary>
+        /// Event raised when the <see cref="IsSelected"/> property changes.
+        /// </summary>
+        event EventHandler<ValueChangedEventArgs<bool>>? IsSelectedChanged;
+
         double PositionX { get; set; }
         double PositionY { get; set; }
         double Width { get; set; }
