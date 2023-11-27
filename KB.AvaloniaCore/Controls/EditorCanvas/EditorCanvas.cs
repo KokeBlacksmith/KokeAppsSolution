@@ -9,6 +9,7 @@ using Avalonia.Media;
 using Avalonia.VisualTree;
 using Avalonia.Xaml.Interactions.Draggable;
 using KB.SharpCore.Utils;
+using System.Collections.Specialized;
 
 namespace KB.AvaloniaCore.Controls;
 
@@ -38,6 +39,7 @@ public class EditorCanvas : Canvas
         _multiSelectBox = new EditorMultiSelectBox();
         _selectionAdorner = new EditableControlAdorner();
         _adornerPlaceholderControl = new Panel();
+        _selectionAdorner.AdornedElements = SelectedItems;
     }
 
     #region StyledProperties
@@ -120,7 +122,6 @@ public class EditorCanvas : Canvas
                     AdornerLayer? adornerLayer = AdornerLayer.GetAdornerLayer(this);
                     if (adornerLayer != null && !_selectionAdorner.IsActive)
                     {
-                        _selectionAdorner.AdornedElements = SelectedItems;
                         _AddInternal(_adornerPlaceholderControl);
                         _selectionAdorner.Activate(adornerLayer, _adornerPlaceholderControl);
                     }
@@ -184,7 +185,6 @@ public class EditorCanvas : Canvas
             editable.IsSelected = false;
         }
 
-        _selectionAdorner.AdornedElements = null;
         SelectedItems.Clear();
     }
 
@@ -227,6 +227,8 @@ public class EditorCanvas : Canvas
 
             //newList.CollectionChanged += _OnSelectedItemsCollectionChanged;
         }
+
+        _selectionAdorner.AdornedElements = SelectedItems;
     }
 
     private void _AddInternal(Control control)

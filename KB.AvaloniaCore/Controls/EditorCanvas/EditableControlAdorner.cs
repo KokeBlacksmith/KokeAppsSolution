@@ -1,4 +1,5 @@
 ﻿using Avalonia;
+using Avalonia.Collections;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.Input;
@@ -8,6 +9,7 @@ using Avalonia.VisualTree;
 using Avalonia.Xaml.Interactions.Draggable;
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -77,6 +79,21 @@ internal class EditableControlAdorner : TemplatedControl
     private void _OnAdornedElementsPropertyChanged(AvaloniaPropertyChangedEventArgs e)
     {
         _MeasureHost();
+
+        if(e.OldValue is INotifyCollectionChanged oldAdornedElements)
+        {
+            oldAdornedElements.CollectionChanged -= _OnAdornedElementsCollectionChanged;
+        }
+
+        if(e.NewValue is INotifyCollectionChanged newAdornedElements)
+        {
+            newAdornedElements.CollectionChanged += _OnAdornedElementsCollectionChanged;
+        }
+    }
+
+    private void _OnAdornedElementsCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
+    {
+        _MeasureHost();
     }
 
     public void Activate(AdornerLayer layer, Control host)
@@ -94,36 +111,6 @@ internal class EditableControlAdorner : TemplatedControl
 
         // Set the size of the host the same as the size of the adorned elements
         _MeasureHost();
-
-        // Calculate the center of the AdornedElements
-        // Then reposition the host so the center of the host is the same as the center of the AdornedElements
-        double adornersMaxPositionX = Double.MinValue;
-        double adornersMaxPositionY = Double.MinValue;
-
-        // Calculate the position of the adorner based on the adorned element. It can have multiple elements so it has to take into account all of them.
-        //
-        //- *********************************** +
-        //|(0, 0)                 (max x, min y)|
-        //|                                     |
-        //|                                     |
-        //|                                     |
-        //|                                     |
-        //|                                     |
-        //|                                     |
-        //|(min x, max y)         (max x, max y)|
-        //- *********************************** +
-        foreach (IEditableControl editableControl in AdornedElements)
-        {
-            adornersMaxPositionX = System.Math.Max(adornersMaxPositionX, editableControl.PositionX);
-            adornersMaxPositionY = System.Math.Max(adornersMaxPositionY, editableControl.PositionY);
-        }
-        
-        double hostDesiredPositionX = adornersMaxPositionX;
-        double hostDesiredPositionY = adornersMaxPositionY;
-        Canvas.SetLeft(_host, hostDesiredPositionX);
-        Canvas.SetTop(_host, hostDesiredPositionY);
-
-        _previousPosition = new Point(hostDesiredPositionX, hostDesiredPositionY);
         _isDraggingElements = true;
     }
 
@@ -219,16 +206,42 @@ internal class EditableControlAdorner : TemplatedControl
 
         // Calcualte the size of the adorner
         Size size = new Size();
+        // Calculate the center of the AdornedElements
+        // Then reposition the host so the center of the host is the same as the center of the AdornedElements
+        double adornersMinPositionX = Double.MaxValue;
+        double adornersMinPositionY = Double.MaxValue;
+
         if (AdornedElements != null)
         {
+            // Calculate the position of the adorner based on the adorned element. It can have multiple elements so it has to take into account all of them.
+            //
+            //- *********************************** +
+            //|(0, 0)                 (max x, min y)|
+            //|                                     |
+            //|                                     |
+            //|                                     |
+            //|                                     |
+            //|                                     |
+            //|                                     |
+            //|(min x, max y)         (max x, max y)|
+            //- *********************************** +
+
             // Calculate the size of the adorner based on the adorned element. It can have multiple elements so it has to take into account all of them.
             foreach (IEditableControl editableControl in AdornedElements)
             {
-                size = new Size(System.Math.Max(size.Width, editableControl.Width), System.Math.Max(size.Height, editableControl.Height));
+                size = new Size(System.Math.Max(size.Width, editableControl.Width + editableControl.PositionX), System.Math.Max(size.Height, editableControl.Height + editableControl.PositionY));
+                adornersMinPositionX = System.Math.Min(adornersMinPositionX, editableControl.PositionX);
+                adornersMinPositionY = System.Math.Min(adornersMinPositionY, editableControl.PositionY);
             }
         }
 
+        size = new Size(size.Width - adornersMinPositionX, size.Height - adornersMinPositionY);
         _host!.Width = size.Width;
         _host!.Height = size.Height;
+
+        Canvas.SetLeft(_host, adornersMinPositionX);
+        Canvas.SetTop(_host, adornersMinPositionY);
+
+        _previousPosition = new Point(adornersMinPositionX, adornersMinPositionY);
     }
 }
