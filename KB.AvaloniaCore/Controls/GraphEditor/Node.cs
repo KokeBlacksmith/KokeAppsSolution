@@ -284,5 +284,11 @@ public abstract partial class Node : Control
         HeightChanged?.Invoke(this, args);
     }
 
+    private void _OnIsSelectedPropertyChanged(AvaloniaPropertyChangedEventArgs e)
+    {
+        ValueChangedEventArgs<bool> args = new ValueChangedEventArgs<bool>((bool)e.OldValue!, (bool)e.NewValue!);
+        IsSelectedChanged?.Invoke(this, args);
+    }
+
     #endregion
 }

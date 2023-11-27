@@ -32,6 +32,8 @@ public abstract partial class Node : IEditableControl
     public event EventHandler<ValueChangedEventArgs<double>>? WidthChanged;
     /// <inheritdoc/>
     public event EventHandler<ValueChangedEventArgs<double>>? HeightChanged;
+    /// <inheritdoc/>
+    public event EventHandler<ValueChangedEventArgs<bool>>? IsSelectedChanged;
 
     static Node()
     {
@@ -46,6 +48,7 @@ public abstract partial class Node : IEditableControl
         Node.PositionYProperty.Changed.AddClassHandler<Node>((s, e) => s._OnPositionYPropertyChanged(e));
         Node.WidthProperty.Changed.AddClassHandler<Node>((s, e) => s._OnWidthPropertyChanged(e));
         Node.HeightProperty.Changed.AddClassHandler<Node>((s, e) => s._OnHeightPropertyChanged(e));
+        Node.IsSelectedProperty.Changed.AddClassHandler<Node>((s, e) => s._OnIsSelectedPropertyChanged(e));
     }
 
     #region StyledProperties

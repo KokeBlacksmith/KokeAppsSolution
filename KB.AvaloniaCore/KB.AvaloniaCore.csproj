@@ -25,4 +25,8 @@
       <ProjectReference Include="..\KB.SharpCore\KB.SharpCore.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Controls\Adorners\" />
+    </ItemGroup>
+
 </Project>

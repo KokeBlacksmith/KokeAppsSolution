@@ -1,5 +1,8 @@
-﻿using Avalonia.Controls;
+﻿using Avalonia;
+using Avalonia.Controls;
 using Avalonia.Controls.Shapes;
+using Avalonia.Media;
+using Avalonia.VisualTree;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,9 +15,28 @@ namespace KB.AvaloniaCore.Controls;
 /// Shape to select multiple elements.
 /// It is a rectangle with border. And selection is done by checking if the element is inside the rectangle.
 /// </summary>
-public class EditorMultiSelectBox : Control
+internal class EditorMultiSelectBox : Rectangle
 {
-    private readonly Rectangle _rectangle;
+    public EditorMultiSelectBox()
+    {
+        Stroke = Brushes.Black;
+        StrokeThickness = 2.0d;
+        StrokeThickness = 1;
+        Fill = Brushes.Blue;
+    }
 
 
+    public IEnumerable<Visual> GetSelectedItems(IEnumerable<Visual> visuals)
+    {
+        List<Visual> visualsToSelect = new List<Visual>();
+        foreach (Visual visual in visuals)
+        {
+            if (this.Bounds.Intersects(visual.Bounds))
+            {
+                visualsToSelect.Add(visual);
+            }
+        }
+
+        return visualsToSelect;
+    }
 }

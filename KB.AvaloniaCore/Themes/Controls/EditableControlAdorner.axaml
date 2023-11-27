@@ -1,0 +1,19 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+					xmlns:kbControls="clr-namespace:KB.AvaloniaCore.Controls;assembly=KB.AvaloniaCore">
+
+	<ControlTheme x:Key="{x:Type kbControls:EditableControlAdorner}" TargetType="kbControls:EditableControlAdorner">
+		<Setter Property="ClipToBounds" Value="False" />
+		<Setter Property="HorizontalAlignment" Value="Stretch" />
+		<Setter Property="VerticalAlignment" Value="Stretch" />
+
+		<Setter Property="Template">
+			<ControlTemplate>
+				<Border HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="Brown">
+					
+				</Border>
+			</ControlTemplate>
+		</Setter>
+	</ControlTheme>
+	
+</ResourceDictionary>

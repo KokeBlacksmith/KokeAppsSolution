@@ -124,7 +124,7 @@ public class GraphCanvas : TemplatedControl
     private void _UpdateNodePosition(Node node)
     {
         Canvas.SetLeft(node, node.PositionX);
-        Canvas.SetBottom(node, node.PositionY);
+        Canvas.SetTop(node, node.PositionY);
     }
 
     private void _OnNodePositionChanged(Node node, ValueChangedEventArgs e)

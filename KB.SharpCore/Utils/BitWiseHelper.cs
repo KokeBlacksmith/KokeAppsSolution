@@ -28,7 +28,7 @@ public static class BitWiseHelper
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static int ClearFlag(int flags, int flag)
     {
-        return flags & ~BitWiseHelper.FlagToBit(flag);
+        return flags & ~flag;
     }
     
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -43,7 +43,7 @@ public static class BitWiseHelper
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool HasFlag(int flags, int flag)
     {
-        return (flags & BitWiseHelper.FlagToBit(flag)) != 0;
+        return (flags & flag) != 0;
     }
     
     [MethodImpl(MethodImplOptions.AggressiveInlining)]

@@ -3,5 +3,6 @@
 	<ResourceDictionary.MergedDictionaries>
 		<ResourceInclude Source="/Themes/Controls/GraphCanvas.axaml" />
 		<ResourceInclude Source="/Themes/Controls/NodeConnectionPin.axaml" />
+		<ResourceInclude Source="/Themes/Controls/EditableControlAdorner.axaml" />
 	</ResourceDictionary.MergedDictionaries>
 </ResourceDictionary>
