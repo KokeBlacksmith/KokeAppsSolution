@@ -78,6 +78,7 @@ public static class BitWiseHelper
         return number ^ (1 << bit);
     }
 
+    
     private static void s_AssertEnumCheck<TEnum>(TEnum enumValue, TEnum flag)
         where TEnum : Enum
     {

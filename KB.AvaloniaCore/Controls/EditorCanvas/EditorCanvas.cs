@@ -48,7 +48,6 @@ public class EditorCanvas : Canvas
         = AvaloniaProperty.Register<EditorCanvas, AvaloniaList<IEditableControl>>(nameof(EditorCanvas.SelectedItems), 
                                         defaultValue: new AvaloniaList<IEditableControl>(), defaultBindingMode: BindingMode.OneWayToSource);
 
-
     public AvaloniaList<IEditableControl> SelectedItems
     {
         get { return GetValue(SelectedItemsProperty); }
@@ -80,11 +79,10 @@ public class EditorCanvas : Canvas
                     // End edit
                     _RemoveEditAdorner();
                 }
-                else
-                {
-                    // Selection box, clicked outside any control
-                    _AddInternal(_multiSelectBox);
-                }
+
+                // Selection box, clicked outside any control
+                _AddInternal(_multiSelectBox);
+                _multiSelectBox.Start(e.GetPosition(this));
             }
             else if(editableControl != null)
             {
@@ -96,13 +94,13 @@ public class EditorCanvas : Canvas
                 {
                     if(controlKeyIsPressed && isNewControl)
                     {
-                        _AddControlToSelection(editableControl);
+                        _AddEditableControlToSelection(editableControl);
                         controlAddedToSelection = true;
                     }
                     else if (isNewControl)
                     {
                         _RemoveEditAdorner();
-                        _AddControlToSelection(editableControl);
+                        _AddEditableControlToSelection(editableControl);
                         controlAddedToSelection = true;
                     }
                     else if (!controlKeyIsPressed && !isNewControl)
@@ -113,7 +111,7 @@ public class EditorCanvas : Canvas
                 }
                 else
                 {
-                    _AddControlToSelection(editableControl);
+                    _AddEditableControlToSelection(editableControl);
                     controlAddedToSelection = true;
                 }
 
@@ -149,25 +147,50 @@ public class EditorCanvas : Canvas
     {
         // If pointer pressed started on this canvas, it won't be raised from the child control
         // So we have to raise it manually
-        _selectionAdorner.OnCanvasPointerMoved(this, e);
+        if(_selectionAdorner.IsActive)
+        {
+            _selectionAdorner.OnCanvasPointerMoved(this, e);
+        }
+
+        if(_multiSelectBox.IsVisible)
+        {
+            _multiSelectBox.Update(e.GetPosition(this));
+        }
     }
 
     protected override void OnPointerReleased(PointerReleasedEventArgs e)
     {
-        // If pointer pressed started on this canvas, it won't be raised from the child control
-        // So we have to raise it manually
-        //if(_internalState == EInternalState.SelectingBox)
-        //{
-        //    SelectedItems.Clear();
-        //    SelectedItems.AddRange(_multiSelectBox.GetSelectedItems(this.Children).OfType<IEditableControl>());
-        //    _RemoveMultiSelectBox();
-        //}
-        //else if(_internalState == EInternalState.Editting)
-        //{
-        //}
+        if (_selectionAdorner.IsActive)
+        {
+            _selectionAdorner.OnCanvasPointerReleased(this, e);
+        }
 
-        _RemoveMultiSelectBox();
-        _selectionAdorner.OnCanvasPointerReleased(this, e);
+        if(_multiSelectBox.IsVisible)
+        {
+            SelectedItems.Clear();
+            SelectedItems.AddRange(_multiSelectBox.GetSelectedItems(Children.OfType<IEditableControl>().Cast<Visual>()).Cast<IEditableControl>());
+
+            if(SelectedItems.Count > 0)
+            {
+                AdornerLayer? adornerLayer = AdornerLayer.GetAdornerLayer(this);
+                if (adornerLayer != null && !_selectionAdorner.IsActive)
+                {
+                    _AddInternal(_adornerPlaceholderControl);
+                    _selectionAdorner.Activate(adornerLayer, _adornerPlaceholderControl);
+                }
+            }
+            else if(_selectionAdorner.IsActive)
+            {
+                AdornerLayer? adornerLayer = AdornerLayer.GetAdornerLayer(this);
+                if (adornerLayer != null)
+                {
+                    _selectionAdorner.Deactivate(adornerLayer);
+                    _RemoveInternal(_adornerPlaceholderControl);
+                }
+            }
+
+            _multiSelectBox.End();
+        }
     }
 
     private void _RemoveEditAdorner()
@@ -176,7 +199,6 @@ public class EditorCanvas : Canvas
         if (adornerLayer != null)
         {
            _selectionAdorner.Deactivate(adornerLayer);
-            //this.Children.Remove(_adornerPlaceholderControl);
             _RemoveInternal(_adornerPlaceholderControl);
         }
 
@@ -188,21 +210,13 @@ public class EditorCanvas : Canvas
         SelectedItems.Clear();
     }
 
-    private void _AddControlToSelection(IEditableControl control)
+    private void _AddEditableControlToSelection(IEditableControl control)
     {
         if(!SelectedItems.Contains(control))
         {
             control.IsSelected = !control.IsSelected;
             SelectedItems.Add(control);
             control.IsSelected = true;
-        }
-    }
-
-    private void _RemoveMultiSelectBox()
-    {
-        if (Children.Contains(_multiSelectBox))
-        {
-            _RemoveInternal(_multiSelectBox);
         }
     }
 
@@ -214,8 +228,6 @@ public class EditorCanvas : Canvas
             {
                 element.IsSelected = false;
             }
-
-            //oldList.CollectionChanged -= _OnSelectedItemsCollectionChanged;
         }
 
         if(e.NewValue is AvaloniaList<IEditableControl> newList)
@@ -224,8 +236,6 @@ public class EditorCanvas : Canvas
             {
                 element.IsSelected = true;
             }
-
-            //newList.CollectionChanged += _OnSelectedItemsCollectionChanged;
         }
 
         _selectionAdorner.AdornedElements = SelectedItems;
@@ -238,7 +248,10 @@ public class EditorCanvas : Canvas
         //InvalidateMeasure();
 
         //TODO: Find a way so that the adorner is not added to the visual tree using Children collection, otherswise it could be removed by the user or client of the library
-        this.Children.Add(control);
+        if(!Children.Contains(control))
+        {
+            Children.Add(control);
+        }
     }
 
     private void _RemoveInternal(Control control)

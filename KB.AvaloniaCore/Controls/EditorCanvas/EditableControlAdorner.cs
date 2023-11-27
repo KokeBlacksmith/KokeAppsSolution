@@ -176,8 +176,6 @@ internal class EditableControlAdorner : TemplatedControl
     private void _MoveElements(Point currentPosition)
     {
         Vector delta = currentPosition - _previousPosition;
-        //Canvas.SetLeft(_host!, Canvas.GetLeft(_host!) + delta.X);
-        //Canvas.SetBottom(_host!, Canvas.GetBottom(_host!) - delta.Y);
 
         double newLeft = Canvas.GetLeft(_host!) + delta.X;
         double newTop = Canvas.GetTop(_host!) + delta.Y;
