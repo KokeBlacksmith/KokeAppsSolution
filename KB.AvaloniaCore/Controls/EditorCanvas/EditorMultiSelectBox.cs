@@ -17,18 +17,14 @@ namespace KB.AvaloniaCore.Controls;
 /// </summary>
 internal class EditorMultiSelectBox : Rectangle
 {
+    private Point _startPosition;
     public EditorMultiSelectBox()
     {
-        Stroke = Brushes.Black;
+        Stroke = Brushes.DarkGray;
         StrokeThickness = 2.0d;
-        StrokeThickness = 1;
-        Fill = Brushes.Blue;
+        Fill = Brushes.White;
         Opacity = 0.5d;
         IsVisible = false;
-
-        //BorderBrush = Brushes.Black;
-        //BorderThickness = new Thickness(2.0d);
-        //Background = Brushes.Blue;
     }
 
     public void Start(Point position)
@@ -39,38 +35,34 @@ internal class EditorMultiSelectBox : Rectangle
 
         Canvas.SetLeft(this, position.X);
         Canvas.SetTop(this, position.Y);
+        _startPosition = position;
     }
 
     public void Update(Point position)
     {
-        double left = Canvas.GetLeft(this);
-        double top = Canvas.GetTop(this);
+        double width = System.Math.Abs(position.X - _startPosition.X);
+        double height = System.Math.Abs(position.Y - _startPosition.Y);
 
-        double width = position.X - left;
-        double height = position.Y - top;
+        if (position.X < _startPosition.X)
+        {
+            Canvas.SetLeft(this, position.X);
+        }
+        else
+        {
+            Canvas.SetLeft(this, _startPosition.X);
+        }
 
-        //if (width < 0)
-        //{
-        //    Canvas.SetLeft(this, position.X);
-        //    this.Width = System.Math.Abs(width);
-        //}
-        //else
-        //{
-        //    this.Width = width;
-        //}
+        if (position.Y < _startPosition.Y)
+        {
+            Canvas.SetTop(this, position.Y);
+        }
+        else
+        {
+            Canvas.SetTop(this, _startPosition.Y);
+        }
 
-        //if (height < 0)
-        //{
-        //    Canvas.SetTop(this, position.Y);
-        //    this.Height = System.Math.Abs(height);
-        //}
-        //else
-        //{
-        //    this.Height = height;
-        //}
-
-        this.Width = width;
-        this.Height = height;
+        Width = width;
+        Height = height;
     }
 
     public void End()
