@@ -27,7 +27,7 @@ internal class EditableControlAdorner : TemplatedControl
 {
     private bool _isDraggingElements;
     private Point _previousPosition;
-    private Control? _host;
+    private readonly Control _host;
     private bool _isActive;
 
     static EditableControlAdorner()
@@ -36,11 +36,13 @@ internal class EditableControlAdorner : TemplatedControl
     }
 
 
-    public EditableControlAdorner()
+    public EditableControlAdorner(Control host)
     {
         IsHitTestVisible = false;
         _isDraggingElements = false;
         _isActive = false;
+        _host = host;
+        AdornerLayer.SetAdornedElement(this, _host);
     }
 
     public bool IsDraggingElements => _isDraggingElements;
@@ -96,12 +98,10 @@ internal class EditableControlAdorner : TemplatedControl
         _MeasureHost();
     }
 
-    public void Activate(AdornerLayer layer, Control host)
+    public void Activate()
     {
         _isActive = true;
-        _host = host;
-        AdornerLayer.SetAdornedElement(this, _host);
-
+        AdornerLayer layer = AdornerLayer.GetAdornerLayer(_host.FindAncestorOfType<Canvas>()!)!;
         layer.Children.Add(this);
 
         if (AdornedElements == null)
@@ -114,13 +114,12 @@ internal class EditableControlAdorner : TemplatedControl
         _isDraggingElements = true;
     }
 
-    public void Deactivate(AdornerLayer layer)
+    public void Deactivate()
     {
         _isActive = false;
+        AdornerLayer layer = AdornerLayer.GetAdornerLayer(_host.FindAncestorOfType<Canvas>()!)!;
         layer.Children.Remove(this);
         _isDraggingElements = false;
-
-        _host = null;
     }
 
     #region Inherited Members

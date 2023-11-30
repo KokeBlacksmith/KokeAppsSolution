@@ -19,11 +19,6 @@ namespace KB.AvaloniaCore.Controls;
 public class EditorCanvas : Control
 {
     private readonly EditableControlAdorner _selectionAdorner;
-    /// <summary>
-    /// Placeholder control to host the <see cref="EditableControlAdorner"/>.
-    /// The adorner may have to be over several controls and this one will be used to host it.
-    /// </summary>
-    private readonly Panel _adornerPlaceholderControl;
 
     /// <summary>
     /// Canvas that will store the IEditbleControl elements.
@@ -46,14 +41,14 @@ public class EditorCanvas : Control
     public EditorCanvas()
     {
         _multiSelectBox = new EditorMultiSelectBox();
-        _selectionAdorner = new EditableControlAdorner();
-        _adornerPlaceholderControl = new Panel();
+        Control adornerPlaceholderControl = new Panel();
+        _selectionAdorner = new EditableControlAdorner(adornerPlaceholderControl);
         _selectionAdorner.AdornedElements = SelectedItems;
 
         _childrenCanvas = new Canvas();
         _editionCanvas = new Canvas();
 
-        _editionCanvas.Children.Add(_adornerPlaceholderControl);
+        _editionCanvas.Children.Add(adornerPlaceholderControl);
         _editionCanvas.Children.Add(_multiSelectBox);
 
 
@@ -176,10 +171,9 @@ public class EditorCanvas : Control
 
                 if(controlAddedToSelection)
                 {
-                    AdornerLayer? adornerLayer = AdornerLayer.GetAdornerLayer(_editionCanvas);
-                    if (adornerLayer != null && !_selectionAdorner.IsActive)
+                    if (!_selectionAdorner.IsActive)
                     {
-                        _selectionAdorner.Activate(adornerLayer, _adornerPlaceholderControl);
+                        _selectionAdorner.Activate();
                     }
                 }
             }
@@ -230,19 +224,14 @@ public class EditorCanvas : Control
 
             if(SelectedItems.Count > 0)
             {
-                AdornerLayer? adornerLayer = AdornerLayer.GetAdornerLayer(_editionCanvas);
-                if (adornerLayer != null && !_selectionAdorner.IsActive)
+                if (!_selectionAdorner.IsActive)
                 {
-                    _selectionAdorner.Activate(adornerLayer, _adornerPlaceholderControl);
+                    _selectionAdorner.Activate();
                 }
             }
             else if(_selectionAdorner.IsActive)
             {
-                AdornerLayer? adornerLayer = AdornerLayer.GetAdornerLayer(_editionCanvas);
-                if (adornerLayer != null)
-                {
-                    _selectionAdorner.Deactivate(adornerLayer);
-                }
+                _selectionAdorner.Deactivate();
             }
 
             _multiSelectBox.End();
@@ -251,11 +240,7 @@ public class EditorCanvas : Control
 
     private void _RemoveEditAdorner()
     {
-        AdornerLayer? adornerLayer = AdornerLayer.GetAdornerLayer(_editionCanvas);
-        if (adornerLayer != null)
-        {
-           _selectionAdorner.Deactivate(adornerLayer);
-        }
+        _selectionAdorner.Deactivate();
 
         foreach (IEditableControl editable in SelectedItems!)
         {
