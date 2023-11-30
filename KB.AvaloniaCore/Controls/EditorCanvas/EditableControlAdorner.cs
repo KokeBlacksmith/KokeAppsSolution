@@ -160,7 +160,7 @@ internal class EditableControlAdorner : TemplatedControl
         {
             return;
         }
-
+        
         _isDraggingElements = false;
         e.Handled = true;
     }
@@ -175,12 +175,12 @@ internal class EditableControlAdorner : TemplatedControl
     private void _MoveElements(Point currentPosition)
     {
         Vector delta = currentPosition - _previousPosition;
+        _previousPosition = currentPosition;
 
         double newLeft = Canvas.GetLeft(_host!) + delta.X;
         double newTop = Canvas.GetTop(_host!) + delta.Y;
         Canvas.SetLeft(_host!, newLeft);
         Canvas.SetTop(_host!, newTop);
-        _previousPosition = new Point(newLeft, newTop);
 
         // Update editable controls
         foreach (IEditableControl editableControl in AdornedElements!)
@@ -239,6 +239,6 @@ internal class EditableControlAdorner : TemplatedControl
         Canvas.SetLeft(_host, adornersMinPositionX);
         Canvas.SetTop(_host, adornersMinPositionY);
 
-        _previousPosition = new Point(adornersMinPositionX, adornersMinPositionY);
+        //_previousPosition = new Point(adornersMinPositionX, adornersMinPositionY);
     }
 }

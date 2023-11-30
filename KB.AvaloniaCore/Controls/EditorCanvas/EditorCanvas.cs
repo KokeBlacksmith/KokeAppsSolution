@@ -181,8 +181,6 @@ public class EditorCanvas : Control
             {
                 _RemoveEditAdorner();
             }
-
-            e.Handled = true;
         }
         else
         {
