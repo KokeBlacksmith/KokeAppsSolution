@@ -4,10 +4,9 @@ using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.Data;
 using Avalonia.Input;
-using Avalonia.Interactivity;
 using Avalonia.Media;
+using Avalonia.Metadata;
 using Avalonia.VisualTree;
-using Avalonia.Xaml.Interactions.Draggable;
 using KB.SharpCore.Utils;
 using System.Collections.Specialized;
 
@@ -17,7 +16,7 @@ namespace KB.AvaloniaCore.Controls;
 /// Canvas to drag and move elements around.
 /// Elemes must implement <see cref="IEditableControl"/>.
 /// </summary>
-public class EditorCanvas : Canvas
+public class EditorCanvas : Control
 {
     private readonly EditableControlAdorner _selectionAdorner;
     /// <summary>
@@ -26,11 +25,21 @@ public class EditorCanvas : Canvas
     /// </summary>
     private readonly Panel _adornerPlaceholderControl;
 
+    /// <summary>
+    /// Canvas that will store the IEditbleControl elements.
+    /// </summary>
+    private readonly Canvas _childrenCanvas;
+
+    /// <summary>
+    /// Canvas that will store edition adorners and selection box.
+    /// </summary>
+    private readonly Canvas _editionCanvas;
 
     private readonly EditorMultiSelectBox _multiSelectBox;
 
     static EditorCanvas()
     {
+        AffectsRender<Panel>(BackgroundProperty);
         EditorCanvas.SelectedItemsProperty.Changed.AddClassHandler<EditorCanvas>((s, e) => s._OnSelectedItemsPropertyChanged(e));
     }
 
@@ -40,7 +49,28 @@ public class EditorCanvas : Canvas
         _selectionAdorner = new EditableControlAdorner();
         _adornerPlaceholderControl = new Panel();
         _selectionAdorner.AdornedElements = SelectedItems;
+
+        _childrenCanvas = new Canvas();
+        _editionCanvas = new Canvas();
+
+        _editionCanvas.Children.Add(_adornerPlaceholderControl);
+        _editionCanvas.Children.Add(_multiSelectBox);
+
+
+        LogicalChildren.Add(_childrenCanvas);
+        LogicalChildren.Add(_editionCanvas);
+
+        VisualChildren.Add(_childrenCanvas);
+        VisualChildren.Add(_editionCanvas);
+
+        Children.CollectionChanged += _OnChildrenChanged;
     }
+
+    /// <summary>
+    /// Gets the children of the <see cref="Panel"/>.
+    /// </summary>
+    [Content]
+    public AvaloniaList<IEditableControl> Children { get; } = new AvaloniaList<IEditableControl>();
 
     #region StyledProperties
 
@@ -48,17 +78,47 @@ public class EditorCanvas : Canvas
         = AvaloniaProperty.Register<EditorCanvas, AvaloniaList<IEditableControl>>(nameof(EditorCanvas.SelectedItems), 
                                         defaultValue: new AvaloniaList<IEditableControl>(), defaultBindingMode: BindingMode.OneWayToSource);
 
+    /// <summary>
+    /// Defines the <see cref="Background"/> property.
+    /// </summary>
+    public static readonly StyledProperty<IBrush?> BackgroundProperty = Border.BackgroundProperty.AddOwner<EditorCanvas>();
+
     public AvaloniaList<IEditableControl> SelectedItems
     {
         get { return GetValue(SelectedItemsProperty); }
         private set { SetValue(SelectedItemsProperty, value); }
     }
-    
+
+    /// <summary>
+    /// Gets or Sets Editor Canvas background brush.
+    /// </summary>
+    public IBrush? Background
+    {
+        get => GetValue(BackgroundProperty);
+        set => SetValue(BackgroundProperty, value);
+    }
+
     #endregion
 
     public bool IsEdittingControls
     {
         get { return SelectedItems.Count > 0; }
+    }
+
+    /// <summary>
+    /// Renders the visual to a <see cref="DrawingContext"/>.
+    /// </summary>
+    /// <param name="context">The drawing context.</param>
+    public sealed override void Render(DrawingContext context)
+    {
+        var background = Background;
+        if (background != null)
+        {
+            var renderSize = Bounds.Size;
+            context.FillRectangle(background, new Rect(renderSize));
+        }
+
+        base.Render(context);
     }
 
     protected override void OnPointerPressed(PointerPressedEventArgs e)
@@ -81,7 +141,6 @@ public class EditorCanvas : Canvas
                 }
 
                 // Selection box, clicked outside any control
-                _AddInternal(_multiSelectBox);
                 _multiSelectBox.Start(e.GetPosition(this));
             }
             else if(editableControl != null)
@@ -117,10 +176,9 @@ public class EditorCanvas : Canvas
 
                 if(controlAddedToSelection)
                 {
-                    AdornerLayer? adornerLayer = AdornerLayer.GetAdornerLayer(this);
+                    AdornerLayer? adornerLayer = AdornerLayer.GetAdornerLayer(_editionCanvas);
                     if (adornerLayer != null && !_selectionAdorner.IsActive)
                     {
-                        _AddInternal(_adornerPlaceholderControl);
                         _selectionAdorner.Activate(adornerLayer, _adornerPlaceholderControl);
                     }
                 }
@@ -172,20 +230,18 @@ public class EditorCanvas : Canvas
 
             if(SelectedItems.Count > 0)
             {
-                AdornerLayer? adornerLayer = AdornerLayer.GetAdornerLayer(this);
+                AdornerLayer? adornerLayer = AdornerLayer.GetAdornerLayer(_editionCanvas);
                 if (adornerLayer != null && !_selectionAdorner.IsActive)
                 {
-                    _AddInternal(_adornerPlaceholderControl);
                     _selectionAdorner.Activate(adornerLayer, _adornerPlaceholderControl);
                 }
             }
             else if(_selectionAdorner.IsActive)
             {
-                AdornerLayer? adornerLayer = AdornerLayer.GetAdornerLayer(this);
+                AdornerLayer? adornerLayer = AdornerLayer.GetAdornerLayer(_editionCanvas);
                 if (adornerLayer != null)
                 {
                     _selectionAdorner.Deactivate(adornerLayer);
-                    _RemoveInternal(_adornerPlaceholderControl);
                 }
             }
 
@@ -195,11 +251,10 @@ public class EditorCanvas : Canvas
 
     private void _RemoveEditAdorner()
     {
-        AdornerLayer? adornerLayer = AdornerLayer.GetAdornerLayer(this);
+        AdornerLayer? adornerLayer = AdornerLayer.GetAdornerLayer(_editionCanvas);
         if (adornerLayer != null)
         {
            _selectionAdorner.Deactivate(adornerLayer);
-            _RemoveInternal(_adornerPlaceholderControl);
         }
 
         foreach (IEditableControl editable in SelectedItems!)
@@ -241,24 +296,34 @@ public class EditorCanvas : Canvas
         _selectionAdorner.AdornedElements = SelectedItems;
     }
 
-    private void _AddInternal(Control control)
+    private void _OnChildrenChanged(object? sender, NotifyCollectionChangedEventArgs e)
     {
-        //LogicalChildren.Add(control);
-        //VisualChildren.Add(control);
-        //InvalidateMeasure();
-
-        //TODO: Find a way so that the adorner is not added to the visual tree using Children collection, otherswise it could be removed by the user or client of the library
-        if(!Children.Contains(control))
+        if (e.Action == NotifyCollectionChangedAction.Add)
         {
-            Children.Add(control);
+            foreach (IEditableControl element in e.NewItems!)
+            {
+                _childrenCanvas.Children.Add((Control)element);
+            }
         }
-    }
+        else if (e.Action == NotifyCollectionChangedAction.Remove)
+        {
+            foreach (IEditableControl element in e.OldItems!)
+            {
+                _childrenCanvas.Children.Remove((Control)element);
+            }
+        }
+        else if (e.Action == NotifyCollectionChangedAction.Reset)
+        {
+            _childrenCanvas.Children.Clear();
+        }
+        else if (e.Action == NotifyCollectionChangedAction.Replace || e.Action == NotifyCollectionChangedAction.Move)
+        {
+            foreach (IEditableControl element in e.OldItems!)
+            {
+                _childrenCanvas.Children.Remove((Control)element);
+            }
 
-    private void _RemoveInternal(Control control)
-    {
-        //LogicalChildren.Remove(control);
-        //VisualChildren.Remove(control);
-        //InvalidateMeasure();
-        this.Children.Remove(control);
+            _childrenCanvas.Children.AddRange(e.NewItems!.OfType<IEditableControl>().Cast<Control>());
+        }
     }
 }
