@@ -173,6 +173,15 @@ internal class EditableControlAdorner : TemplatedControl
         e.Handled = true;
     }
 
+    public bool IsPointInside(Point point)
+    {
+        double left = Canvas.GetLeft(_host!);
+        double top = Canvas.GetTop(_host!);
+        double right = left + _host.Width;
+        double bottom = top + _host.Height;
+        return left <= point.X && right >= point.X && top <= point.Y && bottom >= point.Y;
+    }
+
     protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
     {
         base.OnApplyTemplate(e);

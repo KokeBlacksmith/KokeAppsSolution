@@ -139,7 +139,8 @@ public class EditorCanvas : Control
 
         _isMousePressed = true;
         IEditableControl? editableControl = (e.Source as Control)!.FindAncestorOfType<IEditableControl>();
-        bool isAdornerClicked = (e.Source as Control)!.FindAncestorOfType<EditableControlAdorner>() != null;
+        bool isAdornerClicked = _selectionAdorner.IsPointInside(e.GetPosition(this));
+
         if(editableControl == null && !isAdornerClicked)
         {
             //User clicked outside any control
