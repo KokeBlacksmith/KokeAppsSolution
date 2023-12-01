@@ -27,6 +27,8 @@ internal class EditorMultiSelectBox : Rectangle
         IsVisible = false;
     }
 
+    public bool IsActive => IsVisible;
+
     public void Start(Point position)
     {
         IsVisible = true;

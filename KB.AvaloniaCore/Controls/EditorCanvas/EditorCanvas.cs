@@ -18,6 +18,17 @@ namespace KB.AvaloniaCore.Controls;
 /// </summary>
 public class EditorCanvas : Control
 {
+    private enum EStateMachine
+    {
+        None,
+        MultiSelecting,
+        Adorner,
+    }
+
+    private EStateMachine _stateMachine;
+
+    private bool _isMousePressed;
+
     private readonly EditableControlAdorner _selectionAdorner;
 
     /// <summary>
@@ -40,6 +51,8 @@ public class EditorCanvas : Control
 
     public EditorCanvas()
     {
+        _isMousePressed = false;
+        _stateMachine = EStateMachine.None;
         _multiSelectBox = new EditorMultiSelectBox();
         Control adornerPlaceholderControl = new Panel();
         _selectionAdorner = new EditableControlAdorner(adornerPlaceholderControl);
@@ -124,115 +137,99 @@ public class EditorCanvas : Control
             return;
         }
 
+        _isMousePressed = true;
         IEditableControl? editableControl = (e.Source as Control)!.FindAncestorOfType<IEditableControl>();
-        if(e.ClickCount == 1)
+        if(editableControl == null)
         {
-            if(editableControl == null)
+            //User clicked outside any control
+            _RemoveEditAdorner();
+            _RemoveSelectionAdorner();
+            _stateMachine = EStateMachine.None;
+        }
+        else
+        {
+            if(e.ClickCount == 1)
             {
-                if(IsEdittingControls)
+                if(!editableControl.IsSelected)
                 {
-                    // End edit
-                    _RemoveEditAdorner();
-                }
+                    if(BitWiseHelper.HasFlag(e.KeyModifiers, KeyModifiers.Control))
+                    {
+                        SelectedItems.Add(editableControl);
+                    }
+                    else
+                    { 
+                        SelectedItems.Clear();
+                        SelectedItems.Add(editableControl);
+                    }
 
-                // Selection box, clicked outside any control
-                _multiSelectBox.Start(e.GetPosition(this));
-            }
-            else if(editableControl != null)
-            {
-                bool isNewControl = !SelectedItems.Contains(editableControl);
-                bool controlKeyIsPressed = BitWiseHelper.HasFlag(e.KeyModifiers, KeyModifiers.Control);
-                bool controlAddedToSelection = false;
-
-                if(IsEdittingControls)
-                {
-                    if(controlKeyIsPressed && isNewControl)
-                    {
-                        _AddEditableControlToSelection(editableControl);
-                        controlAddedToSelection = true;
-                    }
-                    else if (isNewControl)
-                    {
-                        _RemoveEditAdorner();
-                        _AddEditableControlToSelection(editableControl);
-                        controlAddedToSelection = true;
-                    }
-                    else if (!controlKeyIsPressed && !isNewControl)
-                    {
-                        _RemoveEditAdorner();
-                        controlAddedToSelection = false;
-                    }
+                    _selectionAdorner.Activate();
+                    _stateMachine = EStateMachine.Adorner;
+                    // If pointer pressed started on this canvas, it won't be raised from the child control
+                    // So we have to raise it manually
+                    _selectionAdorner.OnCanvasPointerPressed(this, e);
                 }
                 else
                 {
-                    _AddEditableControlToSelection(editableControl);
-                    controlAddedToSelection = true;
-                }
-
-                if(controlAddedToSelection)
-                {
-                    if (!_selectionAdorner.IsActive)
+                    SelectedItems.Remove(editableControl);
+                    if(SelectedItems.Count == 0)
                     {
-                        _selectionAdorner.Activate();
+                        _RemoveEditAdorner();
+                        _stateMachine = EStateMachine.None;
                     }
                 }
             }
             else
             {
-                _RemoveEditAdorner();
+                // Double click
+                SelectedItems.Clear();
+                SelectedItems.Add(editableControl);
+                
+                //TODO;  ¿What happens on double click?
             }
         }
-        else
-        {
-            _RemoveEditAdorner();
-        }
 
-        // If pointer pressed started on this canvas, it won't be raised from the child control
-        // So we have to raise it manually
-        _selectionAdorner.OnCanvasPointerPressed(this, e);
         base.OnPointerPressed(e);
     }
 
     protected override void OnPointerMoved(PointerEventArgs e)
     {
-        // If pointer pressed started on this canvas, it won't be raised from the child control
-        // So we have to raise it manually
-        if(_selectionAdorner.IsActive)
+        if(!_isMousePressed)
         {
-            _selectionAdorner.OnCanvasPointerMoved(this, e);
+            return;
         }
 
-        if(_multiSelectBox.IsVisible)
+        switch (_stateMachine)
         {
-            _multiSelectBox.Update(e.GetPosition(this));
+            case EStateMachine.None:
+                if (!_multiSelectBox.IsActive)
+                {
+                    _stateMachine = EStateMachine.MultiSelecting;
+                    _multiSelectBox.Start(e.GetPosition(this));
+                }
+                break;
+            case EStateMachine.MultiSelecting:
+                _multiSelectBox.Update(e.GetPosition(this));
+                break;
+            case EStateMachine.Adorner:
+                _selectionAdorner.OnCanvasPointerMoved(this, e);
+                break;
         }
     }
 
     protected override void OnPointerReleased(PointerReleasedEventArgs e)
     {
-        if (_selectionAdorner.IsActive)
-        {
-            _selectionAdorner.OnCanvasPointerReleased(this, e);
-        }
+        _isMousePressed = false;
 
-        if(_multiSelectBox.IsVisible)
+        if(_stateMachine == EStateMachine.MultiSelecting)
         {
             SelectedItems.Clear();
             SelectedItems.AddRange(_multiSelectBox.GetSelectedItems(Children.OfType<IEditableControl>().Cast<Visual>()).Cast<IEditableControl>());
-
+            _multiSelectBox.End();
             if(SelectedItems.Count > 0)
             {
-                if (!_selectionAdorner.IsActive)
-                {
-                    _selectionAdorner.Activate();
-                }
+                _selectionAdorner.Activate();
+                _stateMachine = EStateMachine.Adorner;
             }
-            else if(_selectionAdorner.IsActive)
-            {
-                _selectionAdorner.Deactivate();
-            }
-
-            _multiSelectBox.End();
         }
     }
 
@@ -246,6 +243,11 @@ public class EditorCanvas : Control
         }
 
         SelectedItems.Clear();
+    }
+
+    private void _RemoveSelectionAdorner() 
+    { 
+        _multiSelectBox.End();
     }
 
     private void _AddEditableControlToSelection(IEditableControl control)

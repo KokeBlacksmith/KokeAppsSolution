@@ -100,6 +100,11 @@ internal class EditableControlAdorner : TemplatedControl
 
     public void Activate()
     {
+        if(_isActive)
+        {
+            return;
+        }
+
         _isActive = true;
         AdornerLayer layer = AdornerLayer.GetAdornerLayer(_host.FindAncestorOfType<Canvas>()!)!;
         layer.Children.Add(this);
