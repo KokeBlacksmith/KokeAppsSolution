@@ -28,7 +28,6 @@ internal class EditableControlAdorner : TemplatedControl
     private bool _isDraggingElements;
     private Point _previousPosition;
     private readonly Control _host;
-    private bool _isActive;
 
     static EditableControlAdorner()
     {
@@ -40,13 +39,12 @@ internal class EditableControlAdorner : TemplatedControl
     {
         IsHitTestVisible = false;
         _isDraggingElements = false;
-        _isActive = false;
         _host = host;
         AdornerLayer.SetAdornedElement(this, _host);
     }
 
     public bool IsDraggingElements => _isDraggingElements;
-    public bool IsActive => _isActive;
+    public bool IsActive { get; private set; }
 
     public static readonly StyledProperty<IEnumerable<IEditableControl>?> AdornedElementsProperty = AvaloniaProperty.Register<EditableControlAdorner, IEnumerable<IEditableControl>?>(nameof(EditableControlAdorner.AdornedElements));
     public static readonly StyledProperty<bool> CanRotateProperty = AvaloniaProperty.Register<EditableControlAdorner, bool>(nameof(EditableControlAdorner.CanRotate), defaultValue: true);
@@ -100,12 +98,12 @@ internal class EditableControlAdorner : TemplatedControl
 
     public void Activate()
     {
-        if(_isActive)
+        if(IsActive)
         {
             return;
         }
 
-        _isActive = true;
+        IsActive = true;
         AdornerLayer layer = AdornerLayer.GetAdornerLayer(_host.FindAncestorOfType<Canvas>()!)!;
         layer.Children.Add(this);
 
@@ -121,10 +119,15 @@ internal class EditableControlAdorner : TemplatedControl
 
     public void Deactivate()
     {
-        _isActive = false;
+        _isDraggingElements = false;
+        if(!IsActive)
+        {
+            return;
+        }
+
+        IsActive = false;
         AdornerLayer layer = AdornerLayer.GetAdornerLayer(_host.FindAncestorOfType<Canvas>()!)!;
         layer.Children.Remove(this);
-        _isDraggingElements = false;
     }
 
     #region Inherited Members
@@ -201,7 +204,7 @@ internal class EditableControlAdorner : TemplatedControl
 
     private void _MeasureHost()
     {
-        if(!_isActive)
+        if(!IsActive)
         {
             return;
         }

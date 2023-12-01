@@ -139,7 +139,8 @@ public class EditorCanvas : Control
 
         _isMousePressed = true;
         IEditableControl? editableControl = (e.Source as Control)!.FindAncestorOfType<IEditableControl>();
-        if(editableControl == null)
+        bool isAdornerClicked = (e.Source as Control)!.FindAncestorOfType<EditableControlAdorner>() != null;
+        if(editableControl == null && !isAdornerClicked)
         {
             //User clicked outside any control
             _RemoveEditAdorner();
@@ -150,7 +151,13 @@ public class EditorCanvas : Control
         {
             if(e.ClickCount == 1)
             {
-                if(!editableControl.IsSelected)
+                if(isAdornerClicked)
+                {
+                    // If pointer pressed started on this canvas, it won't be raised from the child control
+                    // So we have to raise it manually
+                    _selectionAdorner.OnCanvasPointerPressed(this, e);
+                }
+                else if(!editableControl!.IsSelected)
                 {
                     if(BitWiseHelper.HasFlag(e.KeyModifiers, KeyModifiers.Control))
                     {
