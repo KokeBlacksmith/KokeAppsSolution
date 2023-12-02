@@ -7,6 +7,7 @@ using Avalonia.Input;
 using Avalonia.Media;
 using Avalonia.Metadata;
 using Avalonia.VisualTree;
+using KB.AvaloniaCore.Injection;
 using KB.SharpCore.Utils;
 using System.Collections.Specialized;
 
@@ -139,7 +140,7 @@ public class EditorCanvas : Control
 
         _isMousePressed = true;
         IEditableControl? editableControl = (e.Source as Control)!.FindAncestorOfType<IEditableControl>();
-        bool isAdornerClicked = _selectionAdorner.IsPointInside(e.GetPosition(this));
+        bool isAdornerClicked = _editionCanvas.IsPointOverChild(e.GetPosition(this), _selectionAdorner);
 
         if(editableControl == null && !isAdornerClicked)
         {

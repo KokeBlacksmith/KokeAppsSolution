@@ -97,6 +97,12 @@ public abstract partial class Node : Control
         m_RepositionConnectionPins();
     }
 
+    protected override void OnMeasureInvalidated()
+    {
+        base.OnMeasureInvalidated();
+        m_RepositionConnectionPins();
+    }
+
     /// <summary>
     /// Reposition pins
     /// </summary>

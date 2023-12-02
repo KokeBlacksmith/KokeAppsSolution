@@ -40,6 +40,11 @@ internal class EditableControlAdorner : TemplatedControl
     private Thumb? _rightBottomThumb;
     private Thumb? _rotateThumb;
 
+    /// <summary>
+    /// Used to calculate the correct delta. Because the delta is the delta of the thumb and not the delta of the element that is being dragged and scaled.
+    /// </summary>
+    private Point _previousDeltaPositionChangeOnThumbDelta;
+
     static EditableControlAdorner()
     {
         EditableControlAdorner.AdornedElementsProperty.Changed.AddClassHandler<EditableControlAdorner>((s, e) => s._OnAdornedElementsPropertyChanged(e));
@@ -52,6 +57,7 @@ internal class EditableControlAdorner : TemplatedControl
         _isDraggingElements = false;
         _host = host;
         AdornerLayer.SetAdornedElement(this, _host);
+        _previousDeltaPositionChangeOnThumbDelta = default(Point);
     }
 
     public bool IsDraggingElements => _isDraggingElements;
@@ -196,15 +202,6 @@ internal class EditableControlAdorner : TemplatedControl
         e.Handled = true;
     }
 
-    public bool IsPointInside(Point point)
-    {
-        double left = Canvas.GetLeft(_host!);
-        double top = Canvas.GetTop(_host!);
-        double right = left + _host.Width;
-        double bottom = top + _host.Height;
-        return left <= point.X && right >= point.X && top <= point.Y && bottom >= point.Y;
-    }
-
     #region ThumbInteraction
     private void _OnScaleThumbLeftTopDragDelta(object? sender, VectorEventArgs e)
     {
@@ -215,16 +212,22 @@ internal class EditableControlAdorner : TemplatedControl
 
         if (CanResize)
         {
-            double delta = System.Math.Min(e.Vector.X, e.Vector.Y);
+            double deltaX = e.Vector.X - _previousDeltaPositionChangeOnThumbDelta.X;
+            double deltaY = e.Vector.Y - _previousDeltaPositionChangeOnThumbDelta.Y;
+
+            _previousDeltaPositionChangeOnThumbDelta = new Point(e.Vector.X, e.Vector.Y);
+
             foreach (IEditableControl editableControl in AdornedElements!)
             {
-                editableControl.Width -= e.Vector.X;
-                editableControl.Height -= e.Vector.Y;
-                editableControl.PositionX += e.Vector.X;
-                editableControl.PositionY += e.Vector.Y;
+                editableControl.PositionX += deltaX;
+                editableControl.PositionY += deltaY;
+
+                editableControl.Width -= deltaX;
+                editableControl.Height -= deltaY;
             }
         }
 
+        _MeasureHost();
         e.Handled = true;
     }
 
@@ -237,14 +240,22 @@ internal class EditableControlAdorner : TemplatedControl
 
         if (CanResize)
         {
-            double delta = System.Math.Min(e.Vector.X, -e.Vector.Y);
+            double deltaX = e.Vector.X - _previousDeltaPositionChangeOnThumbDelta.X;
+            double deltaY = e.Vector.Y;
+
+            _previousDeltaPositionChangeOnThumbDelta = new Point(e.Vector.X, e.Vector.Y);
+
             foreach (IEditableControl editableControl in AdornedElements!)
             {
-                editableControl.Width -= delta;
-                editableControl.Height -= delta;
-                editableControl.PositionX += delta;
+                editableControl.PositionX += deltaX;
+
+                editableControl.Width -= deltaX;
+                editableControl.Height += deltaY;
             }
         }
+
+        _MeasureHost();
+        e.Handled = true;
     }
 
     private void _OnScaleThumbRightTopDragDelta(object? sender, VectorEventArgs e)
@@ -256,14 +267,22 @@ internal class EditableControlAdorner : TemplatedControl
 
         if (CanResize)
         {
-            double delta = System.Math.Min(-e.Vector.X, e.Vector.Y);
+            double deltaX = e.Vector.X;
+            double deltaY = e.Vector.Y - _previousDeltaPositionChangeOnThumbDelta.Y;
+
+            _previousDeltaPositionChangeOnThumbDelta = new Point(e.Vector.X, e.Vector.Y);
+
             foreach (IEditableControl editableControl in AdornedElements!)
             {
-                editableControl.Width -= delta;
-                editableControl.Height -= delta;
-                editableControl.PositionY += delta;
+                editableControl.PositionY += deltaY;
+
+                editableControl.Width += deltaX;
+                editableControl.Height -= deltaY;
             }
         }
+
+        _MeasureHost();
+        e.Handled = true;
     }
 
     private void _OnScaleThumbRightBottomDragDelta(object? sender, VectorEventArgs e)
@@ -275,13 +294,18 @@ internal class EditableControlAdorner : TemplatedControl
 
         if (CanResize)
         {
-            double delta = System.Math.Min(-e.Vector.X, -e.Vector.Y);
+            double deltaX = e.Vector.X;
+            double deltaY = e.Vector.Y;
+
             foreach (IEditableControl editableControl in AdornedElements!)
             {
-                editableControl.Width -= delta;
-                editableControl.Height -= delta;
+                editableControl.Width += deltaX;
+                editableControl.Height += deltaY;
             }
         }
+
+        _MeasureHost();
+        e.Handled = true;
     }
 
     private void _OnRotateThumbDragDelta(object? sender, VectorEventArgs e)
@@ -298,6 +322,20 @@ internal class EditableControlAdorner : TemplatedControl
                 //editableControl.Rotation += e.Vector.X;
             }
         }
+
+        _MeasureHost();
+        e.Handled = true;
+    }
+
+    private void _OnRotateThumbDragCompleted(object? sender, VectorEventArgs e)
+    {
+        if (e.Handled || !IsActive)
+        {
+            return;
+        }
+
+        _previousDeltaPositionChangeOnThumbDelta = default(Point);
+        e.Handled = true;
     }
 
     #endregion
@@ -331,6 +369,11 @@ internal class EditableControlAdorner : TemplatedControl
         _rightTopThumb!.DragDelta += _OnScaleThumbRightTopDragDelta;
         _rightBottomThumb!.DragDelta += _OnScaleThumbRightBottomDragDelta;
         _rotateThumb!.DragDelta += _OnRotateThumbDragDelta;
+
+        _leftBottomThumb!.DragCompleted += _OnRotateThumbDragCompleted;
+        _rightBottomThumb!.DragCompleted += _OnRotateThumbDragCompleted;
+        _leftTopThumb!.DragCompleted += _OnRotateThumbDragCompleted;
+        _rightTopThumb!.DragCompleted += _OnRotateThumbDragCompleted;
     }
 
     #endregion
