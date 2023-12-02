@@ -2,6 +2,16 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 					xmlns:kbControls="clr-namespace:KB.AvaloniaCore.Controls;assembly=KB.AvaloniaCore">
 
+	<!-- Default thumbs template -->
+	<ControlTemplate x:Key="DefaultThumbScaleTemplate">
+		<Border Background="AliceBlue" BorderBrush="Blue" BorderThickness="2.0" Width="10" Height="10"/>
+	</ControlTemplate>
+
+	<ControlTemplate x:Key="DefaultThumbRotateTemplate">
+		<Ellipse Stroke="Green" StrokeThickness="2.0" Width="10" Height="10"/>
+	</ControlTemplate>
+	
+	<!-- Adorner template -->
 	<ControlTheme x:Key="{x:Type kbControls:EditableControlAdorner}" TargetType="kbControls:EditableControlAdorner">
 		<Setter Property="ClipToBounds" Value="False" />
 		<Setter Property="HorizontalAlignment" Value="Stretch" />
@@ -9,8 +19,15 @@
 
 		<Setter Property="Template">
 			<ControlTemplate>
-				<Border HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="Brown">
+				<Border Background="{x:Null}" BorderBrush="AliceBlue" BorderThickness="2.0">
+					<Grid Background="{x:Null}">
+						<Thumb x:Name="PART_RotateThumb" HorizontalAlignment="Center" VerticalAlignment="Top" Template="{StaticResource DefaultThumbRotateTemplate}"/>
 					
+						<Thumb x:Name="PART_LeftTopThumb" HorizontalAlignment="Left" VerticalAlignment="Top" Template="{StaticResource DefaultThumbScaleTemplate}"/>
+						<Thumb x:Name="PART_LeftBottomThumb" HorizontalAlignment="Left" VerticalAlignment="Bottom" Template="{StaticResource DefaultThumbScaleTemplate}"/>
+						<Thumb x:Name="PART_RightTopThumb" HorizontalAlignment="Right" VerticalAlignment="Top" Template="{StaticResource DefaultThumbScaleTemplate}"/>
+						<Thumb x:Name="PART_RightBottomThumb" HorizontalAlignment="Right" VerticalAlignment="Bottom" Template="{StaticResource DefaultThumbScaleTemplate}"/>
+					</Grid>
 				</Border>
 			</ControlTemplate>
 		</Setter>

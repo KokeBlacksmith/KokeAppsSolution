@@ -1,7 +1,10 @@
 ﻿using Avalonia;
 using Avalonia.Collections;
 using Avalonia.Controls;
+using Avalonia.Controls.Metadata;
 using Avalonia.Controls.Primitives;
+using Avalonia.Controls.Shapes;
+using Avalonia.Controls.Templates;
 using Avalonia.Input;
 using Avalonia.Layout;
 using Avalonia.Media;
@@ -14,20 +17,28 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-//https://github.com/wieslawsoltes/PerspectiveDemo/blob/Resizing/PerspectiveDemo/SelectedAdorner.axaml.cs
-//https://github.com/wieslawsoltes/PerspectiveDemo/blob/Resizing/PerspectiveDemo/SelectedAdorner.axaml
-
 namespace KB.AvaloniaCore.Controls;
 
 /// <summary>
 /// Adorner to edit <see cref="IEditableControl"/>s."/>
 /// It can move, resize and rotate the adorned controls.
 /// </summary>
+[TemplatePart("PART_LeftTopThumb", typeof(Thumb))]
+[TemplatePart("PART_LeftBottomThumb", typeof(Thumb))]
+[TemplatePart("PART_RightTopThumb", typeof(Thumb))]
+[TemplatePart("PART_RightBottomThumb", typeof(Thumb))]
+[TemplatePart("PART_RotateThumb", typeof(Thumb))]
 internal class EditableControlAdorner : TemplatedControl
 {
     private bool _isDraggingElements;
     private Point _previousPosition;
     private readonly Control _host;
+
+    private Thumb? _leftTopThumb;
+    private Thumb? _leftBottomThumb;
+    private Thumb? _rightTopThumb;
+    private Thumb? _rightBottomThumb;
+    private Thumb? _rotateThumb;
 
     static EditableControlAdorner()
     {
@@ -37,7 +48,7 @@ internal class EditableControlAdorner : TemplatedControl
 
     public EditableControlAdorner(Control host)
     {
-        IsHitTestVisible = false;
+        //IsHitTestVisible = false;
         _isDraggingElements = false;
         _host = host;
         AdornerLayer.SetAdornedElement(this, _host);
@@ -50,6 +61,8 @@ internal class EditableControlAdorner : TemplatedControl
     public static readonly StyledProperty<bool> CanRotateProperty = AvaloniaProperty.Register<EditableControlAdorner, bool>(nameof(EditableControlAdorner.CanRotate), defaultValue: true);
     public static readonly StyledProperty<bool> CanResizeProperty = AvaloniaProperty.Register<EditableControlAdorner, bool>(nameof(EditableControlAdorner.CanResize), defaultValue: true);
     public static readonly StyledProperty<bool> CanMoveProperty = AvaloniaProperty.Register<EditableControlAdorner, bool>(nameof(EditableControlAdorner.CanMove), defaultValue: true);
+    public static readonly StyledProperty<IControlTemplate> ScaleThumbTemplateProperty = AvaloniaProperty.Register<EditableControlAdorner, IControlTemplate>(nameof(EditableControlAdorner.ScaleThumbTemplate));
+    public static readonly StyledProperty<IControlTemplate> RotateThumbTemplateProperty = AvaloniaProperty.Register<EditableControlAdorner, IControlTemplate>(nameof(EditableControlAdorner.RotateThumbTemplate));
 
     public IEnumerable<IEditableControl>? AdornedElements
     {
@@ -73,6 +86,18 @@ internal class EditableControlAdorner : TemplatedControl
     {
         get { return GetValue(CanMoveProperty); }
         set { SetValue(CanMoveProperty, value); }
+    }
+
+    public IControlTemplate ScaleThumbTemplate
+    {
+        get { return GetValue(ScaleThumbTemplateProperty); }
+        set { SetValue(ScaleThumbTemplateProperty, value); }
+    }
+
+    public IControlTemplate RotateThumbTemplate
+    {
+        get { return GetValue(RotateThumbTemplateProperty); }
+        set { SetValue(RotateThumbTemplateProperty, value); }
     }
 
 
@@ -130,8 +155,6 @@ internal class EditableControlAdorner : TemplatedControl
         layer.Children.Remove(this);
     }
 
-    #region Inherited Members
-
     public void OnCanvasPointerPressed(object? sender, PointerPressedEventArgs e)
     {
         if(e.Handled || !IsActive)
@@ -182,9 +205,132 @@ internal class EditableControlAdorner : TemplatedControl
         return left <= point.X && right >= point.X && top <= point.Y && bottom >= point.Y;
     }
 
+    #region ThumbInteraction
+    private void _OnScaleThumbLeftTopDragDelta(object? sender, VectorEventArgs e)
+    {
+        if (e.Handled || !IsActive)
+        {
+            return;
+        }
+
+        if (CanResize)
+        {
+            double delta = System.Math.Min(e.Vector.X, e.Vector.Y);
+            foreach (IEditableControl editableControl in AdornedElements!)
+            {
+                editableControl.Width -= e.Vector.X;
+                editableControl.Height -= e.Vector.Y;
+                editableControl.PositionX += e.Vector.X;
+                editableControl.PositionY += e.Vector.Y;
+            }
+        }
+
+        e.Handled = true;
+    }
+
+    private void _OnScaleThumbLeftBottomDragDelta(object? sender, VectorEventArgs e)
+    {
+        if (e.Handled || !IsActive)
+        {
+            return;
+        }
+
+        if (CanResize)
+        {
+            double delta = System.Math.Min(e.Vector.X, -e.Vector.Y);
+            foreach (IEditableControl editableControl in AdornedElements!)
+            {
+                editableControl.Width -= delta;
+                editableControl.Height -= delta;
+                editableControl.PositionX += delta;
+            }
+        }
+    }
+
+    private void _OnScaleThumbRightTopDragDelta(object? sender, VectorEventArgs e)
+    {
+        if (e.Handled || !IsActive)
+        {
+            return;
+        }
+
+        if (CanResize)
+        {
+            double delta = System.Math.Min(-e.Vector.X, e.Vector.Y);
+            foreach (IEditableControl editableControl in AdornedElements!)
+            {
+                editableControl.Width -= delta;
+                editableControl.Height -= delta;
+                editableControl.PositionY += delta;
+            }
+        }
+    }
+
+    private void _OnScaleThumbRightBottomDragDelta(object? sender, VectorEventArgs e)
+    {
+        if (e.Handled || !IsActive)
+        {
+            return;
+        }
+
+        if (CanResize)
+        {
+            double delta = System.Math.Min(-e.Vector.X, -e.Vector.Y);
+            foreach (IEditableControl editableControl in AdornedElements!)
+            {
+                editableControl.Width -= delta;
+                editableControl.Height -= delta;
+            }
+        }
+    }
+
+    private void _OnRotateThumbDragDelta(object? sender, VectorEventArgs e)
+    {
+        if (e.Handled || !IsActive)
+        {
+            return;
+        }
+
+        if (CanRotate)
+        {
+            foreach (IEditableControl editableControl in AdornedElements!)
+            {
+                //editableControl.Rotation += e.Vector.X;
+            }
+        }
+    }
+
+    #endregion
+
+    #region Inherited Members
+
     protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
     {
         base.OnApplyTemplate(e);
+        _leftTopThumb = e.NameScope.Get<Thumb>("PART_LeftTopThumb");
+        _leftBottomThumb = e.NameScope.Get<Thumb>("PART_LeftBottomThumb");
+        _rightTopThumb = e.NameScope.Get<Thumb>("PART_RightTopThumb");
+        _rightBottomThumb = e.NameScope.Get<Thumb>("PART_RightBottomThumb");
+        _rotateThumb = e.NameScope.Get<Thumb>("PART_RotateThumb");
+
+        if (ScaleThumbTemplate != null)
+        {
+            _leftTopThumb!.Template = ScaleThumbTemplate;
+            _leftBottomThumb!.Template = ScaleThumbTemplate;
+            _rightTopThumb!.Template = ScaleThumbTemplate;
+            _rightBottomThumb!.Template = ScaleThumbTemplate;
+        }
+
+        if (RotateThumbTemplate != null)
+        {
+            _rotateThumb!.Template = RotateThumbTemplate;
+        }
+
+        _leftTopThumb!.DragDelta += _OnScaleThumbLeftTopDragDelta;
+        _leftBottomThumb!.DragDelta += _OnScaleThumbLeftBottomDragDelta;
+        _rightTopThumb!.DragDelta += _OnScaleThumbRightTopDragDelta;
+        _rightBottomThumb!.DragDelta += _OnScaleThumbRightBottomDragDelta;
+        _rotateThumb!.DragDelta += _OnRotateThumbDragDelta;
     }
 
     #endregion
@@ -255,7 +401,5 @@ internal class EditableControlAdorner : TemplatedControl
 
         Canvas.SetLeft(_host, adornersMinPositionX);
         Canvas.SetTop(_host, adornersMinPositionY);
-
-        //_previousPosition = new Point(adornersMinPositionX, adornersMinPositionY);
     }
 }
