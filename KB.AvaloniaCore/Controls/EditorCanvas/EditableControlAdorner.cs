@@ -10,6 +10,7 @@ using Avalonia.Layout;
 using Avalonia.Media;
 using Avalonia.VisualTree;
 using Avalonia.Xaml.Interactions.Draggable;
+using KB.AvaloniaCore.Utils;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -30,7 +31,6 @@ namespace KB.AvaloniaCore.Controls;
 [TemplatePart("PART_RotateThumb", typeof(Thumb))]
 internal class EditableControlAdorner : TemplatedControl
 {
-    private bool _isDraggingElements;
     private Point _previousPosition;
     private readonly Control _host;
 
@@ -39,6 +39,8 @@ internal class EditableControlAdorner : TemplatedControl
     private Thumb? _rightTopThumb;
     private Thumb? _rightBottomThumb;
     private Thumb? _rotateThumb;
+
+    private readonly ViewCursorHolder _cursorHolder;
 
     /// <summary>
     /// Used to calculate the correct delta. Because the delta is the delta of the thumb and not the delta of the element that is being dragged and scaled.
@@ -54,13 +56,14 @@ internal class EditableControlAdorner : TemplatedControl
     public EditableControlAdorner(Control host)
     {
         //IsHitTestVisible = false;
-        _isDraggingElements = false;
         _host = host;
         AdornerLayer.SetAdornedElement(this, _host);
         _previousDeltaPositionChangeOnThumbDelta = default(Point);
+        _cursorHolder = new ViewCursorHolder(this);
     }
 
-    public bool IsDraggingElements => _isDraggingElements;
+    public bool IsDraggingElements { get; private set; }
+
     public bool IsActive { get; private set; }
 
     public static readonly StyledProperty<IEnumerable<IEditableControl>?> AdornedElementsProperty = AvaloniaProperty.Register<EditableControlAdorner, IEnumerable<IEditableControl>?>(nameof(EditableControlAdorner.AdornedElements));
@@ -145,12 +148,12 @@ internal class EditableControlAdorner : TemplatedControl
 
         // Set the size of the host the same as the size of the adorned elements
         _MeasureHost();
-        _isDraggingElements = true;
+        IsDraggingElements = true;
     }
 
     public void Deactivate()
     {
-        _isDraggingElements = false;
+        IsDraggingElements = false;
         if(!IsActive)
         {
             return;
@@ -171,7 +174,7 @@ internal class EditableControlAdorner : TemplatedControl
         PointerPointProperties properties = e.GetCurrentPoint(this).Properties;
         if (e.ClickCount == 1 && properties.IsLeftButtonPressed)
         {
-            _isDraggingElements = true;
+            IsDraggingElements = true;
             _previousPosition = e.GetPosition(this);
             e.Handled = true;
         }
@@ -184,7 +187,7 @@ internal class EditableControlAdorner : TemplatedControl
             return;
         }
 
-        if (_isDraggingElements)
+        if (IsDraggingElements)
         {
             _MoveElements(e.GetPosition(this));
             e.Handled = true;
@@ -198,7 +201,7 @@ internal class EditableControlAdorner : TemplatedControl
             return;
         }
         
-        _isDraggingElements = false;
+        IsDraggingElements = false;
         e.Handled = true;
     }
 
@@ -333,9 +336,57 @@ internal class EditableControlAdorner : TemplatedControl
         {
             return;
         }
-
+        
         _previousDeltaPositionChangeOnThumbDelta = default(Point);
         e.Handled = true;
+    }
+
+    private void _OnThumbPointerEnter(object? sender, PointerEventArgs e)
+    {
+        if (e.Handled || !IsActive)
+        {
+            return;
+        }
+
+        if (sender is Thumb thumb)
+        {
+            switch(thumb.Name)
+            {
+                case "PART_LeftTopThumb":
+                {
+                    _cursorHolder.SetCursor(CursorManager.Instance.CursorTopLeftCorner);
+                    break;
+                }
+                case "PART_LeftBottomThumb":
+                {
+                    _cursorHolder.SetCursor(CursorManager.Instance.CursorBottomLeftCorner);
+                    break;
+                }
+                case "PART_RightTopThumb":
+                {
+                    _cursorHolder.SetCursor(CursorManager.Instance.CursorTopRightCorner);
+                    break;
+                }
+                case "PART_RightBottomThumb":
+                {
+                    _cursorHolder.SetCursor(CursorManager.Instance.CursorBottomRightCorner);
+                    break;
+                }
+                case "PART_RotateThumb":
+                {
+                    _cursorHolder.SetCursor(CursorManager.Instance.CursorCross);
+                    break;
+                }
+
+            }
+        }
+
+        e.Handled = true;
+    }
+
+    private void _OnThumbPointerExited(object? sender, PointerEventArgs e)
+    {
+        _cursorHolder.ReturnToPreviousCursor();
     }
 
     #endregion
@@ -364,12 +415,30 @@ internal class EditableControlAdorner : TemplatedControl
             _rotateThumb!.Template = RotateThumbTemplate;
         }
 
+        // Pointer Entered
+        _leftTopThumb!.PointerEntered += _OnThumbPointerEnter;
+        _leftBottomThumb!.PointerEntered += _OnThumbPointerEnter;
+        _rightTopThumb!.PointerEntered += _OnThumbPointerEnter;
+        _rightBottomThumb!.PointerEntered += _OnThumbPointerEnter;
+        _rotateThumb!.PointerEntered += _OnThumbPointerEnter;
+
+        // Pointer Exited
+        _leftTopThumb!.PointerExited += _OnThumbPointerExited;
+        _leftBottomThumb!.PointerExited += _OnThumbPointerExited;
+        _rightTopThumb!.PointerExited += _OnThumbPointerExited;
+        _rightBottomThumb!.PointerExited += _OnThumbPointerExited;
+        _rotateThumb!.PointerExited += _OnThumbPointerExited;
+            
+        // Delta scale
         _leftTopThumb!.DragDelta += _OnScaleThumbLeftTopDragDelta;
         _leftBottomThumb!.DragDelta += _OnScaleThumbLeftBottomDragDelta;
         _rightTopThumb!.DragDelta += _OnScaleThumbRightTopDragDelta;
         _rightBottomThumb!.DragDelta += _OnScaleThumbRightBottomDragDelta;
+
+        // Rotate
         _rotateThumb!.DragDelta += _OnRotateThumbDragDelta;
 
+        // Drag completed
         _leftBottomThumb!.DragCompleted += _OnRotateThumbDragCompleted;
         _rightBottomThumb!.DragCompleted += _OnRotateThumbDragCompleted;
         _leftTopThumb!.DragCompleted += _OnRotateThumbDragCompleted;
