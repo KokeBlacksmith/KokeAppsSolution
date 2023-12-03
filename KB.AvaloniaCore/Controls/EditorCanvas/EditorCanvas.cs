@@ -140,7 +140,7 @@ public class EditorCanvas : Control
 
         _isMousePressed = true;
         IEditableControl? editableControl = (e.Source as Control)!.FindAncestorOfType<IEditableControl>();
-        bool isAdornerClicked = _editionCanvas.IsPointOverChild(e.GetPosition(this), _selectionAdorner);
+        bool isAdornerClicked = _selectionAdorner.IsPointOver(e.GetPosition(this));
 
         if(editableControl == null && !isAdornerClicked)
         {

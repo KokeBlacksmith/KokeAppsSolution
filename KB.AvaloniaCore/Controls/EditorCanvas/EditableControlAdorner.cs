@@ -10,6 +10,7 @@ using Avalonia.Layout;
 using Avalonia.Media;
 using Avalonia.VisualTree;
 using Avalonia.Xaml.Interactions.Draggable;
+using KB.AvaloniaCore.Injection;
 using KB.AvaloniaCore.Utils;
 using System;
 using System.Collections.Generic;
@@ -55,7 +56,6 @@ internal class EditableControlAdorner : TemplatedControl
 
     public EditableControlAdorner(Control host)
     {
-        //IsHitTestVisible = false;
         _host = host;
         AdornerLayer.SetAdornedElement(this, _host);
         _previousDeltaPositionChangeOnThumbDelta = default(Point);
@@ -107,6 +107,11 @@ internal class EditableControlAdorner : TemplatedControl
     {
         get { return GetValue(RotateThumbTemplateProperty); }
         set { SetValue(RotateThumbTemplateProperty, value); }
+    }
+
+    public bool IsPointOver(Point point)
+    {
+        return CanvasExtension.IsPointOverCanvasChild(point, _host);
     }
 
 

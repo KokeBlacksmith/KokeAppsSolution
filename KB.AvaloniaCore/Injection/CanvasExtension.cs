@@ -6,6 +6,11 @@ public static class CanvasExtension
 {
     public static bool IsPointOverChild(this Canvas self, Point point, Control child)
     {
+        return IsPointOverCanvasChild(point, child);
+    }
+
+    public static bool IsPointOverCanvasChild(Point point, Control child)
+    {
         double left = Canvas.GetLeft(child!);
         double top = Canvas.GetTop(child!);
         double right = left + child.Width;
