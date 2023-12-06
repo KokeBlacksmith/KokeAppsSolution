@@ -83,6 +83,9 @@ public class EditorCanvas : Control
         VisualChildren.Add(_editionCanvas);
 
         Children.CollectionChanged += _OnChildrenChanged;
+
+        // To receive key events must be focusable
+        Focusable = true;
     }
 
     /// <summary>
@@ -155,8 +158,7 @@ public class EditorCanvas : Control
         if(editableControl == null && !isAdornerClicked)
         {
             //User clicked outside any control
-            _RemoveEditAdorner();
-            _RemoveSelectionAdorner();
+            SelectedItems.Clear();
             _stateMachine = EStateMachine.None;
         }
         else
@@ -192,7 +194,7 @@ public class EditorCanvas : Control
                     SelectedItems.Remove(editableControl);
                     if(SelectedItems.Count == 0)
                     {
-                        _RemoveEditAdorner();
+                        //SelectedItems.Clear();
                         _stateMachine = EStateMachine.None;
                     }
                 }
@@ -252,31 +254,9 @@ public class EditorCanvas : Control
         }
     }
 
-    private void _RemoveEditAdorner()
-    {
-        _selectionAdorner.Deactivate();
-
-        foreach (IEditableControl editable in SelectedItems!)
-        {
-            editable.IsSelected = false;
-        }
-
-        SelectedItems.Clear();
-    }
-
     private void _RemoveSelectionAdorner() 
     { 
         _multiSelectBox.End();
-    }
-
-    private void _AddEditableControlToSelection(IEditableControl control)
-    {
-        if(!SelectedItems.Contains(control))
-        {
-            control.IsSelected = !control.IsSelected;
-            SelectedItems.Add(control);
-            control.IsSelected = true;
-        }
     }
 
     private void _OnSelectedItemsPropertyChanged(AvaloniaPropertyChangedEventArgs e)
@@ -328,6 +308,23 @@ public class EditorCanvas : Control
             }
 
             _childrenCanvas.Children.AddRange(e.NewItems!.OfType<IEditableControl>().Cast<Control>());
+        }
+    }
+
+    protected override void OnKeyUp(KeyEventArgs e)
+    {
+        if(e.Key == Key.Delete)
+        {
+            //_userActionInvoker.AddUserAction(new UserActionDelete(SelectedItems));
+            SelectedItems.Clear();
+        }
+        else if(e.Key == Key.Z && BitWiseHelper.HasFlag(e.KeyModifiers, KeyModifiers.Control))
+        {
+            _userActionInvoker.Undo();
+        }
+        else if(e.Key == Key.Y && BitWiseHelper.HasFlag(e.KeyModifiers, KeyModifiers.Control))
+        {
+            _userActionInvoker.Redo();
         }
     }
 }
