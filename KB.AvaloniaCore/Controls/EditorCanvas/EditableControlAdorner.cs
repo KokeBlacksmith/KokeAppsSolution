@@ -226,37 +226,12 @@ internal class EditableControlAdorner : TemplatedControl
 
             double currentHostPositionX = Canvas.GetLeft(_host!);
             double currentHostPositionY = Canvas.GetTop(_host!);
-
             double newHostPositionX = currentHostPositionX + deltaX;
             double newHostPositionY = currentHostPositionY + deltaY;
             double newHostWidth = _host.Width - deltaX;
             double newHostHeight = _host.Height - deltaY;
 
-            double changePercentageWidth = newHostWidth / _host.Width;
-            double changePercentageHeight = newHostHeight / _host.Height;
-
-            // Controls have to be in the same relative position to the host as before the resize
-            foreach (IEditableControl editableControl in AdornedElements!)
-            {
-                double oldRelativePositionX = editableControl.PositionX - currentHostPositionX;
-                double oldRelativePositionY = editableControl.PositionY - currentHostPositionY;
-
-                double newRelativePositionX = oldRelativePositionX * changePercentageWidth;
-                double newRelativePositionY = oldRelativePositionY * changePercentageHeight;
-
-                editableControl.PositionX = newHostPositionX + newRelativePositionX;
-                editableControl.PositionY = newHostPositionY + newRelativePositionY;
-
-                editableControl.Width *= changePercentageWidth;
-                editableControl.Height *= changePercentageHeight;
-            }
-
-            // For debugging the calculation made. Remove on finishing coding this part
-            _host!.Width = newHostWidth;
-            _host!.Height = newHostHeight;
-
-            Canvas.SetLeft(_host, newHostPositionX);
-            Canvas.SetTop(_host, newHostPositionY);
+            _ScaleRelativeToHost(newHostPositionX, newHostPositionY, newHostWidth, newHostHeight);
         }
 
         e.Handled = true;
@@ -273,19 +248,20 @@ internal class EditableControlAdorner : TemplatedControl
         {
             double deltaX = e.Vector.X - _previousDeltaPositionChangeOnThumbDelta.X;
             double deltaY = e.Vector.Y;
-
             _previousDeltaPositionChangeOnThumbDelta = new Point(e.Vector.X, e.Vector.Y);
 
-            foreach (IEditableControl editableControl in AdornedElements!)
-            {
-                editableControl.PositionX += deltaX;
+            double currentHostPositionX = Canvas.GetLeft(_host!);
+            double currentHostPositionY = Canvas.GetTop(_host!);
 
-                editableControl.Width -= deltaX;
-                editableControl.Height += deltaY;
-            }
+            double newHostPositionX = currentHostPositionX + deltaX;
+            double newHostPositionY = currentHostPositionY;
+
+            double newHostWidth = _host.Width - deltaX;
+            double newHostHeight = _host.Height + deltaY;
+
+            _ScaleRelativeToHost(newHostPositionX, newHostPositionY, newHostWidth, newHostHeight);
         }
 
-        _MeasureHost();
         e.Handled = true;
     }
 
@@ -300,19 +276,20 @@ internal class EditableControlAdorner : TemplatedControl
         {
             double deltaX = e.Vector.X;
             double deltaY = e.Vector.Y - _previousDeltaPositionChangeOnThumbDelta.Y;
-
             _previousDeltaPositionChangeOnThumbDelta = new Point(e.Vector.X, e.Vector.Y);
 
-            foreach (IEditableControl editableControl in AdornedElements!)
-            {
-                editableControl.PositionY += deltaY;
+            double currentHostPositionX = Canvas.GetLeft(_host!);
+            double currentHostPositionY = Canvas.GetTop(_host!);
 
-                editableControl.Width += deltaX;
-                editableControl.Height -= deltaY;
-            }
+            double newHostPositionX = currentHostPositionX;
+            double newHostPositionY = currentHostPositionY + deltaY;
+
+            double newHostWidth = _host.Width + deltaX;
+            double newHostHeight = _host.Height - deltaY;
+
+            _ScaleRelativeToHost(newHostPositionX, newHostPositionY, newHostWidth, newHostHeight);
         }
 
-        _MeasureHost();
         e.Handled = true;
     }
 
@@ -328,14 +305,18 @@ internal class EditableControlAdorner : TemplatedControl
             double deltaX = e.Vector.X;
             double deltaY = e.Vector.Y;
 
-            foreach (IEditableControl editableControl in AdornedElements!)
-            {
-                editableControl.Width += deltaX;
-                editableControl.Height += deltaY;
-            }
+            double currentHostPositionX = Canvas.GetLeft(_host!);
+            double currentHostPositionY = Canvas.GetTop(_host!);
+
+            double newHostPositionX = currentHostPositionX;
+            double newHostPositionY = currentHostPositionY;
+
+            double newHostWidth = _host.Width + deltaX;
+            double newHostHeight = _host.Height + deltaY;
+
+            _ScaleRelativeToHost(newHostPositionX, newHostPositionY, newHostWidth, newHostHeight);
         }
 
-        _MeasureHost();
         e.Handled = true;
     }
 
@@ -541,5 +522,36 @@ internal class EditableControlAdorner : TemplatedControl
 
         Canvas.SetLeft(_host, adornersMinPositionX);
         Canvas.SetTop(_host, adornersMinPositionY);
+    }
+
+    private void _ScaleRelativeToHost(double newHostPositionX, double newHostPositionY, double newHostWidth, double newHostHeight)
+    {
+        double currentHostPositionX = Canvas.GetLeft(_host!);
+        double currentHostPositionY = Canvas.GetTop(_host!);
+
+        double changePercentageWidth = newHostWidth / _host.Width;
+        double changePercentageHeight = newHostHeight / _host.Height;
+
+        // Controls have to be in the same relative position to the host as before the resize
+        foreach (IEditableControl editableControl in AdornedElements!)
+        {
+            double oldRelativePositionX = editableControl.PositionX - currentHostPositionX;
+            double oldRelativePositionY = editableControl.PositionY - currentHostPositionY;
+
+            double newRelativePositionX = oldRelativePositionX * changePercentageWidth;
+            double newRelativePositionY = oldRelativePositionY * changePercentageHeight;
+
+            editableControl.PositionX = newHostPositionX + newRelativePositionX;
+            editableControl.PositionY = newHostPositionY + newRelativePositionY;
+
+            editableControl.Width *= changePercentageWidth;
+            editableControl.Height *= changePercentageHeight;
+        }
+
+        _host!.Width = newHostWidth;
+        _host!.Height = newHostHeight;
+
+        Canvas.SetLeft(_host, newHostPositionX);
+        Canvas.SetTop(_host, newHostPositionY);
     }
 }
