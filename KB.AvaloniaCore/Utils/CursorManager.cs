@@ -1,25 +1,11 @@
 ﻿using Avalonia.Input;
+using KB.SharpCore.DesignPatterns.Singleton;
 
 namespace KB.AvaloniaCore.Utils;
-public class CursorManager : IDisposable
+public sealed class CursorManager : BaseSingleton<CursorManager>, IDisposable
 {
-    private static CursorManager? _instance;
-
     private CursorManager()
     {
-    }
-
-    public static CursorManager Instance
-    {
-        get
-        {
-            if(_instance == null)
-            {
-                _instance = new CursorManager();
-            }
-
-            return _instance;
-        }
     }
 
     public Cursor CursorDefault { get; } = Cursor.Default;
