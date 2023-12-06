@@ -1,4 +1,5 @@
-﻿using KB.SharpCore.Events;
+﻿using Avalonia.Controls;
+using KB.SharpCore.Events;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -47,5 +48,7 @@ namespace KB.AvaloniaCore.Controls
         /// Wether the control can be resized with uniform scale or can be scaled to all directions.
         /// </summary>
         bool IsScaleOnlyUniform { get; set; }
+
+        Control Control { get; }
     }
 }

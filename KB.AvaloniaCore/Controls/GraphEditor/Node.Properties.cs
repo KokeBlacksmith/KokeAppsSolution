@@ -135,6 +135,8 @@ public abstract partial class Node : IEditableControl
         set { SetValue(Node.PaddingProperty, value); }
     }
 
+    public Control Control => this;
+
     #endregion
 
     #region Properties
