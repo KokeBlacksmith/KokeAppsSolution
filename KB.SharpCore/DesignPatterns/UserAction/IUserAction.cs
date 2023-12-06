@@ -1,7 +1,7 @@
 ﻿namespace KB.SharpCore.DesignPatterns;
 
 /// <summary>
-/// Interface for a user action. Hnadle Do and Undo.
+/// Interface for a user action. Handle Do and Undo.
 /// Uses Command pattern.
 /// </summary>
 public interface IUserAction

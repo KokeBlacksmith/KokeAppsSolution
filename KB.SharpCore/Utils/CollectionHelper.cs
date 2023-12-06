@@ -41,4 +41,20 @@ public static class CollectionHelper
             return null;
         }
     }
+
+    public static int IndexOf<T>(IEnumerable<T> enumerable, T itemToFind)
+    {
+        var index = 0;
+        foreach (T item in enumerable)
+        {
+            if (item?.Equals(itemToFind) ?? false)
+            {
+                return index;
+            }
+
+            index++;
+        }
+
+        return -1;
+    }
 }

@@ -8,6 +8,7 @@ using Avalonia.Media;
 using Avalonia.Metadata;
 using Avalonia.VisualTree;
 using KB.AvaloniaCore.Injection;
+using KB.SharpCore.DesignPatterns.UserAction;
 using KB.SharpCore.Utils;
 using System.Collections.Specialized;
 
@@ -42,7 +43,15 @@ public class EditorCanvas : Control
     /// </summary>
     private readonly Canvas _editionCanvas;
 
+    /// <summary>
+    /// Multi select box. To select multiple editable controls at once.
+    /// </summary>
     private readonly EditorMultiSelectBox _multiSelectBox;
+
+    /// <summary>
+    /// Handle Do / Undo actions.
+    /// </summary>
+    private readonly UserActionInvoker _userActionInvoker;
 
     static EditorCanvas()
     {
@@ -58,6 +67,7 @@ public class EditorCanvas : Control
         Control adornerPlaceholderControl = new Panel();
         _selectionAdorner = new EditableControlAdorner(adornerPlaceholderControl);
         _selectionAdorner.AdornedElements = SelectedItems;
+        _userActionInvoker = new UserActionInvoker();
 
         _childrenCanvas = new Canvas();
         _editionCanvas = new Canvas();
