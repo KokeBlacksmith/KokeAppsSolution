@@ -222,20 +222,43 @@ internal class EditableControlAdorner : TemplatedControl
         {
             double deltaX = e.Vector.X - _previousDeltaPositionChangeOnThumbDelta.X;
             double deltaY = e.Vector.Y - _previousDeltaPositionChangeOnThumbDelta.Y;
-
             _previousDeltaPositionChangeOnThumbDelta = new Point(e.Vector.X, e.Vector.Y);
 
+            double currentHostPositionX = Canvas.GetLeft(_host!);
+            double currentHostPositionY = Canvas.GetTop(_host!);
+
+            double newHostPositionX = currentHostPositionX + deltaX;
+            double newHostPositionY = currentHostPositionY + deltaY;
+            double newHostWidth = _host.Width - deltaX;
+            double newHostHeight = _host.Height - deltaY;
+
+            double changePercentageWidth = newHostWidth / _host.Width;
+            double changePercentageHeight = newHostHeight / _host.Height;
+
+            // Controls have to be in the same relative position to the host as before the resize
             foreach (IEditableControl editableControl in AdornedElements!)
             {
-                editableControl.PositionX += deltaX;
-                editableControl.PositionY += deltaY;
+                double oldRelativePositionX = editableControl.PositionX - currentHostPositionX;
+                double oldRelativePositionY = editableControl.PositionY - currentHostPositionY;
 
-                editableControl.Width -= deltaX;
-                editableControl.Height -= deltaY;
+                double newRelativePositionX = oldRelativePositionX * changePercentageWidth;
+                double newRelativePositionY = oldRelativePositionY * changePercentageHeight;
+
+                editableControl.PositionX = newHostPositionX + newRelativePositionX;
+                editableControl.PositionY = newHostPositionY + newRelativePositionY;
+
+                editableControl.Width *= changePercentageWidth;
+                editableControl.Height *= changePercentageHeight;
             }
+
+            // For debugging the calculation made. Remove on finishing coding this part
+            _host!.Width = newHostWidth;
+            _host!.Height = newHostHeight;
+
+            Canvas.SetLeft(_host, newHostPositionX);
+            Canvas.SetTop(_host, newHostPositionY);
         }
 
-        _MeasureHost();
         e.Handled = true;
     }
 
