@@ -31,9 +31,13 @@ internal class EditableControlAdorner : TemplatedControl
 
     private readonly ViewCursorHolder _cursorHolder;
 
+    #region Values before editing
+
     private Point[]? _oldPositions;
     private double[]? _oldWidths;
     private double[]? _oldHeights;
+
+    #endregion
 
     /// <summary>
     /// Used to calculate the correct delta. Because the delta is the delta of the thumb and not the delta of the element that is being dragged and scaled.
@@ -262,6 +266,7 @@ internal class EditableControlAdorner : TemplatedControl
     }
 
     #region ThumbInteraction
+
     private void _OnScaleThumbLeftTopDragDelta(object? sender, VectorEventArgs e)
     {
         if (e.Handled || !IsActive)
@@ -566,32 +571,53 @@ internal class EditableControlAdorner : TemplatedControl
 
     private void _ScaleRelativeToHost(double newHostPositionX, double newHostPositionY, double newHostWidth, double newHostHeight)
     {
+        double miniumMeasureFactor = 1.8d;
+        double miniumWidth = _leftTopThumb!.Bounds.Width * miniumMeasureFactor * 2 * AdornedElements!.Count();
+        double miniumHeight = _leftTopThumb!.Bounds.Height * miniumMeasureFactor * 2 * AdornedElements!.Count();
+        bool isValidWidth = newHostWidth >= miniumWidth;
+        bool isValidHeight = newHostHeight >= miniumHeight;
+
+        if(!isValidWidth && !isValidHeight)
+        {
+            return;
+        }
+
         double currentHostPositionX = Canvas.GetLeft(_host!);
         double currentHostPositionY = Canvas.GetTop(_host!);
 
-        double changePercentageWidth = newHostWidth / _host.Width;
+        double changePercentageWidth = newHostWidth / _host.Width; ;
         double changePercentageHeight = newHostHeight / _host.Height;
 
         // Controls have to be in the same relative position to the host as before the resize
         foreach (IEditableControl editableControl in AdornedElements!)
         {
-            double oldRelativePositionX = editableControl.PositionX - currentHostPositionX;
-            double oldRelativePositionY = editableControl.PositionY - currentHostPositionY;
+            if(isValidWidth)
+            {
+                double oldRelativePositionX = editableControl.PositionX - currentHostPositionX;
+                double newRelativePositionX = oldRelativePositionX * changePercentageWidth;
+                editableControl.PositionX = newHostPositionX + newRelativePositionX;
+                editableControl.Width *= changePercentageWidth;
+            }
 
-            double newRelativePositionX = oldRelativePositionX * changePercentageWidth;
-            double newRelativePositionY = oldRelativePositionY * changePercentageHeight;
-
-            editableControl.PositionX = newHostPositionX + newRelativePositionX;
-            editableControl.PositionY = newHostPositionY + newRelativePositionY;
-
-            editableControl.Width *= changePercentageWidth;
-            editableControl.Height *= changePercentageHeight;
+            if(isValidHeight)
+            {
+                double oldRelativePositionY = editableControl.PositionY - currentHostPositionY;
+                double newRelativePositionY = oldRelativePositionY * changePercentageHeight;
+                editableControl.PositionY = newHostPositionY + newRelativePositionY;
+                editableControl.Height *= changePercentageHeight;
+            }
         }
 
-        _host!.Width = newHostWidth;
-        _host!.Height = newHostHeight;
+        if(isValidWidth)
+        {
+            _host!.Width = newHostWidth;
+            Canvas.SetLeft(_host, newHostPositionX);
+        }
 
-        Canvas.SetLeft(_host, newHostPositionX);
-        Canvas.SetTop(_host, newHostPositionY);
+        if(isValidHeight)
+        {
+            _host!.Height = newHostHeight;
+            Canvas.SetTop(_host, newHostPositionY);
+        }
     }
 }
