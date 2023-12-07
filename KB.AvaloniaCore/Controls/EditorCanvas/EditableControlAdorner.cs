@@ -41,6 +41,8 @@ internal class EditableControlAdorner : TemplatedControl
 
     private readonly ViewCursorHolder _cursorHolder;
 
+    private Point[]? _oldPositions;
+
     /// <summary>
     /// Used to calculate the correct delta. Because the delta is the delta of the thumb and not the delta of the element that is being dragged and scaled.
     /// </summary>
@@ -58,7 +60,10 @@ internal class EditableControlAdorner : TemplatedControl
         AdornerLayer.SetAdornedElement(this, _host);
         _previousDeltaPositionChangeOnThumbDelta = default(Point);
         _cursorHolder = new ViewCursorHolder(this);
+        _oldPositions = null;
     }
+
+    public event Action<Point[]> OnAdornedElementsMovedFinished;
 
     public bool IsDraggingElements { get; private set; }
 
@@ -106,16 +111,53 @@ internal class EditableControlAdorner : TemplatedControl
         if(e.OldValue is INotifyCollectionChanged oldAdornedElements)
         {
             oldAdornedElements.CollectionChanged -= _OnAdornedElementsCollectionChanged;
+            foreach(IEditableControl element in (e.OldValue as IEnumerable<IEditableControl>)!)
+            {
+                element.PositionXChanged -= _OnAdornedElementPositionChanged;
+                element.PositionYChanged -= _OnAdornedElementPositionChanged;
+            }
         }
 
         if(e.NewValue is INotifyCollectionChanged newAdornedElements)
         {
             newAdornedElements.CollectionChanged += _OnAdornedElementsCollectionChanged;
+            foreach (IEditableControl element in (e.NewValue as IEnumerable<IEditableControl>)!)
+            {
+                element.PositionXChanged += _OnAdornedElementPositionChanged;
+                element.PositionYChanged += _OnAdornedElementPositionChanged;
+            }
+        }
+    }
+
+    private void _OnAdornedElementPositionChanged(object? sender, EventArgs e)
+    {
+        if(!IsDraggingElements)
+        {
+            // Position changed from outside the adorner
+            _MeasureHost();
         }
     }
 
     private void _OnAdornedElementsCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
     {
+        if(e.OldItems != null)
+        {
+            foreach(IEditableControl element in e.OldItems)
+            {
+                element.PositionXChanged -= _OnAdornedElementPositionChanged;
+                element.PositionYChanged -= _OnAdornedElementPositionChanged;
+            }
+        }
+
+        if(e.NewItems != null)
+        {
+            foreach (IEditableControl element in e.NewItems)
+            {
+                element.PositionXChanged += _OnAdornedElementPositionChanged;
+                element.PositionYChanged += _OnAdornedElementPositionChanged;
+            }
+        }
+
         _MeasureHost();
     }
 
@@ -178,6 +220,11 @@ internal class EditableControlAdorner : TemplatedControl
 
         if (IsDraggingElements)
         {
+            if(_oldPositions == null)
+            {
+                _oldPositions = AdornedElements!.Select(x => new Point(x.PositionX, x.PositionY)).ToArray();
+            }
+
             _MoveElements(e.GetPosition(this));
             e.Handled = true;
         }
@@ -190,7 +237,17 @@ internal class EditableControlAdorner : TemplatedControl
             return;
         }
         
-        IsDraggingElements = false;
+        if(IsDraggingElements)
+        {
+            if(_oldPositions != null)
+            {
+                OnAdornedElementsMovedFinished?.Invoke(_oldPositions!);
+                _oldPositions = null;
+            }
+
+            IsDraggingElements = false;
+        }
+
         e.Handled = true;
     }
 

@@ -82,6 +82,7 @@ public class EditorCanvas : Control
         VisualChildren.Add(_editionCanvas);
 
         Children.CollectionChanged += _OnChildrenChanged;
+        _selectionAdorner.OnAdornedElementsMovedFinished += _OnEditableControlsFinishedMoving;
 
         // To receive key events must be focusable
         Focusable = true;
@@ -256,6 +257,10 @@ public class EditorCanvas : Control
                 _stateMachine = EStateMachine.Adorner;
             }
         }
+        else if(_stateMachine == EStateMachine.Adorner)
+        {
+            _selectionAdorner.OnCanvasPointerReleased(this, e);
+        }
     }
 
     private void _OnSelectedItemsPropertyChanged(AvaloniaPropertyChangedEventArgs e)
@@ -332,5 +337,12 @@ public class EditorCanvas : Control
         SelectEditableControlUserAction selectEditableControlUserAction = new SelectEditableControlUserAction(this, SelectedItems, newSelectedItems);
         selectEditableControlUserAction.Do();
         _userActionInvoker.AddUserAction(selectEditableControlUserAction);
+    }
+
+    private void _OnEditableControlsFinishedMoving(Point[] oldPositions)
+    {
+        MoveEditableControlUserAction moveEditableControlUserAction = new MoveEditableControlUserAction(SelectedItems, oldPositions, SelectedItems.Select(item => new Point(item.PositionX, item.PositionY)));
+        moveEditableControlUserAction.Do();
+        _userActionInvoker.AddUserAction(moveEditableControlUserAction);
     }
 }
