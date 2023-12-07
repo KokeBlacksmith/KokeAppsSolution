@@ -1,23 +1,13 @@
 ﻿using Avalonia;
-using Avalonia.Collections;
 using Avalonia.Controls;
 using Avalonia.Controls.Metadata;
 using Avalonia.Controls.Primitives;
-using Avalonia.Controls.Shapes;
 using Avalonia.Controls.Templates;
 using Avalonia.Input;
-using Avalonia.Layout;
-using Avalonia.Media;
 using Avalonia.VisualTree;
-using Avalonia.Xaml.Interactions.Draggable;
 using KB.AvaloniaCore.Injection;
 using KB.AvaloniaCore.Utils;
-using System;
-using System.Collections.Generic;
 using System.Collections.Specialized;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace KB.AvaloniaCore.Controls;
 
@@ -42,6 +32,8 @@ internal class EditableControlAdorner : TemplatedControl
     private readonly ViewCursorHolder _cursorHolder;
 
     private Point[]? _oldPositions;
+    private double[]? _oldWidths;
+    private double[]? _oldHeights;
 
     /// <summary>
     /// Used to calculate the correct delta. Because the delta is the delta of the thumb and not the delta of the element that is being dragged and scaled.
@@ -61,11 +53,23 @@ internal class EditableControlAdorner : TemplatedControl
         _previousDeltaPositionChangeOnThumbDelta = default(Point);
         _cursorHolder = new ViewCursorHolder(this);
         _oldPositions = null;
+        _oldWidths = null;
+        _oldHeights = null;
     }
 
-    public event Action<Point[]> OnAdornedElementsMovedFinished;
+    /// <summary>
+    /// Event raised when the adorned elements finished moving.
+    /// Argument is the old positions of the elements.
+    /// </summary>
+    public event Action<Point[]> OnAdornedElementsMoveFinished;
+    /// <summary>
+    /// Event raised when the adorned elements finished scaling.
+    /// Argument is the old sizes of the elements. Widht and Height.
+    /// </summary>
+    public event Action<double[], double[]> OnAdornedElementsScaleFinished; 
 
     public bool IsDraggingElements { get; private set; }
+    public bool IsScalingElements { get; private set; }
 
     public bool IsActive { get; private set; }
 
@@ -111,25 +115,39 @@ internal class EditableControlAdorner : TemplatedControl
         if(e.OldValue is INotifyCollectionChanged oldAdornedElements)
         {
             oldAdornedElements.CollectionChanged -= _OnAdornedElementsCollectionChanged;
-            foreach(IEditableControl element in (e.OldValue as IEnumerable<IEditableControl>)!)
-            {
-                element.PositionXChanged -= _OnAdornedElementPositionChanged;
-                element.PositionYChanged -= _OnAdornedElementPositionChanged;
-            }
+            _UnsubscribeToElementChanges((IEnumerable<IEditableControl>)e.OldValue);
         }
 
         if(e.NewValue is INotifyCollectionChanged newAdornedElements)
         {
             newAdornedElements.CollectionChanged += _OnAdornedElementsCollectionChanged;
-            foreach (IEditableControl element in (e.NewValue as IEnumerable<IEditableControl>)!)
-            {
-                element.PositionXChanged += _OnAdornedElementPositionChanged;
-                element.PositionYChanged += _OnAdornedElementPositionChanged;
-            }
+            _SubscribeToElementChanges((IEnumerable<IEditableControl>)e.NewValue);
         }
     }
 
-    private void _OnAdornedElementPositionChanged(object? sender, EventArgs e)
+    private void _UnsubscribeToElementChanges(IEnumerable<IEditableControl> elements)
+    {
+        foreach (IEditableControl element in elements)
+        {
+            element.PositionXChanged -= _OnAdornedElementMeasureChanged;
+            element.PositionYChanged -= _OnAdornedElementMeasureChanged;
+            element.WidthChanged -= _OnAdornedElementMeasureChanged;
+            element.HeightChanged -= _OnAdornedElementMeasureChanged;
+        }
+    }
+
+    private void _SubscribeToElementChanges(IEnumerable<IEditableControl> elements)
+    {
+        foreach (IEditableControl element in elements)
+        {
+            element.PositionXChanged += _OnAdornedElementMeasureChanged;
+            element.PositionYChanged += _OnAdornedElementMeasureChanged;
+            element.WidthChanged += _OnAdornedElementMeasureChanged;
+            element.HeightChanged += _OnAdornedElementMeasureChanged;
+        }
+    }
+
+    private void _OnAdornedElementMeasureChanged(object? sender, EventArgs e)
     {
         if(!IsDraggingElements)
         {
@@ -142,20 +160,12 @@ internal class EditableControlAdorner : TemplatedControl
     {
         if(e.OldItems != null)
         {
-            foreach(IEditableControl element in e.OldItems)
-            {
-                element.PositionXChanged -= _OnAdornedElementPositionChanged;
-                element.PositionYChanged -= _OnAdornedElementPositionChanged;
-            }
+            _UnsubscribeToElementChanges(e.OldItems.Cast<IEditableControl>());
         }
 
         if(e.NewItems != null)
         {
-            foreach (IEditableControl element in e.NewItems)
-            {
-                element.PositionXChanged += _OnAdornedElementPositionChanged;
-                element.PositionYChanged += _OnAdornedElementPositionChanged;
-            }
+            _SubscribeToElementChanges(e.NewItems.Cast<IEditableControl>());
         }
 
         _MeasureHost();
@@ -236,12 +246,12 @@ internal class EditableControlAdorner : TemplatedControl
         {
             return;
         }
-        
+
         if(IsDraggingElements)
         {
             if(_oldPositions != null)
             {
-                OnAdornedElementsMovedFinished?.Invoke(_oldPositions!);
+                OnAdornedElementsMoveFinished?.Invoke(_oldPositions!);
                 _oldPositions = null;
             }
 
@@ -261,6 +271,7 @@ internal class EditableControlAdorner : TemplatedControl
 
         if (CanResize)
         {
+            _StartScaleElements();
             double deltaX = e.Vector.X - _previousDeltaPositionChangeOnThumbDelta.X;
             double deltaY = e.Vector.Y - _previousDeltaPositionChangeOnThumbDelta.Y;
             _previousDeltaPositionChangeOnThumbDelta = new Point(e.Vector.X, e.Vector.Y);
@@ -287,6 +298,7 @@ internal class EditableControlAdorner : TemplatedControl
 
         if (CanResize)
         {
+            _StartScaleElements();
             double deltaX = e.Vector.X - _previousDeltaPositionChangeOnThumbDelta.X;
             double deltaY = e.Vector.Y;
             _previousDeltaPositionChangeOnThumbDelta = new Point(e.Vector.X, e.Vector.Y);
@@ -315,6 +327,7 @@ internal class EditableControlAdorner : TemplatedControl
 
         if (CanResize)
         {
+            _StartScaleElements();
             double deltaX = e.Vector.X;
             double deltaY = e.Vector.Y - _previousDeltaPositionChangeOnThumbDelta.Y;
             _previousDeltaPositionChangeOnThumbDelta = new Point(e.Vector.X, e.Vector.Y);
@@ -343,6 +356,7 @@ internal class EditableControlAdorner : TemplatedControl
 
         if (CanResize)
         {
+            _StartScaleElements();
             double deltaX = e.Vector.X;
             double deltaY = e.Vector.Y;
 
@@ -361,6 +375,16 @@ internal class EditableControlAdorner : TemplatedControl
         e.Handled = true;
     }
 
+    private void _StartScaleElements()
+    {
+        IsScalingElements = true;
+        if(_oldWidths == null || _oldHeights == null)
+        {
+            _oldWidths = AdornedElements!.Select(x => x.Width).ToArray();
+            _oldHeights = AdornedElements!.Select(x => x.Height).ToArray();
+        }
+    }
+
     private void _OnThumbDragCompleted(object? sender, VectorEventArgs e)
     {
         if (e.Handled || !IsActive)
@@ -368,8 +392,19 @@ internal class EditableControlAdorner : TemplatedControl
             return;
         }
         
-        _previousDeltaPositionChangeOnThumbDelta = default(Point);
-        e.Handled = true;
+        if(IsScalingElements)
+        {
+            IsScalingElements = false;
+            if(_oldWidths != null && _oldHeights != null)
+            {
+                OnAdornedElementsScaleFinished?.Invoke(_oldWidths!, _oldHeights!);
+                _oldWidths = null;
+                _oldHeights = null;
+            }
+
+            _previousDeltaPositionChangeOnThumbDelta = default(Point);
+            e.Handled = true;
+        }
     }
 
     private void _OnThumbPointerEnter(object? sender, PointerEventArgs e)

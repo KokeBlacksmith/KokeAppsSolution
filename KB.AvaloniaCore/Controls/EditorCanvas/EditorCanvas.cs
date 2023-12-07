@@ -82,7 +82,8 @@ public class EditorCanvas : Control
         VisualChildren.Add(_editionCanvas);
 
         Children.CollectionChanged += _OnChildrenChanged;
-        _selectionAdorner.OnAdornedElementsMovedFinished += _OnEditableControlsFinishedMoving;
+        _selectionAdorner.OnAdornedElementsMoveFinished += _OnEditableControlsFinishedMoving;
+        _selectionAdorner.OnAdornedElementsScaleFinished += _OnEditableControlsFinishedMoving;
 
         // To receive key events must be focusable
         Focusable = true;
@@ -344,5 +345,12 @@ public class EditorCanvas : Control
         MoveEditableControlUserAction moveEditableControlUserAction = new MoveEditableControlUserAction(SelectedItems, oldPositions, SelectedItems.Select(item => new Point(item.PositionX, item.PositionY)));
         moveEditableControlUserAction.Do();
         _userActionInvoker.AddUserAction(moveEditableControlUserAction);
+    }
+
+    private void _OnEditableControlsFinishedMoving(double[] oldWidths, double[] oldHeights)
+    {
+        ScaleEditableControlUserAction scaleEditableControlUserAction = new ScaleEditableControlUserAction(SelectedItems, oldWidths, oldHeights, SelectedItems.Select(item => item.Width), SelectedItems.Select(item => item.Height));
+        scaleEditableControlUserAction.Do();
+        _userActionInvoker.AddUserAction(scaleEditableControlUserAction);
     }
 }
