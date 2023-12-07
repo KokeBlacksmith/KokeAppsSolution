@@ -30,6 +30,11 @@ public class MultipleUserAction : IUserAction
 
     #region Methods
 
+    public void AddUserAction(IUserAction userAction)
+    {
+        _userActions.Add(userAction);
+    }
+
 
     /// <summary>
     /// Do the action.

@@ -1,13 +1,12 @@
 ﻿using Avalonia;
 using Avalonia.Collections;
 using Avalonia.Controls;
-using Avalonia.Controls.Primitives;
 using Avalonia.Data;
 using Avalonia.Input;
 using Avalonia.Media;
 using Avalonia.Metadata;
 using Avalonia.VisualTree;
-using KB.AvaloniaCore.Injection;
+using KB.AvaloniaCore.Controls.UserActions;
 using KB.SharpCore.DesignPatterns.UserAction;
 using KB.SharpCore.Utils;
 using System.Collections.Specialized;
@@ -158,7 +157,7 @@ public class EditorCanvas : Control
         if(editableControl == null && !isAdornerClicked)
         {
             //User clicked outside any control
-            SelectedItems.Clear();
+            _UpdateSelectedItems(Enumerable.Empty<IEditableControl>());
             _stateMachine = EStateMachine.None;
         }
         else
@@ -173,14 +172,19 @@ public class EditorCanvas : Control
                 }
                 else if(!editableControl!.IsSelected)
                 {
-                    if(BitWiseHelper.HasFlag(e.KeyModifiers, KeyModifiers.Control))
+                    //Clicked on a non selected item. Select it
+                    if (!BitWiseHelper.HasFlag(e.KeyModifiers, KeyModifiers.Control))
                     {
-                        SelectedItems.Add(editableControl);
+                        // Control key not pressed. Clear selection
+                        _UpdateSelectedItems(new IEditableControl[] { editableControl });
                     }
                     else
-                    { 
-                        SelectedItems.Clear();
-                        SelectedItems.Add(editableControl);
+                    {
+                        // Control key pressed. Add to selection
+                        IEditableControl[] newSelectedItems = new IEditableControl[SelectedItems.Count + 1];
+                        SelectedItems.CopyTo(newSelectedItems, 0);
+                        newSelectedItems[^1] = editableControl;
+                        _UpdateSelectedItems(newSelectedItems);
                     }
 
                     _selectionAdorner.Activate();
@@ -191,10 +195,11 @@ public class EditorCanvas : Control
                 }
                 else
                 {
-                    SelectedItems.Remove(editableControl);
-                    if(SelectedItems.Count == 0)
+                    // Clicked on a selected item. Unselect it
+                    IEnumerable<IEditableControl> newSelectedItems = SelectedItems.Where(item => item != editableControl);
+                    _UpdateSelectedItems(newSelectedItems);
+                    if(!newSelectedItems.Any())
                     {
-                        //SelectedItems.Clear();
                         _stateMachine = EStateMachine.None;
                     }
                 }
@@ -202,8 +207,7 @@ public class EditorCanvas : Control
             else
             {
                 // Double click
-                SelectedItems.Clear();
-                SelectedItems.Add(editableControl);
+                _UpdateSelectedItems(new IEditableControl[] { editableControl! });
                 
                 //TODO;  ¿What happens on double click?
             }
@@ -243,20 +247,15 @@ public class EditorCanvas : Control
 
         if(_stateMachine == EStateMachine.MultiSelecting)
         {
-            SelectedItems.Clear();
-            SelectedItems.AddRange(_multiSelectBox.GetSelectedItems(Children.OfType<IEditableControl>().Cast<Visual>()).Cast<IEditableControl>());
+            IEnumerable<IEditableControl> newSelectedItems = _multiSelectBox.GetSelectedItems(Children.OfType<IEditableControl>().Cast<Visual>()).Cast<IEditableControl>();
+            _UpdateSelectedItems(newSelectedItems);
             _multiSelectBox.End();
-            if(SelectedItems.Count > 0)
+            if(newSelectedItems.Any())
             {
                 _selectionAdorner.Activate();
                 _stateMachine = EStateMachine.Adorner;
             }
         }
-    }
-
-    private void _RemoveSelectionAdorner() 
-    { 
-        _multiSelectBox.End();
     }
 
     private void _OnSelectedItemsPropertyChanged(AvaloniaPropertyChangedEventArgs e)
@@ -315,7 +314,7 @@ public class EditorCanvas : Control
     {
         if(e.Key == Key.Delete)
         {
-            //_userActionInvoker.AddUserAction(new UserActionDelete(SelectedItems));
+            _UpdateSelectedItems(Enumerable.Empty<IEditableControl>());
             SelectedItems.Clear();
         }
         else if(e.Key == Key.Z && BitWiseHelper.HasFlag(e.KeyModifiers, KeyModifiers.Control))
@@ -326,5 +325,12 @@ public class EditorCanvas : Control
         {
             _userActionInvoker.Redo();
         }
+    }
+
+    private void _UpdateSelectedItems(IEnumerable<IEditableControl> newSelectedItems)
+    {
+        SelectEditableControlUserAction selectEditableControlUserAction = new SelectEditableControlUserAction(this, SelectedItems, newSelectedItems);
+        selectEditableControlUserAction.Do();
+        _userActionInvoker.AddUserAction(selectEditableControlUserAction);
     }
 }
