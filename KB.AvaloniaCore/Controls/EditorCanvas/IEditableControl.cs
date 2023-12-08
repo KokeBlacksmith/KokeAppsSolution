@@ -44,11 +44,6 @@ namespace KB.AvaloniaCore.Controls
         double Height { get; set; }
         bool IsSelected { get; set; }
 
-        /// <summary>
-        /// Wether the control can be resized with uniform scale or can be scaled to all directions.
-        /// </summary>
-        bool IsScaleOnlyUniform { get; set; }
-
         Control Control { get; }
     }
 }

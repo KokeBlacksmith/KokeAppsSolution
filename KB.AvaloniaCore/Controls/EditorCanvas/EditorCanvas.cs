@@ -225,8 +225,6 @@ public class EditorCanvas : Control
                 }
             }
         }
-
-        base.OnPointerPressed(e);
     }
 
     protected override void OnPointerMoved(PointerEventArgs e)

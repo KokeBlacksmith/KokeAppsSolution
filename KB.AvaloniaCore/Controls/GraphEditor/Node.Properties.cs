@@ -35,6 +35,9 @@ public abstract partial class Node : IEditableControl
     /// <inheritdoc/>
     public event EventHandler<ValueChangedEventArgs<bool>>? IsSelectedChanged;
 
+    public event Action<NodeConnectionPin>? ConnectionPinPressed;
+    public event Action<NodeConnectionPin>? ConnectionPinReleased;
+
     static Node()
     {
         Node.ChildProperty.Changed.AddClassHandler<Node>((s, e) => s.m_OnChildPropertyChanged(e));
@@ -58,8 +61,6 @@ public abstract partial class Node : IEditableControl
     public static readonly StyledProperty<double> PositionYProperty = AvaloniaProperty.Register<Node, double>(nameof(Node.PositionY));
 
     public static readonly StyledProperty<bool> IsSelectedProperty = AvaloniaProperty.Register<Node, bool>(nameof(Node.IsSelected));
-    public static readonly StyledProperty<bool> IsDraggedProperty = AvaloniaProperty.Register<Node, bool>(nameof(Node.IsDragged));
-    public static readonly StyledProperty<bool> IsScaleOnlyUniformProperty = AvaloniaProperty.Register<Node, bool>(nameof(Node.IsScaleOnlyUniform), false);
 
     public static readonly StyledProperty<IBrush> BackgroundProperty = AvaloniaProperty.Register<Node, IBrush>(nameof(Node.Background), Brushes.White);
     public static readonly StyledProperty<IBrush> BorderBrushProperty = AvaloniaProperty.Register<Node, IBrush>(nameof(Node.BorderBrush), Brushes.Black);
@@ -91,18 +92,6 @@ public abstract partial class Node : IEditableControl
     {
         get { return GetValue(Node.IsSelectedProperty); }
         set { SetValue(Node.IsSelectedProperty, value); }
-    }
-
-    public bool IsDragged
-    {
-        get { return GetValue(Node.IsDraggedProperty); }
-        set { SetValue(Node.IsDraggedProperty, value); }
-    }
-
-    public bool IsScaleOnlyUniform
-    {
-        get { return GetValue(Node.IsScaleOnlyUniformProperty); }
-        set { SetValue(Node.IsScaleOnlyUniformProperty, value); }
     }
 
     public IBrush Background

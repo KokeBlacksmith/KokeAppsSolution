@@ -1,13 +1,14 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Controls.Metadata;
-using Avalonia.Controls.Presenters;
-using Avalonia.Controls.Primitives;
+using Avalonia.Input;
+using Avalonia.Interactivity;
 using Avalonia.Layout;
 using Avalonia.Media;
-using Avalonia.Metadata;
+using Avalonia.VisualTree;
+using KB.AvaloniaCore.Injection;
 using KB.SharpCore.Enums;
 using KB.SharpCore.Events;
+using System;
 
 namespace KB.AvaloniaCore.Controls.GraphEditor;
 
@@ -35,7 +36,6 @@ public abstract partial class Node : Control
     private readonly Border? _childParentBorder;
 
     #endregion
-
 
     public Node()
     {
@@ -93,8 +93,53 @@ public abstract partial class Node : Control
         }
 
         _connectionsCanvas!.Children.Add(pin);
-
+        //pin.AddHandler(PointerPressedEvent, _OnPointerPressedOverNodePin, RoutingStrategies.Direct);
+        //pin.AddHandler(PointerReleasedEvent, _OnPointerReleasedOverNodePin, RoutingStrategies.Direct);
+        pin.AddHandler(PointerPressedEvent, _OnPointerPressedOverNodePin);
+        pin.AddHandler(PointerReleasedEvent, _OnPointerReleasedOverNodePin);
         m_RepositionConnectionPins();
+    }
+
+    public void RemoveConnectionPin(NodeConnectionPin pin, ESide side)
+    {
+        switch (side)
+        {
+            case ESide.Left:
+                m_leftConnectionPins.Remove(pin);
+                break;
+            case ESide.Right:
+                m_rightConnectionPins.Remove(pin);
+                break;
+            case ESide.Top:
+                m_topConnectionPins.Remove(pin);
+                break;
+            case ESide.Bottom:
+                m_bottomConnectionPins.Remove(pin);
+                break;
+            default:
+                throw new ArgumentOutOfRangeException($"{nameof(ESide)} enum does not contain the given value on {nameof(RemoveConnectionPin)} method.");
+        }
+
+        _connectionsCanvas!.Children.Remove(pin);
+        pin.RemoveHandler(PointerPressedEvent, _OnPointerPressedOverNodePin);
+        pin.RemoveHandler(PointerReleasedEvent, _OnPointerReleasedOverNodePin);
+        m_RepositionConnectionPins();
+    }
+
+    private void _OnPointerPressedOverNodePin(object? sender, PointerPressedEventArgs e)
+    {
+        // Get the pin
+        NodeConnectionPin pin = ((Visual)e.Source!).GetParentOfTypeIncludeSelf<NodeConnectionPin>();
+        ConnectionPinPressed?.Invoke(pin);
+        e.Handled = true;
+    }
+
+    private void _OnPointerReleasedOverNodePin(object? sender, PointerReleasedEventArgs e)
+    {
+        // Get the pin
+        NodeConnectionPin pin = ((Visual)e.Source!).GetParentOfTypeIncludeSelf<NodeConnectionPin>();
+        ConnectionPinReleased?.Invoke(pin);
+        e.Handled = true;
     }
 
     protected override void OnMeasureInvalidated()

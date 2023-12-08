@@ -4,16 +4,8 @@ using Avalonia.Controls;
 using Avalonia.Controls.Metadata;
 using Avalonia.Controls.Presenters;
 using Avalonia.Controls.Primitives;
-using Avalonia.Interactivity;
 using Avalonia.Metadata;
-using KB.SharpCore.Events;
-using SkiaSharp;
-using System;
-using System.Collections.Generic;
 using System.Collections.Specialized;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace KB.AvaloniaCore.Controls.GraphEditor;
 
@@ -26,6 +18,10 @@ public class GraphCanvas : TemplatedControl
     private ZoomDecorator? _zoomDecorator;
     private ScrollViewer? _scrollViewer;
     private ContentPresenter? _contentPresenter;
+    /// <summary>
+    /// Canvas to edit editable controls. Nodes.
+    /// Drag and scale
+    /// </summary>
     private EditorCanvas? _canvas;
 
     static GraphCanvas()
@@ -101,7 +97,8 @@ public class GraphCanvas : TemplatedControl
     private void _AddNode(Node node)
     {
         _canvas!.Children.Add(node);
-
+        node.ConnectionPinPressed += _OnNodePinPressed;
+        node.ConnectionPinReleased += _OnNodePinReleased;
         //_UpdateNodePosition(node);
     }
 
@@ -112,13 +109,23 @@ public class GraphCanvas : TemplatedControl
 
     private bool _RemoveNode(Node node)
     {
+        node.ConnectionPinPressed -= _OnNodePinPressed;
+        node.ConnectionPinReleased -= _OnNodePinReleased;
         return _canvas!.Children.Remove(node);
     }
 
     #endregion
 
     #region NodeConnection Management
+    private void _OnNodePinPressed(NodeConnectionPin pin)
+    {
 
+    }
+
+    private void _OnNodePinReleased(NodeConnectionPin pin)
+    {
+
+    }
 
 
     #endregion
