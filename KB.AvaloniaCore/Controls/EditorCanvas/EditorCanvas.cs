@@ -388,14 +388,31 @@ public class EditorCanvas : Control
     {
         _childrenCanvas.Children.Add(editableControl.Control);
         editableControl.IsSelectedChanged += _OnEditableControlIsSelectedChanged;
+
+        editableControl.PositionXChanged += _OnEditableControlLayoutAffectedPropertyChanged;
+        editableControl.PositionYChanged += _OnEditableControlLayoutAffectedPropertyChanged;
+        editableControl.WidthChanged += _OnEditableControlLayoutAffectedPropertyChanged;
+        editableControl.HeightChanged += _OnEditableControlLayoutAffectedPropertyChanged;
+        _UpdateEditableControlPosition(editableControl);
     }
 
     private void _OnEditableControlRemovedFromChildrenCollection(IEditableControl editableControl)
     {
         _childrenCanvas.Children.Remove(editableControl.Control);
         editableControl.IsSelectedChanged -= _OnEditableControlIsSelectedChanged;
+
+        editableControl.PositionXChanged -= _OnEditableControlLayoutAffectedPropertyChanged;
+        editableControl.PositionYChanged -= _OnEditableControlLayoutAffectedPropertyChanged;
+        editableControl.WidthChanged -= _OnEditableControlLayoutAffectedPropertyChanged;
+        editableControl.HeightChanged -= _OnEditableControlLayoutAffectedPropertyChanged;
     }
 
+    /// <summary>
+    /// When the IsSelected property of an IEditableControl changes, this method will be called.
+    /// To handle IsSelectd changes from outside EditorCanvas.
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="valueChangedArgs"></param>
     private void _OnEditableControlIsSelectedChanged(object? sender, ValueChangedEventArgs<bool> valueChangedArgs)
     {
         if(!_selfUpdatingSelectedItemsRAII.CanExecute())
@@ -413,5 +430,17 @@ public class EditorCanvas : Control
         {
             _UpdateSelectedItems(SelectedItems.Where(item => item.IsSelected));
         }
+    }
+
+    private void _OnEditableControlLayoutAffectedPropertyChanged(object? sender, EventArgs args)
+    {
+        IEditableControl editableControl = (IEditableControl)sender!;
+        _UpdateEditableControlPosition(editableControl);
+    }
+
+    private void _UpdateEditableControlPosition(IEditableControl editableControl)
+    {
+        Canvas.SetLeft(editableControl.Control, editableControl.PositionX);
+        Canvas.SetTop(editableControl.Control, editableControl.PositionY);
     }
 }

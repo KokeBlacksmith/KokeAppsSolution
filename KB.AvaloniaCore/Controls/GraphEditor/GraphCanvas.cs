@@ -99,12 +99,8 @@ public class GraphCanvas : TemplatedControl
     private void _AddNode(Node node)
     {
         _canvas!.Children.Add(node);
-        node.PositionXChanged += _OnNodePositionChanged;
-        node.PositionYChanged += _OnNodePositionChanged;
-        node.WidthChanged += _OnNodeSizeChanged;
-        node.HeightChanged += _OnNodeSizeChanged;
 
-        _UpdateNodePosition(node);
+        //_UpdateNodePosition(node);
     }
 
     private void _DrawConnection(NodeConnection connection)
@@ -114,36 +110,7 @@ public class GraphCanvas : TemplatedControl
 
     private bool _RemoveNode(Node node)
     {
-        node.PositionXChanged -= _OnNodePositionChanged;
-        node.PositionYChanged -= _OnNodePositionChanged;
-        node.WidthChanged -= _OnNodeSizeChanged;
-        node.HeightChanged -= _OnNodeSizeChanged;
         return _canvas!.Children.Remove(node);
-    }
-
-    private void _UpdateNodePosition(Node node)
-    {
-        Canvas.SetLeft(node, node.PositionX);
-        Canvas.SetTop(node, node.PositionY);
-    }
-
-    private void _OnNodePositionChanged(Node node, ValueChangedEventArgs e)
-    {
-        _UpdateNodePosition(node);
-    }
-
-    #endregion
-
-    #region Node Properties Changed
-
-    private void _OnNodePositionChanged(object? sender, ValueChangedEventArgs<double> e)
-    {
-        _UpdateNodePosition((Node)sender!);
-    }
-
-    private void _OnNodeSizeChanged(object? sender, ValueChangedEventArgs<double> e)
-    {
-        _UpdateNodePosition((Node)sender!);
     }
 
     #endregion
