@@ -4,6 +4,9 @@ namespace KB.SharpCore.DesignPatterns.UserAction;
 
 public class UserActionInvoker
 {
+    // TODO: Search for a better way to do this.
+    public static bool IsUserActionsPaused = false;
+
     public UserActionInvoker(uint capacity = 100)
     {
         _userActions = new IUserAction[capacity];
@@ -13,8 +16,13 @@ public class UserActionInvoker
     private int _currentIndex = -1;
     private int _count = 0;
 
-    public void AddUserAction(IUserAction userAction)
+    public bool AddUserAction(IUserAction userAction)
     {
+        if(IsUserActionsPaused)
+        {
+            return false;
+        }
+
         if(_userActions.Length <= _count + 1)
         {
             // We will max the capacity of the array.
@@ -24,7 +32,7 @@ public class UserActionInvoker
         _userActions[_count] = userAction;
         _currentIndex++;
         _count++;
-
+        return true;
     }
 
     public void Undo()

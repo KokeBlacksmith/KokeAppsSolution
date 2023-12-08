@@ -8,6 +8,8 @@ using Avalonia.Metadata;
 using Avalonia.VisualTree;
 using KB.AvaloniaCore.Controls.UserActions;
 using KB.SharpCore.DesignPatterns.UserAction;
+using KB.SharpCore.Events;
+using KB.SharpCore.Synchronization;
 using KB.SharpCore.Utils;
 using System.Collections.Specialized;
 
@@ -52,6 +54,11 @@ public class EditorCanvas : Control
     /// </summary>
     private readonly UserActionInvoker _userActionInvoker;
 
+    /// <summary>
+    /// RAII operation to avoid infinite loop when updating selected items.
+    /// </summary>
+    private BooleanRAIIOperation _selfUpdatingSelectedItemsRAII;
+
     static EditorCanvas()
     {
         AffectsRender<Panel>(BackgroundProperty);
@@ -67,6 +74,7 @@ public class EditorCanvas : Control
         _selectionAdorner = new EditableControlAdorner(adornerPlaceholderControl);
         _selectionAdorner.AdornedElements = SelectedItems;
         _userActionInvoker = new UserActionInvoker();
+        _selfUpdatingSelectedItemsRAII = new BooleanRAIIOperation();
 
         _childrenCanvas = new Canvas();
         _editionCanvas = new Canvas();
@@ -156,62 +164,65 @@ public class EditorCanvas : Control
         IEditableControl? editableControl = (e.Source as Control)!.FindAncestorOfType<IEditableControl>();
         bool isAdornerClicked = _selectionAdorner.IsPointOver(e.GetPosition(this));
 
-        if(editableControl == null && !isAdornerClicked)
+        using (_selfUpdatingSelectedItemsRAII.Execute())
         {
-            //User clicked outside any control
-            _UpdateSelectedItems(Enumerable.Empty<IEditableControl>());
-            _stateMachine = EStateMachine.None;
-        }
-        else
-        {
-            if(e.ClickCount == 1)
+            if(editableControl == null && !isAdornerClicked)
             {
-                if(isAdornerClicked)
-                {
-                    // If pointer pressed started on this canvas, it won't be raised from the child control
-                    // So we have to raise it manually
-                    _selectionAdorner.OnCanvasPointerPressed(this, e);
-                }
-                else if(!editableControl!.IsSelected)
-                {
-                    //Clicked on a non selected item. Select it
-                    if (!BitWiseHelper.HasFlag(e.KeyModifiers, KeyModifiers.Control))
-                    {
-                        // Control key not pressed. Clear selection
-                        _UpdateSelectedItems(new IEditableControl[] { editableControl });
-                    }
-                    else
-                    {
-                        // Control key pressed. Add to selection
-                        IEditableControl[] newSelectedItems = new IEditableControl[SelectedItems.Count + 1];
-                        SelectedItems.CopyTo(newSelectedItems, 0);
-                        newSelectedItems[^1] = editableControl;
-                        _UpdateSelectedItems(newSelectedItems);
-                    }
-
-                    _selectionAdorner.Activate();
-                    _stateMachine = EStateMachine.Adorner;
-                    // If pointer pressed started on this canvas, it won't be raised from the child control
-                    // So we have to raise it manually
-                    _selectionAdorner.OnCanvasPointerPressed(this, e);
-                }
-                else
-                {
-                    // Clicked on a selected item. Unselect it
-                    IEnumerable<IEditableControl> newSelectedItems = SelectedItems.Where(item => item != editableControl);
-                    _UpdateSelectedItems(newSelectedItems);
-                    if(!newSelectedItems.Any())
-                    {
-                        _stateMachine = EStateMachine.None;
-                    }
-                }
+                //User clicked outside any control
+                _UpdateSelectedItems(Enumerable.Empty<IEditableControl>());
+                _stateMachine = EStateMachine.None;
             }
             else
             {
-                // Double click
-                _UpdateSelectedItems(new IEditableControl[] { editableControl! });
+                if(e.ClickCount == 1)
+                {
+                    if(isAdornerClicked)
+                    {
+                        // If pointer pressed started on this canvas, it won't be raised from the child control
+                        // So we have to raise it manually
+                        _selectionAdorner.OnCanvasPointerPressed(this, e);
+                    }
+                    else if(!editableControl!.IsSelected)
+                    {
+                        //Clicked on a non selected item. Select it
+                        if (!BitWiseHelper.HasFlag(e.KeyModifiers, KeyModifiers.Control))
+                        {
+                            // Control key not pressed. Clear selection
+                            _UpdateSelectedItems(new IEditableControl[] { editableControl });
+                        }
+                        else
+                        {
+                            // Control key pressed. Add to selection
+                            IEditableControl[] newSelectedItems = new IEditableControl[SelectedItems.Count + 1];
+                            SelectedItems.CopyTo(newSelectedItems, 0);
+                            newSelectedItems[^1] = editableControl;
+                            _UpdateSelectedItems(newSelectedItems);
+                        }
+
+                        _selectionAdorner.Activate();
+                        _stateMachine = EStateMachine.Adorner;
+                        // If pointer pressed started on this canvas, it won't be raised from the child control
+                        // So we have to raise it manually
+                        _selectionAdorner.OnCanvasPointerPressed(this, e);
+                    }
+                    else
+                    {
+                        // Clicked on a selected item. Unselect it
+                        IEnumerable<IEditableControl> newSelectedItems = SelectedItems.Where(item => item != editableControl);
+                        _UpdateSelectedItems(newSelectedItems);
+                        if(!newSelectedItems.Any())
+                        {
+                            _stateMachine = EStateMachine.None;
+                        }
+                    }
+                }
+                else
+                {
+                    // Double click
+                    _UpdateSelectedItems(new IEditableControl[] { editableControl! });
                 
-                //TODO;  ¿What happens on double click?
+                    //TODO;  ¿What happens on double click?
+                }
             }
         }
 
@@ -246,21 +257,23 @@ public class EditorCanvas : Control
     protected override void OnPointerReleased(PointerReleasedEventArgs e)
     {
         _isMousePressed = false;
-
-        if(_stateMachine == EStateMachine.MultiSelecting)
+        using(_selfUpdatingSelectedItemsRAII.Execute())
         {
-            IEnumerable<IEditableControl> newSelectedItems = _multiSelectBox.GetSelectedItems(Children.OfType<IEditableControl>().Cast<Visual>()).Cast<IEditableControl>();
-            _UpdateSelectedItems(newSelectedItems);
-            _multiSelectBox.End();
-            if(newSelectedItems.Any())
+            if(_stateMachine == EStateMachine.MultiSelecting)
             {
-                _selectionAdorner.Activate();
-                _stateMachine = EStateMachine.Adorner;
+                IEnumerable<IEditableControl> newSelectedItems = _multiSelectBox.GetSelectedItems(Children.OfType<IEditableControl>().Cast<Visual>()).Cast<IEditableControl>();
+                _UpdateSelectedItems(newSelectedItems);
+                _multiSelectBox.End();
+                if(newSelectedItems.Any())
+                {
+                    _selectionAdorner.Activate();
+                    _stateMachine = EStateMachine.Adorner;
+                }
             }
-        }
-        else if(_stateMachine == EStateMachine.Adorner)
-        {
-            _selectionAdorner.OnCanvasPointerReleased(this, e);
+            else if(_stateMachine == EStateMachine.Adorner)
+            {
+                _selectionAdorner.OnCanvasPointerReleased(this, e);
+            }
         }
     }
 
@@ -285,72 +298,120 @@ public class EditorCanvas : Control
         _selectionAdorner.AdornedElements = SelectedItems;
     }
 
+    /// <summary>
+    /// Fired when the children collection changes. (Add, Remove, Clear, etc..)
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
     private void _OnChildrenChanged(object? sender, NotifyCollectionChangedEventArgs e)
     {
-        if (e.Action == NotifyCollectionChangedAction.Add)
+        using(_selfUpdatingSelectedItemsRAII.Execute())
         {
-            foreach (IEditableControl element in e.NewItems!)
+            switch(e.Action)
             {
-                _childrenCanvas.Children.Add((Control)element);
-            }
-        }
-        else if (e.Action == NotifyCollectionChangedAction.Remove)
-        {
-            foreach (IEditableControl element in e.OldItems!)
-            {
-                _childrenCanvas.Children.Remove((Control)element);
-            }
-        }
-        else if (e.Action == NotifyCollectionChangedAction.Reset)
-        {
-            _childrenCanvas.Children.Clear();
-        }
-        else if (e.Action == NotifyCollectionChangedAction.Replace || e.Action == NotifyCollectionChangedAction.Move)
-        {
-            foreach (IEditableControl element in e.OldItems!)
-            {
-                _childrenCanvas.Children.Remove((Control)element);
-            }
+                case NotifyCollectionChangedAction.Add:
+                    foreach (IEditableControl element in e.NewItems!)
+                    {
+                        _OnEditableControlAddedToChildrenCollection(element);
+                    }
+                    break;
+                case NotifyCollectionChangedAction.Remove:
+                case NotifyCollectionChangedAction.Reset:
+                    foreach (IEditableControl element in e.OldItems!)
+                    {
+                        _OnEditableControlRemovedFromChildrenCollection(element);
+                    }
+                    break;
+                case NotifyCollectionChangedAction.Replace:
+                case NotifyCollectionChangedAction.Move:
+                    foreach (IEditableControl element in e.OldItems!)
+                    {
+                        _OnEditableControlRemovedFromChildrenCollection(element);
+                    }
+                    foreach (IEditableControl element in e.NewItems!)
+                    {
+                        _OnEditableControlAddedToChildrenCollection(element);
+                    }
+                    break;
 
-            _childrenCanvas.Children.AddRange(e.NewItems!.OfType<IEditableControl>().Cast<Control>());
+            }
         }
     }
 
     protected override void OnKeyUp(KeyEventArgs e)
     {
-        if(e.Key == Key.Delete)
+        using(_selfUpdatingSelectedItemsRAII.Execute())
         {
-            _UpdateSelectedItems(Enumerable.Empty<IEditableControl>());
-            SelectedItems.Clear();
-        }
-        else if(e.Key == Key.Z && BitWiseHelper.HasFlag(e.KeyModifiers, KeyModifiers.Control))
-        {
-            _userActionInvoker.Undo();
-        }
-        else if(e.Key == Key.Y && BitWiseHelper.HasFlag(e.KeyModifiers, KeyModifiers.Control))
-        {
-            _userActionInvoker.Redo();
+            if(e.Key == Key.Delete)
+            {
+                _UpdateSelectedItems(Enumerable.Empty<IEditableControl>());
+            }
+            else if(e.Key == Key.Z && BitWiseHelper.HasFlag(e.KeyModifiers, KeyModifiers.Control))
+            {
+                _userActionInvoker.Undo();
+            }
+            else if(e.Key == Key.Y && BitWiseHelper.HasFlag(e.KeyModifiers, KeyModifiers.Control))
+            {
+                _userActionInvoker.Redo();
+            }
         }
     }
 
     private void _UpdateSelectedItems(IEnumerable<IEditableControl> newSelectedItems)
     {
         SelectEditableControlUserAction selectEditableControlUserAction = new SelectEditableControlUserAction(this, SelectedItems, newSelectedItems);
-        selectEditableControlUserAction.Do();
-        _userActionInvoker.AddUserAction(selectEditableControlUserAction);
+        if(_userActionInvoker.AddUserAction(selectEditableControlUserAction))
+        {
+            selectEditableControlUserAction.Do();
+        }
     }
 
     private void _OnEditableControlsFinishedMoving(Point[] oldPositions)
     {
         MoveEditableControlUserAction moveEditableControlUserAction = new MoveEditableControlUserAction(SelectedItems, oldPositions, SelectedItems.Select(item => new Point(item.PositionX, item.PositionY)));
-        moveEditableControlUserAction.Do();
-        _userActionInvoker.AddUserAction(moveEditableControlUserAction);
+        if(_userActionInvoker.AddUserAction(moveEditableControlUserAction))
+        {
+            moveEditableControlUserAction.Do();
+        }
     }
 
     private void _OnEditableControlsFinishedMoving(double[] oldWidths, double[] oldHeights)
     {
         ScaleEditableControlUserAction scaleEditableControlUserAction = new ScaleEditableControlUserAction(SelectedItems, oldWidths, oldHeights, SelectedItems.Select(item => item.Width), SelectedItems.Select(item => item.Height));
-        scaleEditableControlUserAction.Do();
-        _userActionInvoker.AddUserAction(scaleEditableControlUserAction);
+        if(_userActionInvoker.AddUserAction(scaleEditableControlUserAction))
+        {
+            scaleEditableControlUserAction.Do();
+        }
+    }
+
+    private void _OnEditableControlAddedToChildrenCollection(IEditableControl editableControl)
+    {
+        _childrenCanvas.Children.Add(editableControl.Control);
+        editableControl.IsSelectedChanged += _OnEditableControlIsSelectedChanged;
+    }
+
+    private void _OnEditableControlRemovedFromChildrenCollection(IEditableControl editableControl)
+    {
+        _childrenCanvas.Children.Remove(editableControl.Control);
+        editableControl.IsSelectedChanged -= _OnEditableControlIsSelectedChanged;
+    }
+
+    private void _OnEditableControlIsSelectedChanged(object? sender, ValueChangedEventArgs<bool> valueChangedArgs)
+    {
+        if(!_selfUpdatingSelectedItemsRAII.CanExecute())
+        {
+            return;
+        }
+
+        // At this point, the IsSelected property was updated from an action outside EditorCanvas.
+        IEditableControl editableControl = (IEditableControl)sender!;
+        if(editableControl.IsSelected)
+        {
+            _UpdateSelectedItems(SelectedItems.Append(editableControl));
+        }
+        else
+        {
+            _UpdateSelectedItems(SelectedItems.Where(item => item.IsSelected));
+        }
     }
 }
