@@ -315,9 +315,12 @@ public class EditorCanvas : Control
                     break;
                 case NotifyCollectionChangedAction.Remove:
                 case NotifyCollectionChangedAction.Reset:
-                    foreach (IEditableControl element in e.OldItems!)
+                    if(e.OldItems != null)
                     {
-                        _OnEditableControlRemovedFromChildrenCollection(element);
+                        foreach (IEditableControl element in e.OldItems!)
+                        {
+                            _OnEditableControlRemovedFromChildrenCollection(element);
+                        }
                     }
                     break;
                 case NotifyCollectionChangedAction.Replace:

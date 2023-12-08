@@ -1,43 +1,48 @@
 ﻿using Avalonia;
 using Avalonia.Collections;
 using Avalonia.Controls;
-using Avalonia.Controls.Metadata;
-using Avalonia.Controls.Presenters;
-using Avalonia.Controls.Primitives;
+using Avalonia.Media;
 using Avalonia.Metadata;
 using System.Collections.Specialized;
 
 namespace KB.AvaloniaCore.Controls.GraphEditor;
 
-[TemplatePart("PART_ZoomDecorator", typeof(ZoomDecorator))]
-[TemplatePart("PART_ScrollViewer", typeof(ScrollViewer))]
-[TemplatePart("PART_ContentPresenter", typeof(ContentPresenter))]
-[TemplatePart("PART_Canvas", typeof(EditorCanvas))]
-public class GraphCanvas : TemplatedControl
+public class GraphCanvas : Control
 {
-    private ZoomDecorator? _zoomDecorator;
-    private ScrollViewer? _scrollViewer;
-    private ContentPresenter? _contentPresenter;
+    private readonly ZoomDecorator _zoomDecorator;
+    private readonly ScrollViewer _scrollViewer;
     /// <summary>
     /// Canvas to edit editable controls. Nodes.
     /// Drag and scale
     /// </summary>
-    private EditorCanvas? _canvas;
+    private readonly EditorCanvas _editorCanvas;
 
     static GraphCanvas()
     {
         ChildNodesProperty.Changed.AddClassHandler<GraphCanvas>((s, e) => s.m_OnChildNodesPropertyChanged(e));
+        BackgroundProperty.Changed.AddClassHandler<GraphCanvas>((s, e) => s._OnBackgroundPropertyChanged(e));
     }
 
     public GraphCanvas()
     {
-        
+        _scrollViewer = new ScrollViewer();
+        _zoomDecorator = new ZoomDecorator();
+        _editorCanvas = new EditorCanvas();
+
+        _scrollViewer.Content = _zoomDecorator;
+        _zoomDecorator.Child = _editorCanvas;
+
+        LogicalChildren.Add(_scrollViewer);
+        VisualChildren.Add(_scrollViewer);
+
+        this.Background = Brushes.Purple;
     }
 
     #region StyledProperties
 
     public readonly static StyledProperty<IAvaloniaList<Node>> ChildNodesProperty = AvaloniaProperty.Register<GraphCanvas, IAvaloniaList<Node>>(nameof(GraphCanvas.ChildNodes));
     public readonly static StyledProperty<IEnumerable<NodeConnection>> NodeConnectionsProperty = AvaloniaProperty.Register<GraphCanvas, IEnumerable<NodeConnection>>(nameof(GraphCanvas.NodeConnections));
+    public readonly static StyledProperty<IBrush> BackgroundProperty = AvaloniaProperty.Register<GraphCanvas, IBrush>(nameof(GraphCanvas.Background), Brushes.White);
 
     [Content]
     public IAvaloniaList<Node> ChildNodes
@@ -50,6 +55,12 @@ public class GraphCanvas : TemplatedControl
     {
         get { return GetValue(GraphCanvas.NodeConnectionsProperty); }
         set { SetValue(GraphCanvas.NodeConnectionsProperty, value); }
+    }
+
+    public IBrush Background
+    {
+        get { return GetValue(GraphCanvas.BackgroundProperty); }
+        set { SetValue(GraphCanvas.BackgroundProperty, value); }
     }
 
     #endregion
@@ -70,6 +81,11 @@ public class GraphCanvas : TemplatedControl
         }
 
         RebuildView();
+    }
+
+    private void _OnBackgroundPropertyChanged(AvaloniaPropertyChangedEventArgs e)
+    {
+        _editorCanvas.Background = Background;
     }
 
 
@@ -96,7 +112,7 @@ public class GraphCanvas : TemplatedControl
 
     private void _AddNode(Node node)
     {
-        _canvas!.Children.Add(node);
+        _editorCanvas.Children.Add(node);
         node.ConnectionPinPressed += _OnNodePinPressed;
         node.ConnectionPinReleased += _OnNodePinReleased;
         //_UpdateNodePosition(node);
@@ -111,7 +127,7 @@ public class GraphCanvas : TemplatedControl
     {
         node.ConnectionPinPressed -= _OnNodePinPressed;
         node.ConnectionPinReleased -= _OnNodePinReleased;
-        return _canvas!.Children.Remove(node);
+        return _editorCanvas!.Children.Remove(node);
     }
 
     #endregion
@@ -132,12 +148,7 @@ public class GraphCanvas : TemplatedControl
 
     public void RebuildView()
     {
-        if(_canvas == null)
-        {
-            return;
-        }
-
-        _canvas.Children.Clear();
+        _editorCanvas.Children.Clear();
         foreach (Node node in ChildNodes)
         {
             _AddNode(node);
@@ -145,16 +156,11 @@ public class GraphCanvas : TemplatedControl
     }
 
     #region Inhertied Members
-
-    protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
-    {
-        base.OnApplyTemplate(e);
-        _zoomDecorator = e.NameScope.Get<ZoomDecorator>("PART_ZoomDecorator");
-        _scrollViewer = e.NameScope.Find<ScrollViewer>("PART_ScrollViewer");
-        _contentPresenter = e.NameScope.Get<ContentPresenter>("PART_ContentPresenter");
-        _canvas = e.NameScope.Get<EditorCanvas>("PART_Canvas");
-        RebuildView();
-    }
+    //protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
+    //{
+    //    base.OnAttachedToVisualTree(e);
+    //    RebuildView();
+    //}
 
     #endregion
 }
