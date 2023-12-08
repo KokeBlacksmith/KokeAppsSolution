@@ -3,26 +3,14 @@
 ///https://github.com/wieslawsoltes/PanAndZoom/
 
 using Avalonia;
-using Avalonia.Animation;
 using Avalonia.Controls;
-using Avalonia.Controls.Documents;
 using Avalonia.Controls.Primitives;
 using Avalonia.Input;
-using Avalonia.Interactivity;
-using Avalonia.Layout;
 using Avalonia.Media;
 using Avalonia.Media.Transformation;
 using KB.AvaloniaCore.Controls.Events;
-using KB.AvaloniaCore.Controls.GraphEditor;
 using KB.AvaloniaCore.Injection;
 using KB.AvaloniaCore.Math;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Linq;
 
 namespace KB.AvaloniaCore.Controls;
 

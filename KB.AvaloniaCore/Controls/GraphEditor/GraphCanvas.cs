@@ -1,4 +1,5 @@
 ﻿using Avalonia;
+using Avalonia.Collections;
 using Avalonia.Controls;
 using Avalonia.Controls.Metadata;
 using Avalonia.Controls.Presenters;
@@ -39,10 +40,11 @@ public class GraphCanvas : TemplatedControl
 
     #region StyledProperties
 
-    public readonly static StyledProperty<IEnumerable<Node>> ChildNodesProperty = AvaloniaProperty.Register<GraphCanvas, IEnumerable<Node>>(nameof(GraphCanvas.ChildNodes));
+    public readonly static StyledProperty<IAvaloniaList<Node>> ChildNodesProperty = AvaloniaProperty.Register<GraphCanvas, IAvaloniaList<Node>>(nameof(GraphCanvas.ChildNodes));
     public readonly static StyledProperty<IEnumerable<NodeConnection>> NodeConnectionsProperty = AvaloniaProperty.Register<GraphCanvas, IEnumerable<NodeConnection>>(nameof(GraphCanvas.NodeConnections));
 
-    public IEnumerable<Node> ChildNodes
+    [Content]
+    public IAvaloniaList<Node> ChildNodes
     {
         get { return GetValue(GraphCanvas.ChildNodesProperty); }
         set { SetValue(GraphCanvas.ChildNodesProperty, value); }
