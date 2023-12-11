@@ -8,12 +8,12 @@ public sealed partial class TimerNode : Node
     public TimerNode()
     {
         InitializeComponent();
-        NodeConnectionPin pin1 = new NodeConnectionPin() { Width = 10, Height = 10};
-        NodeConnectionPin pin2 = new NodeConnectionPin() { Width = 10, Height = 10};
-        NodeConnectionPin pin3 = new NodeConnectionPin() { Width = 10, Height = 10};
-        NodeConnectionPin pin11 = new NodeConnectionPin() { Width = 10, Height = 10};
-        NodeConnectionPin pin12 = new NodeConnectionPin() { Width = 10, Height = 10};
-        NodeConnectionPin pin13 = new NodeConnectionPin();
+        NodePin pin1 = new NodePin() { Width = 10, Height = 10};
+        NodePin pin2 = new NodePin() { Width = 10, Height = 10};
+        NodePin pin3 = new NodePin() { Width = 10, Height = 10};
+        NodePin pin11 = new NodePin() { Width = 10, Height = 10};
+        NodePin pin12 = new NodePin() { Width = 10, Height = 10};
+        NodePin pin13 = new NodePin();
 
         AddConnectionPin(pin1, ESide.Left);
         AddConnectionPin(pin2, ESide.Left);

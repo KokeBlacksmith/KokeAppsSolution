@@ -3,19 +3,34 @@ using Avalonia.Collections;
 using Avalonia.Controls;
 using Avalonia.Media;
 using Avalonia.Metadata;
+using KB.AvaloniaCore.Controls.GraphEditor.Events;
+using KB.AvaloniaCore.Injection;
+using System.Collections.Generic;
 using System.Collections.Specialized;
 
 namespace KB.AvaloniaCore.Controls.GraphEditor;
 
 public class GraphCanvas : Control
 {
+    //TODO: Move this controls to EditorCanvas
     private readonly ZoomDecorator _zoomDecorator;
     private readonly ScrollViewer _scrollViewer;
+
+
+
     /// <summary>
     /// Canvas to edit editable controls. Nodes.
     /// Drag and scale
     /// </summary>
     private readonly EditorCanvas _editorCanvas;
+
+    /// <summary>
+    /// Canvas to draw connections between nodes.
+    /// </summary>
+    private readonly Canvas _nodeConnectionsCanvas;
+
+    private readonly NodeConnectionCollection _nodeConnections;
+    private NodeConnection? _edittingConnection;
 
     static GraphCanvas()
     {
@@ -25,12 +40,18 @@ public class GraphCanvas : Control
 
     public GraphCanvas()
     {
+        _edittingConnection = null;
+        _nodeConnections = new NodeConnectionCollection();
         _scrollViewer = new ScrollViewer();
         _zoomDecorator = new ZoomDecorator();
         _editorCanvas = new EditorCanvas();
+        _nodeConnectionsCanvas = new Canvas();
 
         _scrollViewer.Content = _zoomDecorator;
-        _zoomDecorator.Child = _editorCanvas;
+        Grid canvasContainer = new Grid();
+        canvasContainer.Children.Add(_editorCanvas);
+        canvasContainer.Children.Add(_nodeConnectionsCanvas);
+        _zoomDecorator.Child = canvasContainer;
 
         LogicalChildren.Add(_scrollViewer);
         VisualChildren.Add(_scrollViewer);
@@ -93,17 +114,17 @@ public class GraphCanvas : Control
 
     private void m_OnChildNodesCollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
     {
-        if (e.NewItems != null)
+        if (e.NewItems is IEnumerable<Node> newNodes)
         {
-            foreach (var node in e.NewItems.OfType<Node>())
+            foreach (Node node in newNodes)
             {
                 _AddNode(node);
             }
         }
 
-        if (e.OldItems != null)
+        if (e.OldItems is IEnumerable<Node> oldNodes)
         {
-            foreach (var node in e.OldItems.OfType<Node>())
+            foreach (Node node in oldNodes)
             {
                 _RemoveNode(node);
             }
@@ -115,34 +136,150 @@ public class GraphCanvas : Control
         _editorCanvas.Children.Add(node);
         node.ConnectionPinPressed += _OnNodePinPressed;
         node.ConnectionPinReleased += _OnNodePinReleased;
-        //_UpdateNodePosition(node);
+        node.ConnectionPinPointerMoved += _OnNodePinPointerMoved;
     }
-
-    private void _DrawConnection(NodeConnection connection)
-    {
-
-    }
-
     private bool _RemoveNode(Node node)
     {
         node.ConnectionPinPressed -= _OnNodePinPressed;
         node.ConnectionPinReleased -= _OnNodePinReleased;
+        node.ConnectionPinPointerMoved -= _OnNodePinPointerMoved;
         return _editorCanvas!.Children.Remove(node);
     }
 
     #endregion
 
     #region NodeConnection Management
-    private void _OnNodePinPressed(NodeConnectionPin pin)
-    {
 
+    private void _OnNodePinPressed(object? sender, NodePinPointerInteractionEventArgs args)
+    {
+        Point point = args.Pin.ParentNode!.TranslatePoint(args.Point, _nodeConnectionsCanvas)!.Value;
+        _edittingConnection = _nodeConnections.GetConnection(args.Pin);
+        if(_edittingConnection is not null)
+        {
+            // We are disconnecting the pin
+            // Remove the connection
+            _nodeConnections.Remove(_edittingConnection);
+            
+        }
+        else
+        {
+            // Creating a new connection
+            _edittingConnection = new NodeConnection(args.Pin, point, point);
+            _nodeConnectionsCanvas.Children.Add(_edittingConnection);
+        }
     }
 
-    private void _OnNodePinReleased(NodeConnectionPin pin)
+    private void _OnNodePinPointerMoved(object? sender, NodePinPointerInteractionEventArgs args)
     {
+        if (_edittingConnection is null)
+        {
+            return;
+        }
 
+        Point point = args.Pin.ParentNode!.TranslatePoint(args.Point, _nodeConnectionsCanvas)!.Value;
+        // Update the opposite connection point
+        if (_edittingConnection.SourcePin == args.Pin)
+        {
+            _edittingConnection.UpdateEndPoint(point);
+        }
+        else if (_edittingConnection.TargetPin == args.Pin)
+        {
+            _edittingConnection.UpdateStartPoint(point);
+        }
+        else
+        {
+            throw new Exception("Updating a pin that is not being editted. An unhandled exception occurred.");
+        }
     }
 
+    private void _OnNodePinReleased(object? sender, NodePinPointerInteractionEventArgs args)
+    {
+        Node? targetNode = null;
+        Point point = args.Pin.ParentNode!.TranslatePoint(args.Point, _nodeConnectionsCanvas)!.Value;
+
+        // Get the pin if we are over it
+        foreach (IEditableControl nodeControl in _editorCanvas.Children)
+        {
+            if(CanvasExtension.IsPointOverCanvasChild(point, nodeControl.Control))
+            {
+                targetNode = (Node)nodeControl.Control;
+                if(targetNode == args.Pin.Parent)
+                {
+                    // Pin is over the same node we are connecting
+                    _RemoveEdittingConnection();
+                    return;
+                }
+
+                break;
+            }
+        }
+
+        if(targetNode is null) 
+        {
+            // We are not over a node
+            _RemoveEdittingConnection();
+            return;
+        }
+
+        NodePin? newPin = null;
+        foreach(NodePin nodePin in targetNode.GetAllConnectionPins())
+        {
+            if(CanvasExtension.IsPointOverCanvasChild(point, nodePin))
+            {
+                newPin = nodePin;
+                if(newPin == args.Pin)
+                {
+                    // We are over the same pin we started the dragging
+                    // Check if the current connection is valid. If not, remove it
+                    // In the situation that it is a new connection, we have to check if we are coming back to previous situation before editing, so we can remove the connection
+                    if(_edittingConnection!.SourcePin == newPin || _edittingConnection.TargetPin == newPin)
+                    {
+                        _RemoveEdittingConnection();
+                        return;
+                    }
+                }
+
+                break;
+            }
+        }
+
+        if(newPin is null)
+        {
+            // We are over the node but not over a pin
+            _RemoveEdittingConnection();
+            return;
+        }
+
+        if(!args.Pin.CanConnectToPin(newPin))
+        {
+            // The pin does not allow the connection
+            _RemoveEdittingConnection();
+            return;
+        }
+
+        //// Find existing connections for the target pin
+        //if(_nodeConnections.GetConnection(newPin) is not null)
+        //{
+        //    // The connection already exists
+        //    _RemoveEdittingConnection();
+        //    return;
+        //}
+
+        // Passed all conditions. Connect pins
+        _edittingConnection!.SetMissingPin(newPin);
+        _nodeConnections.Add(_edittingConnection);
+    }
+
+    private void _RemoveEdittingConnection()
+    {
+        if(_edittingConnection is null)
+        {
+            return;
+        }
+
+        _nodeConnectionsCanvas.Children.Remove(_edittingConnection);
+        _edittingConnection = null;
+    }
 
     #endregion
 
@@ -156,11 +293,6 @@ public class GraphCanvas : Control
     }
 
     #region Inhertied Members
-    //protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
-    //{
-    //    base.OnAttachedToVisualTree(e);
-    //    RebuildView();
-    //}
 
     #endregion
 }

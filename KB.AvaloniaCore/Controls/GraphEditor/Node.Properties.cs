@@ -3,6 +3,7 @@ using Avalonia.Media;
 using Avalonia.Metadata;
 using Avalonia;
 using KB.SharpCore.Events;
+using KB.AvaloniaCore.Controls.GraphEditor.Events;
 
 namespace KB.AvaloniaCore.Controls.GraphEditor;
 
@@ -17,10 +18,10 @@ public abstract partial class Node : IEditableControl
 
     protected Guid m_id = new Guid();
 
-    protected List<NodeConnectionPin> m_leftConnectionPins = new List<NodeConnectionPin>();
-    protected List<NodeConnectionPin> m_rightConnectionPins = new List<NodeConnectionPin>();
-    protected List<NodeConnectionPin> m_topConnectionPins = new List<NodeConnectionPin>();
-    protected List<NodeConnectionPin> m_bottomConnectionPins = new List<NodeConnectionPin>();
+    protected List<NodePin> m_leftConnectionPins = new List<NodePin>();
+    protected List<NodePin> m_rightConnectionPins = new List<NodePin>();
+    protected List<NodePin> m_topConnectionPins = new List<NodePin>();
+    protected List<NodePin> m_bottomConnectionPins = new List<NodePin>();
 
     #endregion
 
@@ -35,8 +36,9 @@ public abstract partial class Node : IEditableControl
     /// <inheritdoc/>
     public event EventHandler<ValueChangedEventArgs<bool>>? IsSelectedChanged;
 
-    public event Action<NodeConnectionPin>? ConnectionPinPressed;
-    public event Action<NodeConnectionPin>? ConnectionPinReleased;
+    public event EventHandler<NodePinPointerInteractionEventArgs>? ConnectionPinPressed;
+    public event EventHandler<NodePinPointerInteractionEventArgs>? ConnectionPinReleased;
+    public event EventHandler<NodePinPointerInteractionEventArgs>? ConnectionPinPointerMoved;
 
     static Node()
     {
@@ -131,10 +133,10 @@ public abstract partial class Node : IEditableControl
     #region Properties
 
     public Guid Id => m_id;
-    public IReadOnlyList<NodeConnectionPin> LeftConnectionPins => m_leftConnectionPins;
-    public IReadOnlyList<NodeConnectionPin> RightConnectionPins => m_rightConnectionPins;
-    public IReadOnlyList<NodeConnectionPin> TopConnectionPins => m_topConnectionPins;
-    public IReadOnlyList<NodeConnectionPin> BottomConnectionPins => m_bottomConnectionPins;
+    public IReadOnlyList<NodePin> LeftConnectionPins => m_leftConnectionPins;
+    public IReadOnlyList<NodePin> RightConnectionPins => m_rightConnectionPins;
+    public IReadOnlyList<NodePin> TopConnectionPins => m_topConnectionPins;
+    public IReadOnlyList<NodePin> BottomConnectionPins => m_bottomConnectionPins;
 
     #endregion
 
@@ -143,24 +145,24 @@ public abstract partial class Node : IEditableControl
     /// The order is left, right, top, bottom.
     /// </summary>
     /// <returns></returns>
-    public IEnumerable<NodeConnectionPin> GetAllConnectionPins()
+    public IEnumerable<NodePin> GetAllConnectionPins()
     {
-        foreach(NodeConnectionPin pin in m_leftConnectionPins)
+        foreach(NodePin pin in m_leftConnectionPins)
         {
             yield return pin;
         }
 
-        foreach (NodeConnectionPin pin in m_rightConnectionPins)
+        foreach (NodePin pin in m_rightConnectionPins)
         {
             yield return pin;
         }
 
-        foreach (NodeConnectionPin pin in m_topConnectionPins)
+        foreach (NodePin pin in m_topConnectionPins)
         {
             yield return pin;
         }
 
-        foreach (NodeConnectionPin pin in m_bottomConnectionPins)
+        foreach (NodePin pin in m_bottomConnectionPins)
         {
             yield return pin;
         }

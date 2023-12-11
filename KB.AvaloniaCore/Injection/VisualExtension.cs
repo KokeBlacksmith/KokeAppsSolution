@@ -81,4 +81,24 @@ public static class VisualExtension
     {
         return visual.FindParentOfTypeIncludeSelf<T>() ?? throw new Exception($"Could not find parent of type {typeof(T).Name} in the child visual {visual}.");
     }
+
+    public static Point? GetRelativePosition(this Visual visual, Visual relativeToAncestor)
+    {
+        if(visual == relativeToAncestor)
+        {
+            return new Point(0, 0);
+        }
+
+        return visual.TranslatePoint(new Point(0, 0), relativeToAncestor);
+    }
+
+    public static Point GetRelativePositionOrThrow(this Visual visual, Visual relativeToAncestor)
+    {
+        return visual.GetRelativePosition(relativeToAncestor) ?? throw new Exception($"Could not get relative position of visual {visual} to visual {relativeToAncestor}.");
+    }
+
+    //public static Point? GetRelativePosition(this Point point, Visual relativeToAncestor)
+    //{
+    //    return point.GetRelativePosition(relativeToAncestor as Visual);
+    //}
 }

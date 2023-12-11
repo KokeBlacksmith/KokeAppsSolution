@@ -5,6 +5,7 @@ using Avalonia.Interactivity;
 using Avalonia.Layout;
 using Avalonia.Media;
 using Avalonia.VisualTree;
+using KB.AvaloniaCore.Controls.GraphEditor.Events;
 using KB.AvaloniaCore.Injection;
 using KB.SharpCore.Enums;
 using KB.SharpCore.Events;
@@ -28,7 +29,7 @@ public abstract partial class Node : Control
     /// Container to add node connections to.
     /// </summary>
     /// 
-    private readonly Canvas? _connectionsCanvas;
+    private readonly Canvas? _pinsCanvas;
 
     /// <summary>
     /// Container of the <see cref="Child"/> control
@@ -48,7 +49,7 @@ public abstract partial class Node : Control
             BorderThickness = new Thickness(1),
         };
 
-        _connectionsCanvas = new Canvas()
+        _pinsCanvas = new Canvas()
         {
             HorizontalAlignment = HorizontalAlignment.Stretch,
             VerticalAlignment = VerticalAlignment.Stretch,
@@ -62,7 +63,7 @@ public abstract partial class Node : Control
 
         // Order is important, the last added element is the topmost.
         _mainPanel.Children.Add(_childParentBorder);
-        _mainPanel.Children.Add(_connectionsCanvas);
+        _mainPanel.Children.Add(_pinsCanvas);
 
         ((ISetLogicalParent)_mainPanel).SetParent(this);
         VisualChildren.Add(_mainPanel);
@@ -72,7 +73,7 @@ public abstract partial class Node : Control
 
     #region Methods
 
-    public void AddConnectionPin(NodeConnectionPin pin, ESide side)
+    public void AddConnectionPin(NodePin pin, ESide side)
     {
         switch (side)
         {
@@ -92,15 +93,16 @@ public abstract partial class Node : Control
                 throw new ArgumentOutOfRangeException($"{nameof(ESide)} enum does not contain the given value on {nameof(AddConnectionPin)} method.");
         }
 
-        _connectionsCanvas!.Children.Add(pin);
+        _pinsCanvas!.Children.Add(pin);
         //pin.AddHandler(PointerPressedEvent, _OnPointerPressedOverNodePin, RoutingStrategies.Direct);
         //pin.AddHandler(PointerReleasedEvent, _OnPointerReleasedOverNodePin, RoutingStrategies.Direct);
         pin.AddHandler(PointerPressedEvent, _OnPointerPressedOverNodePin);
         pin.AddHandler(PointerReleasedEvent, _OnPointerReleasedOverNodePin);
+        pin.AddHandler(PointerMovedEvent, _OnPointerMovedOverNodePin);
         m_RepositionConnectionPins();
     }
 
-    public void RemoveConnectionPin(NodeConnectionPin pin, ESide side)
+    public void RemoveConnectionPin(NodePin pin, ESide side)
     {
         switch (side)
         {
@@ -120,25 +122,34 @@ public abstract partial class Node : Control
                 throw new ArgumentOutOfRangeException($"{nameof(ESide)} enum does not contain the given value on {nameof(RemoveConnectionPin)} method.");
         }
 
-        _connectionsCanvas!.Children.Remove(pin);
+        _pinsCanvas!.Children.Remove(pin);
         pin.RemoveHandler(PointerPressedEvent, _OnPointerPressedOverNodePin);
         pin.RemoveHandler(PointerReleasedEvent, _OnPointerReleasedOverNodePin);
+        pin.RemoveHandler(PointerMovedEvent, _OnPointerMovedOverNodePin);
         m_RepositionConnectionPins();
     }
 
     private void _OnPointerPressedOverNodePin(object? sender, PointerPressedEventArgs e)
     {
         // Get the pin
-        NodeConnectionPin pin = ((Visual)e.Source!).GetParentOfTypeIncludeSelf<NodeConnectionPin>();
-        ConnectionPinPressed?.Invoke(pin);
+        NodePin pin = ((Visual)e.Source!).GetParentOfTypeIncludeSelf<NodePin>();   
+        ConnectionPinPressed?.Invoke(pin, new NodePinPointerInteractionEventArgs(pin, e.GetPosition(this)));
         e.Handled = true;
     }
 
     private void _OnPointerReleasedOverNodePin(object? sender, PointerReleasedEventArgs e)
     {
         // Get the pin
-        NodeConnectionPin pin = ((Visual)e.Source!).GetParentOfTypeIncludeSelf<NodeConnectionPin>();
-        ConnectionPinReleased?.Invoke(pin);
+        NodePin pin = ((Visual)e.Source!).GetParentOfTypeIncludeSelf<NodePin>();
+        ConnectionPinReleased?.Invoke(pin, new NodePinPointerInteractionEventArgs(pin, e.GetPosition(this)));
+        e.Handled = true;
+    }
+
+    private void _OnPointerMovedOverNodePin(object? sender, PointerEventArgs e)
+    {
+        // Get the pin
+        NodePin pin = ((Visual)e.Source!).GetParentOfTypeIncludeSelf<NodePin>();
+        ConnectionPinPointerMoved?.Invoke(pin, new NodePinPointerInteractionEventArgs(pin, e.GetPosition(this)));
         e.Handled = true;
     }
 
@@ -172,7 +183,7 @@ public abstract partial class Node : Control
             double leftPinSeparation = (Height * marginErrorRatio) / leftPinsCount;
             for (int i = 0; i < leftPinsCount; ++i)
             {
-                NodeConnectionPin pin = m_leftConnectionPins[i];
+                NodePin pin = m_leftConnectionPins[i];
 
                 double leftPosition = (pin.Width / 2.0d) * -1.0d;
                 Canvas.SetLeft(pin, leftPosition);

@@ -3,7 +3,7 @@
 					xmlns:kbGraph="clr-namespace:KB.AvaloniaCore.Controls.GraphEditor;assembly=KB.AvaloniaCore"
 					xmlns:kbControls="clr-namespace:KB.AvaloniaCore.Controls;assembly=KB.AvaloniaCore">
 
-	<ControlTheme x:Key="{x:Type kbGraph:NodeConnectionPin}" TargetType="kbGraph:NodeConnectionPin">
+	<ControlTheme x:Key="{x:Type kbGraph:NodePin}" TargetType="kbGraph:NodePin">
 
 		<Setter Property="Template">
 			<ControlTemplate>
@@ -14,6 +14,14 @@
 				</Border>
 			</ControlTemplate>
 		</Setter>
+
+		<!-- Styles for mouse over interaction -->
+		<Style Selector="^:pointerover /template/ Border#PART_OutterBorder">
+			<Setter Property="BorderThickness" Value="3" />
+			<!-- TODO: Change Brush to interacion color -->
+		</Style>
 	</ControlTheme>
+	
+	
 	
 </ResourceDictionary>

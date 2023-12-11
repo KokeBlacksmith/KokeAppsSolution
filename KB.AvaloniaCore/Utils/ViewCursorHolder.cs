@@ -1,9 +1,12 @@
-﻿using Avalonia;
-using Avalonia.Input;
-using Avalonia.Platform;
+﻿using Avalonia.Input;
 
 namespace KB.AvaloniaCore.Utils;
 
+/// <summary>
+/// Holds a cursor for a view.
+/// <para/>
+/// View can switch between cursors and return to the previous one.
+/// </summary>
 public class ViewCursorHolder
 {
     public ViewCursorHolder(InputElement view)
