@@ -161,6 +161,7 @@ public abstract partial class Node : Control
 
     /// <summary>
     /// Reposition pins
+    /// Pins must be set using <see cref="Canvas.SetLeft"/> and <see cref="Canvas.SetTop"/>
     /// </summary>
     protected virtual void m_RepositionConnectionPins()
     {
@@ -172,34 +173,35 @@ public abstract partial class Node : Control
             return;
         }
 
-        double centerX = Width / 2.0d;
-        double centerY = Height / 2.0d;
-        double marginErrorRatio = 0.8d;
+        double centerX = this.GetHalfWidth();
+        double centerY = this.GetHalfHeight();
+        double marginRatio = 0.8d;
 
         // Left pins
         int leftPinsCount = m_leftConnectionPins.Count;
         if(leftPinsCount > 0)
         {
-            double leftPinSeparation = (Height * marginErrorRatio) / leftPinsCount;
-            for (int i = 0; i < leftPinsCount; ++i)
+            double leftPinSeparation = (Height * marginRatio) / leftPinsCount;
+            // Place pins top to bottom
+            for (int i = leftPinsCount - 1; i >= 0; --i)
             {
                 NodePin pin = m_leftConnectionPins[i];
 
-                double leftPosition = (pin.Width / 2.0d) * -1.0d;
+                double leftPosition = pin.GetHalfWidth() * -1.0d;
                 Canvas.SetLeft(pin, leftPosition);
 
-                double bottomPosition;
+                double topPosition;
                 if(leftPinsCount == 1)
                 {
-                    bottomPosition = centerY;
+                    topPosition = centerY;
                 }
                 else
                 {
                     // Distribute the pins evenly
-                    bottomPosition = leftPinSeparation * (i + 1);
+                    topPosition = Height - leftPinSeparation * (i + 1);
                 }
 
-                Canvas.SetBottom(pin, bottomPosition);
+                Canvas.SetTop(pin, topPosition);
             }
         }
 
@@ -207,25 +209,26 @@ public abstract partial class Node : Control
         int rightPinsCount = m_rightConnectionPins.Count;
         if(rightPinsCount > 0)
         {
-            double rightPinSeparation = (Height * marginErrorRatio) / rightPinsCount;
-            for (int i = 0; i < rightPinsCount; i++)
+            double rightPinSeparation = (Height * marginRatio) / rightPinsCount;
+            // Place pins top to bottom
+            for (int i = rightPinsCount - 1; i >= 0; --i)
             {
                 var pin = m_rightConnectionPins[i];
-                double rightPosition = (pin.Width / 2.0d) * -1.0d;
-                Canvas.SetRight(pin, rightPosition);
+                double rightPosition = pin.GetHalfWidth() * -1.0d;
+                Canvas.SetLeft(pin, Width + rightPosition);
 
-                double bottomPosition;
+                double topPosition;
                 if (rightPinsCount == 1)
                 {
-                    bottomPosition = centerY;
+                    topPosition = centerY;
                 }
                 else
                 {
                     // Distribute the pins evenly
-                    bottomPosition = rightPinSeparation * (i + 1);
+                    topPosition = Height - rightPinSeparation * (i + 1);
                 }
                 
-                Canvas.SetBottom(pin, bottomPosition);
+                Canvas.SetBottom(pin, topPosition);
             }
         }
 
@@ -233,11 +236,12 @@ public abstract partial class Node : Control
         int topPinsCount = m_topConnectionPins.Count;
         if (topPinsCount > 0)
         {
-            double topPinSeparation = (Width * marginErrorRatio) / topPinsCount;
+            double topPinSeparation = (Width * marginRatio) / topPinsCount;
+            // Place pins left to right
             for (int i = 0; i < m_topConnectionPins.Count; i++)
             {
                 var pin = m_topConnectionPins[i];
-                double topPosition = (pin.Height / 2.0d) * -1.0d;
+                double topPosition = pin.GetHalfHeight() * -1.0d;
                 Canvas.SetTop(pin, topPosition);
 
                 double leftPosition;
@@ -259,12 +263,13 @@ public abstract partial class Node : Control
         int bottomPinsCount = m_bottomConnectionPins.Count;
         if (bottomPinsCount > 0)
         {
-            double bottomPinSeparation = (Width * marginErrorRatio) / bottomPinsCount;
+            double bottomPinSeparation = (Width * marginRatio) / bottomPinsCount;
+            // Place pins left to right
             for (int i = 0; i < bottomPinsCount; ++i)
             {
                 var pin = m_bottomConnectionPins[i];
-                double bottomPosition = (pin.Height / 2.0d) * -1.0d;
-                Canvas.SetBottom(pin, bottomPosition);
+                double bottomPosition = pin.GetHalfHeight() * -1.0d;
+                Canvas.SetTop(pin, Height + bottomPosition);
 
                 double leftPosition;
                 if (bottomPinsCount == 1)

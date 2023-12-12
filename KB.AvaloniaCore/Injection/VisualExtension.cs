@@ -1,4 +1,5 @@
 ﻿using Avalonia;
+using Avalonia.Layout;
 using Avalonia.LogicalTree;
 using Avalonia.VisualTree;
 
@@ -95,6 +96,16 @@ public static class VisualExtension
     public static Point GetRelativePositionOrThrow(this Visual visual, Visual relativeToAncestor)
     {
         return visual.GetRelativePosition(relativeToAncestor) ?? throw new Exception($"Could not get relative position of visual {visual} to visual {relativeToAncestor}.");
+    }
+
+    public static double GetHalfWidth(this Layoutable layoutable)
+    {
+        return layoutable.Width * 0.5d;
+    }
+
+    public static double GetHalfHeight(this Layoutable layoutable)
+    {
+        return layoutable.Height * 0.5d;
     }
 
     //public static Point? GetRelativePosition(this Point point, Visual relativeToAncestor)

@@ -3,6 +3,7 @@ using Avalonia.Collections;
 using Avalonia.Controls;
 using Avalonia.Media;
 using Avalonia.Metadata;
+using Avalonia.Xaml.Interactions.Custom;
 using KB.AvaloniaCore.Controls.GraphEditor.Events;
 using KB.AvaloniaCore.Injection;
 using System.Collections.Generic;
@@ -194,6 +195,9 @@ public class GraphCanvas : Control
 
     private void _OnNodePinReleased(object? sender, NodePinPointerInteractionEventArgs args)
     {
+        //TODO: more responsive check if we are over a pin.
+        // Right now is hard to release the mouse over a pin.
+
         Node? targetNode = null;
         Point releasePoint = args.Pin.ParentNode!.TranslatePoint(args.Point, _nodeConnectionsCanvas)!.Value;
 
@@ -224,21 +228,14 @@ public class GraphCanvas : Control
         NodePin? newPin = null;
         foreach(NodePin targetNodePin in targetNode.GetAllConnectionPins())
         {
-            //TODO: Get relative position of the nodePin
-            //Get relative position of the nodePin
-            // Check if we are over the pin by its bounds
-            //if (CanvasExtension.IsPointOverCanvasChild(point, nodePin))
-            //{
-            //    newPin = nodePin;
-            //    break;
-            //}
+            Point targetPinPositionRelativeToNode = CanvasExtension.GetControlLeftTop(targetNodePin);
+            Point targetPinRelativePosition = targetNodePin.ParentNode!.TranslatePoint(targetPinPositionRelativeToNode, _nodeConnectionsCanvas)!.Value;
+            //targetPinRelativePosition += new Point(targetNodePin.GetHalfWidth(), -targetNodePin.GetHalfHeight());
+            Point distancePoint = releasePoint - targetPinRelativePosition;
 
-
-
-            Point targetPinPosition = CanvasExtension.GetControlLeftTop(targetNodePin);
-            Point targetPinRelativePosition = targetNodePin.ParentNode!.TranslatePoint(targetPinPosition, _nodeConnectionsCanvas)!.Value;
-            Point tmpPoint = releasePoint - targetPinPosition;
-            if(targetNodePin.Bounds.Contains(tmpPoint))
+            double marginError = 2.0d;
+            Rect bounds = new Rect(-targetNodePin.GetHalfWidth(), -targetNodePin.GetHalfHeight(), targetNodePin.Width, targetNodePin.Height) * marginError;
+            if (bounds.Contains(distancePoint))
             {
                 // We are not over the pin
                 newPin = targetNodePin;
@@ -263,6 +260,7 @@ public class GraphCanvas : Control
         // Passed all conditions. Connect pins
         _edittingConnection!.SetMissingPin(newPin);
         _nodeConnections.Add(_edittingConnection);
+        _edittingConnection = null;
     }
 
     private void _RemoveEdittingConnection()

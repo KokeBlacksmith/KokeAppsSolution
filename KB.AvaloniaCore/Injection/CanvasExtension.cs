@@ -21,6 +21,7 @@ public static class CanvasExtension
 
     /// <summary>
     /// Returns true if the given point is over the given child control.
+    /// It relative to the child control's parent canvas.
     /// <para/>
     /// Avalonia has the property <see cref="InputElement.IsPointerOver"/> but it only works if the upper control is this one.
     /// So if you have a canvas with a child control and you want to know if the mouse is over the child control, you have to use this method.
