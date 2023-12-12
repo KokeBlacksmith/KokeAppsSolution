@@ -195,12 +195,12 @@ public class GraphCanvas : Control
     private void _OnNodePinReleased(object? sender, NodePinPointerInteractionEventArgs args)
     {
         Node? targetNode = null;
-        Point point = args.Pin.ParentNode!.TranslatePoint(args.Point, _nodeConnectionsCanvas)!.Value;
+        Point releasePoint = args.Pin.ParentNode!.TranslatePoint(args.Point, _nodeConnectionsCanvas)!.Value;
 
         // Get the pin if we are over it
         foreach (IEditableControl nodeControl in _editorCanvas.Children)
         {
-            if(CanvasExtension.IsPointOverCanvasChild(point, nodeControl.Control))
+            if(CanvasExtension.IsPointOverCanvasChild(releasePoint, nodeControl.Control))
             {
                 targetNode = (Node)nodeControl.Control;
                 if(targetNode == args.Pin.Parent)
@@ -222,23 +222,26 @@ public class GraphCanvas : Control
         }
 
         NodePin? newPin = null;
-        foreach(NodePin nodePin in targetNode.GetAllConnectionPins())
+        foreach(NodePin targetNodePin in targetNode.GetAllConnectionPins())
         {
-            if(CanvasExtension.IsPointOverCanvasChild(point, nodePin))
-            {
-                newPin = nodePin;
-                if(newPin == args.Pin)
-                {
-                    // We are over the same pin we started the dragging
-                    // Check if the current connection is valid. If not, remove it
-                    // In the situation that it is a new connection, we have to check if we are coming back to previous situation before editing, so we can remove the connection
-                    if(_edittingConnection!.SourcePin == newPin || _edittingConnection.TargetPin == newPin)
-                    {
-                        _RemoveEdittingConnection();
-                        return;
-                    }
-                }
+            //TODO: Get relative position of the nodePin
+            //Get relative position of the nodePin
+            // Check if we are over the pin by its bounds
+            //if (CanvasExtension.IsPointOverCanvasChild(point, nodePin))
+            //{
+            //    newPin = nodePin;
+            //    break;
+            //}
 
+
+
+            Point targetPinPosition = CanvasExtension.GetControlLeftTop(targetNodePin);
+            Point targetPinRelativePosition = targetNodePin.ParentNode!.TranslatePoint(targetPinPosition, _nodeConnectionsCanvas)!.Value;
+            Point tmpPoint = releasePoint - targetPinPosition;
+            if(targetNodePin.Bounds.Contains(tmpPoint))
+            {
+                // We are not over the pin
+                newPin = targetNodePin;
                 break;
             }
         }
@@ -256,14 +259,6 @@ public class GraphCanvas : Control
             _RemoveEdittingConnection();
             return;
         }
-
-        //// Find existing connections for the target pin
-        //if(_nodeConnections.GetConnection(newPin) is not null)
-        //{
-        //    // The connection already exists
-        //    _RemoveEdittingConnection();
-        //    return;
-        //}
 
         // Passed all conditions. Connect pins
         _edittingConnection!.SetMissingPin(newPin);

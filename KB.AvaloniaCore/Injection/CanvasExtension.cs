@@ -49,4 +49,11 @@ public static class CanvasExtension
         double top = Canvas.GetTop(control);
         return new Point(left + control.Width / 2, top + control.Height / 2);
     }
+
+    public static Point GetControlLeftTop(Control control)
+    {
+        double left = Canvas.GetLeft(control);
+        double top = Canvas.GetTop(control);
+        return new Point(left, top);
+    }
 }
