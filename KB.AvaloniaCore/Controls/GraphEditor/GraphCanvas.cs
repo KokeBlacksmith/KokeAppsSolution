@@ -9,6 +9,7 @@ using KB.AvaloniaCore.Injection;
 using KB.SharpCore.Utils;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Linq;
 
 namespace KB.AvaloniaCore.Controls.GraphEditor;
 
@@ -31,7 +32,6 @@ public class GraphCanvas : Control
     /// </summary>
     private readonly Canvas _nodeConnectionsCanvas;
 
-    private readonly NodeConnectionCollection _nodeConnections;
     private NodeConnection? _edittingConnection;
 
     static GraphCanvas()
@@ -43,7 +43,6 @@ public class GraphCanvas : Control
     public GraphCanvas()
     {
         _edittingConnection = null;
-        _nodeConnections = new NodeConnectionCollection();
         _scrollViewer = new ScrollViewer();
         _zoomDecorator = new ZoomDecorator();
         _editorCanvas = new EditorCanvas();
@@ -155,13 +154,11 @@ public class GraphCanvas : Control
     private void _OnNodePinPressed(object? sender, NodePinPointerInteractionEventArgs args)
     {
         Point point = args.Pin.ParentNode!.TranslatePoint(args.Point, _nodeConnectionsCanvas)!.Value;
-        _edittingConnection = _nodeConnections.GetConnection(args.Pin);
+        _edittingConnection = _nodeConnectionsCanvas.Children.OfType<NodeConnection>().FirstOrDefault(x => x.SourcePin == args.Pin || x.TargetPin == args.Pin);
         if(_edittingConnection is not null)
         {
             // We are disconnecting the pin
-            // Remove the connection
-            _nodeConnections.Remove(_edittingConnection);
-            
+            _edittingConnection.DisconnectPin(args.Pin, point);
         }
         else
         {
@@ -180,11 +177,11 @@ public class GraphCanvas : Control
 
         Point point = args.Pin.ParentNode!.TranslatePoint(args.Point, _nodeConnectionsCanvas)!.Value;
         // Update the opposite connection point
-        if (_edittingConnection.SourcePin == args.Pin)
+        if (_edittingConnection.SourcePin == args.Pin || _edittingConnection.SourcePin is not null)
         {
             _edittingConnection.UpdateEndPoint(point);
         }
-        else if (_edittingConnection.TargetPin == args.Pin)
+        else if (_edittingConnection.TargetPin == args.Pin || _edittingConnection.TargetPin is not null)
         {
             _edittingConnection.UpdateStartPoint(point);
         }
@@ -214,11 +211,16 @@ public class GraphCanvas : Control
 
                 if (distanceBetweenNodePinAndReleasePoint.X.IsBetween(0, targetNodePin.Width) && distanceBetweenNodePinAndReleasePoint.Y.IsBetween(0, targetNodePin.Height))
                 {
-                    if (targetNodePin.ParentNode == args.Pin.ParentNode)
+                    if (targetNode == args.Pin.ParentNode)
                     {
-                        // Pin is over the same node we are connecting
-                        _RemoveEdittingConnection();
-                        return;
+                        // Interacted pin belongs to the node we are over.
+                        // Check that source and target pins do not have the same node. One connection can't be connected to the same node.
+                        NodePin connectedPin = _edittingConnection!.SourcePin is not null ? _edittingConnection.SourcePin : _edittingConnection.TargetPin!;
+                        if (connectedPin.ParentNode == targetNode)
+                        {
+                            _RemoveEdittingConnection();
+                            return;
+                        }
                     }
 
                     // We are not over the pin
@@ -249,7 +251,6 @@ public class GraphCanvas : Control
 
         // Passed all conditions. Connect pins
         _edittingConnection!.SetMissingPin(newPin);
-        _nodeConnections.Add(_edittingConnection);
         _edittingConnection = null;
     }
 

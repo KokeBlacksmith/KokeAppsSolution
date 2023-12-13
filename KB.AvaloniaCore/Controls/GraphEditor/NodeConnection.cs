@@ -65,6 +65,16 @@
         {
             TargetPin = null;
         }
+    }      public void DisconnectPin(NodePin pin, Point connectionPoint)
+    {
+        if (SourcePin == pin)
+        {
+            UpdateStartPoint(connectionPoint);
+        }
+        else if (TargetPin == pin)
+        {
+            UpdateEndPoint(connectionPoint);
+        }
     }      private static void _OnSourcePinPropertyChanged(NodeConnection self, AvaloniaPropertyChangedEventArgs args)
     {
         if(args.OldValue is NodePin oldPin)
@@ -75,7 +85,7 @@
         if(args.NewValue is NodePin newPin)
         {
             newPin.IsConnected = true;
-            //self._line.StartPoint = CanvasExtension.GetCanvasControlCenter(newPin);
+            self._line.StartPoint = self._GePinCenterPosition(newPin);
         }
         else if (self.TargetPin is null)
         {
@@ -91,10 +101,15 @@
         if (args.NewValue is NodePin newPin)
         {
             newPin.IsConnected = true;
-            //self._line.EndPoint = CanvasExtension.GetCanvasControlCenter(newPin);
+            self._line.EndPoint = self._GePinCenterPosition(newPin);
         }
         else if (self.SourcePin is null)
         {
             throw new InvalidOperationException("SourcePin is null. At least one pin has to be connected.");
         }
+    }      private Point _GePinCenterPosition(NodePin pin)
+    {
+        Point pinPosition = CanvasExtension.GetCanvasControlCenter(pin);
+        Canvas parentNodeCanvas = pin.ParentNode!.GetParentOfType<Canvas>();
+        return pin.ParentNode!.TranslatePoint(pinPosition, parentNodeCanvas)!.Value;
     } } 

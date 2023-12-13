@@ -48,7 +48,7 @@ public static class CanvasExtension
     {
         double left = Canvas.GetLeft(control);
         double top = Canvas.GetTop(control);
-        return new Point(left + control.Width / 2, top + control.Height / 2);
+        return new Point(left + control.GetHalfWidth(), top + control.GetHalfHeight());
     }
 
     public static Point GetControlLeftTop(Control control)

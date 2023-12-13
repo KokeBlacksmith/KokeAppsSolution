@@ -108,6 +108,11 @@ public static class VisualExtension
         return self.Height * 0.5d;
     }
 
+    public static Point GetCenter(this Layoutable self)
+    {
+        return new Point(self.GetHalfWidth(), self.GetHalfHeight());
+    }
+
     //public static Point? GetRelativePosition(this Point point, Visual relativeToAncestor)
     //{
     //    return point.GetRelativePosition(relativeToAncestor as Visual);
