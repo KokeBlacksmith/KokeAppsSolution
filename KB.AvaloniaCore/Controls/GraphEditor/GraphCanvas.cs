@@ -6,6 +6,7 @@ using Avalonia.Metadata;
 using Avalonia.Xaml.Interactions.Custom;
 using KB.AvaloniaCore.Controls.GraphEditor.Events;
 using KB.AvaloniaCore.Injection;
+using KB.SharpCore.Utils;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 
@@ -198,47 +199,36 @@ public class GraphCanvas : Control
         //TODO: more responsive check if we are over a pin.
         // Right now is hard to release the mouse over a pin.
 
-        Node? targetNode = null;
-        Point releasePoint = args.Pin.ParentNode!.TranslatePoint(args.Point, _nodeConnectionsCanvas)!.Value;
+        Point releasePositionRelativeToCanvas = args.Pin.ParentNode!.TranslatePoint(args.Point, _nodeConnectionsCanvas)!.Value;
 
+        NodePin? newPin = null;
         // Get the pin if we are over it
         foreach (IEditableControl nodeControl in _editorCanvas.Children)
         {
-            if(CanvasExtension.IsPointOverCanvasChild(releasePoint, nodeControl.Control))
+            Node targetNode = (Node)nodeControl.Control;
+            foreach (NodePin targetNodePin in targetNode.GetAllConnectionPins())
             {
-                targetNode = (Node)nodeControl.Control;
-                if(targetNode == args.Pin.Parent)
+                Point targetPinPositionRelativeToNode = CanvasExtension.GetControlLeftTop(targetNodePin);
+                Point targetPinRelativeToCanvasPosition = targetNodePin.ParentNode!.TranslatePoint(targetPinPositionRelativeToNode, _nodeConnectionsCanvas)!.Value;
+                Point distanceBetweenNodePinAndReleasePoint = releasePositionRelativeToCanvas - targetPinRelativeToCanvasPosition;
+
+                if (distanceBetweenNodePinAndReleasePoint.X.IsBetween(0, targetNodePin.Width) && distanceBetweenNodePinAndReleasePoint.Y.IsBetween(0, targetNodePin.Height))
                 {
-                    // Pin is over the same node we are connecting
-                    _RemoveEdittingConnection();
-                    return;
+                    if (targetNodePin.ParentNode == args.Pin.ParentNode)
+                    {
+                        // Pin is over the same node we are connecting
+                        _RemoveEdittingConnection();
+                        return;
+                    }
+
+                    // We are not over the pin
+                    newPin = targetNodePin;
+                    break;
                 }
-
-                break;
             }
-        }
 
-        if(targetNode is null) 
-        {
-            // We are not over a node
-            _RemoveEdittingConnection();
-            return;
-        }
-
-        NodePin? newPin = null;
-        foreach(NodePin targetNodePin in targetNode.GetAllConnectionPins())
-        {
-            Point targetPinPositionRelativeToNode = CanvasExtension.GetControlLeftTop(targetNodePin);
-            Point targetPinRelativePosition = targetNodePin.ParentNode!.TranslatePoint(targetPinPositionRelativeToNode, _nodeConnectionsCanvas)!.Value;
-            //targetPinRelativePosition += new Point(targetNodePin.GetHalfWidth(), -targetNodePin.GetHalfHeight());
-            Point distancePoint = releasePoint - targetPinRelativePosition;
-
-            double marginError = 2.0d;
-            Rect bounds = new Rect(-targetNodePin.GetHalfWidth(), -targetNodePin.GetHalfHeight(), targetNodePin.Width, targetNodePin.Height) * marginError;
-            if (bounds.Contains(distancePoint))
+            if(newPin is not null)
             {
-                // We are not over the pin
-                newPin = targetNodePin;
                 break;
             }
         }

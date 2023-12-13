@@ -98,14 +98,14 @@ public static class VisualExtension
         return visual.GetRelativePosition(relativeToAncestor) ?? throw new Exception($"Could not get relative position of visual {visual} to visual {relativeToAncestor}.");
     }
 
-    public static double GetHalfWidth(this Layoutable layoutable)
+    public static double GetHalfWidth(this Layoutable self)
     {
-        return layoutable.Width * 0.5d;
+        return self.Width * 0.5d;
     }
 
-    public static double GetHalfHeight(this Layoutable layoutable)
+    public static double GetHalfHeight(this Layoutable self)
     {
-        return layoutable.Height * 0.5d;
+        return self.Height * 0.5d;
     }
 
     //public static Point? GetRelativePosition(this Point point, Visual relativeToAncestor)
