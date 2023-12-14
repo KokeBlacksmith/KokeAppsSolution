@@ -1,6 +1,7 @@
 ﻿using Avalonia;
 using Avalonia.Collections;
 using Avalonia.Controls;
+using Avalonia.Controls.Primitives;
 using Avalonia.Data;
 using Avalonia.Input;
 using Avalonia.Media;
@@ -33,6 +34,8 @@ public class EditorCanvas : Control
     private bool _isMousePressed;
 
     private readonly EditableControlAdorner _selectionAdorner;
+
+    private readonly ScrollViewer _scrollViewer;
 
     /// <summary>
     /// Canvas that will store the IEditbleControl elements.
@@ -82,12 +85,18 @@ public class EditorCanvas : Control
         _editionCanvas.Children.Add(adornerPlaceholderControl);
         _editionCanvas.Children.Add(_multiSelectBox);
 
+        _scrollViewer = new ScrollViewer() 
+        { 
+            HorizontalScrollBarVisibility = ScrollBarVisibility.Auto,
+            VerticalScrollBarVisibility = ScrollBarVisibility.Auto,
+        };
+        Grid canvasContainer = new Grid();
+        canvasContainer.Children.Add(_childrenCanvas);
+        canvasContainer.Children.Add(_editionCanvas);
+        _scrollViewer.Content = canvasContainer;
 
-        LogicalChildren.Add(_childrenCanvas);
-        LogicalChildren.Add(_editionCanvas);
-
-        VisualChildren.Add(_childrenCanvas);
-        VisualChildren.Add(_editionCanvas);
+        LogicalChildren.Add(_scrollViewer);
+        VisualChildren.Add(_scrollViewer);
 
         Children.CollectionChanged += _OnChildrenChanged;
         _selectionAdorner.OnAdornedElementsMoveFinished += _OnEditableControlsFinishedMoving;

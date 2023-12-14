@@ -1,17 +1,66 @@
-﻿using Avalonia; using Avalonia.Controls; using Avalonia.Controls.Shapes; using Avalonia.Media; using KB.AvaloniaCore.Injection;  namespace KB.AvaloniaCore.Controls.GraphEditor;  /// <summary>
+﻿using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Controls.Shapes;
+using Avalonia.Media;
+using KB.AvaloniaCore.Injection;
+
+namespace KB.AvaloniaCore.Controls.GraphEditor;
+
+/// <summary>
 /// Wire that connects two node pins
-/// </summary> public class NodeConnection : Control {     /// <summary>     /// Connection drawing     /// </summary>     private readonly Line _line;      static NodeConnection()
+/// </summary>
+public class NodeConnection : Control
+{
+    /// <summary>
+    /// Connection drawing
+    /// </summary>
+    private readonly Line _line;
+
+    static NodeConnection()
     {
         SourcePinProperty.Changed.AddClassHandler<NodeConnection>(_OnSourcePinPropertyChanged);
         TargetPinProperty.Changed.AddClassHandler<NodeConnection>(_OnTargetPinPropertyChanged);
-    }      // no solo se le puede pasar el source y el target, también podemos crear una conexiópn sin haber finalizado la edición,     // por lo que el Source siempre será un NodePin pero el target puede ser un NodePin o un Point     public NodeConnection(NodePin source, NodePin target, Point sourcePosition, Point targetPosition) : this(sourcePosition, targetPosition)     {         SourcePin = source ?? throw new ArgumentNullException(nameof(source));         TargetPin = target ?? throw new ArgumentNullException(nameof(target));     }      public NodeConnection(NodePin source, Point sourcePosition, Point targetPosition) : this(sourcePosition, targetPosition)     {         SourcePin = source ?? throw new ArgumentNullException(nameof(source));     }      private NodeConnection(Point sourcePosition, Point targetPosition)
+    }
+
+    // no solo se le puede pasar el source y el target, también podemos crear una conexiópn sin haber finalizado la edición,
+    // por lo que el Source siempre será un NodePin pero el target puede ser un NodePin o un Point
+    public NodeConnection(NodePin source, NodePin target, Point sourcePosition, Point targetPosition) : this(sourcePosition, targetPosition)
     {
-        _line = new Line();         LogicalChildren.Add(_line);         VisualChildren.Add(_line);          // Set start and end point// Set start and end point         _line.StartPoint = sourcePosition;         _line.EndPoint = targetPosition;          //TODO: remove this, just for testing         // Color has to be in styled properties         _line.Stroke = Brushes.Yellow;         _line.StrokeThickness = 2;
-    }      public static readonly StyledProperty<NodePin?> SourcePinProperty = AvaloniaProperty.Register<NodeConnection, NodePin?>(nameof(NodeConnection.SourcePin));     public static readonly StyledProperty<NodePin?> TargetPinProperty = AvaloniaProperty.Register<NodeConnection, NodePin?>(nameof(NodeConnection.TargetPin));          public NodePin? SourcePin
+        SourcePin = source ?? throw new ArgumentNullException(nameof(source));
+        TargetPin = target ?? throw new ArgumentNullException(nameof(target));
+    }
+
+    public NodeConnection(NodePin source, Point sourcePosition, Point targetPosition) : this(sourcePosition, targetPosition)
+    {
+        SourcePin = source ?? throw new ArgumentNullException(nameof(source));
+    }
+
+    private NodeConnection(Point sourcePosition, Point targetPosition)
+    {
+        _line = new Line();
+        LogicalChildren.Add(_line);
+        VisualChildren.Add(_line);
+
+        // Set start and end point// Set start and end point
+        _line.StartPoint = sourcePosition;
+        _line.EndPoint = targetPosition;
+
+        //TODO: remove this, just for testing
+        // Color has to be in styled properties
+        _line.Stroke = Brushes.Yellow;
+        _line.StrokeThickness = 2;
+    }
+
+    public static readonly StyledProperty<NodePin?> SourcePinProperty = AvaloniaProperty.Register<NodeConnection, NodePin?>(nameof(NodeConnection.SourcePin));
+    public static readonly StyledProperty<NodePin?> TargetPinProperty = AvaloniaProperty.Register<NodeConnection, NodePin?>(nameof(NodeConnection.TargetPin));
+    
+    public NodePin? SourcePin
     {
         get { return GetValue(NodeConnection.SourcePinProperty); }
         set { SetValue(NodeConnection.SourcePinProperty, value); }
-    }          public NodePin? TargetPin
+    }
+    
+    public NodePin? TargetPin
     {
         get { return GetValue(NodeConnection.TargetPinProperty); }
         set { SetValue(NodeConnection.TargetPinProperty, value); }
@@ -26,7 +75,8 @@
 
         SourcePin = null;
         _line.StartPoint = point;
-    }     public void UpdateEndPoint(Point point)
+    }
+    public void UpdateEndPoint(Point point)
     {
         if(SourcePin is null)
         {
@@ -35,12 +85,15 @@
 
         TargetPin = null;
         _line.EndPoint = point;
-    }      /// <summary>
+    }
+
+    /// <summary>
     /// Sets the source or target pin, depending which one is missing to set.
     /// A connection always has to have a source or a target pin set at least.
     /// </summary>
     /// <param name="pin"></param>
-    /// <exception cref="InvalidOperationException"></exception>     public void SetMissingPin(NodePin pin)
+    /// <exception cref="InvalidOperationException"></exception>
+    public void SetMissingPin(NodePin pin)
     {
         if (SourcePin is not null && TargetPin is not null)
         {
@@ -55,7 +108,9 @@
         {
             TargetPin = pin;
         }
-    }      public void DisconnectPin(NodePin pin)
+    }
+
+    public void DisconnectPin(NodePin pin)
     {
         if(SourcePin == pin)
         {
@@ -65,7 +120,9 @@
         {
             TargetPin = null;
         }
-    }      public void DisconnectPin(NodePin pin, Point connectionPoint)
+    }
+
+    public void DisconnectPin(NodePin pin, Point connectionPoint)
     {
         if (SourcePin == pin)
         {
@@ -75,7 +132,9 @@
         {
             UpdateEndPoint(connectionPoint);
         }
-    }      private static void _OnSourcePinPropertyChanged(NodeConnection self, AvaloniaPropertyChangedEventArgs args)
+    }
+
+    private static void _OnSourcePinPropertyChanged(NodeConnection self, AvaloniaPropertyChangedEventArgs args)
     {
         if(args.OldValue is NodePin oldPin)
         {
@@ -91,7 +150,9 @@
         {
             throw new InvalidOperationException("TargetPin is null. At least one pin has to be connected.");
         }
-    }      private static void _OnTargetPinPropertyChanged(NodeConnection self, AvaloniaPropertyChangedEventArgs args)
+    }
+
+    private static void _OnTargetPinPropertyChanged(NodeConnection self, AvaloniaPropertyChangedEventArgs args)
     {
         if (args.OldValue is NodePin oldPin)
         {
@@ -107,9 +168,12 @@
         {
             throw new InvalidOperationException("SourcePin is null. At least one pin has to be connected.");
         }
-    }      private Point _GePinCenterPosition(NodePin pin)
+    }
+
+    private Point _GePinCenterPosition(NodePin pin)
     {
         Point pinPosition = CanvasExtension.GetCanvasControlCenter(pin);
         Canvas parentNodeCanvas = pin.ParentNode!.GetParentOfType<Canvas>();
         return pin.ParentNode!.TranslatePoint(pinPosition, parentNodeCanvas)!.Value;
-    } } 
+    }
+}
