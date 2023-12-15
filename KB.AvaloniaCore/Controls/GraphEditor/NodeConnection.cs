@@ -14,7 +14,7 @@ public class NodeConnection : Control
     /// <summary>
     /// Connection drawing
     /// </summary>
-    private readonly Line _line;
+    private readonly BezierLine _line;
 
     static NodeConnection()
     {
@@ -37,7 +37,7 @@ public class NodeConnection : Control
 
     private NodeConnection(Point sourcePosition, Point targetPosition)
     {
-        _line = new Line();
+        _line = new BezierLine();
         LogicalChildren.Add(_line);
         VisualChildren.Add(_line);
 
