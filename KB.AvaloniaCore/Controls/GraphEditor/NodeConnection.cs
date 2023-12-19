@@ -2,6 +2,8 @@
 using Avalonia.Controls;
 using Avalonia.Media;
 using KB.AvaloniaCore.Injection;
+using KB.SharpCore.Events;
+using KB.SharpCore.Utils;
 
 namespace KB.AvaloniaCore.Controls.GraphEditor;
 
@@ -73,8 +75,10 @@ public class NodeConnection : Control
         }
 
         SourcePin = null;
+        _line.StartAngle = null;
         _line.StartPoint = point;
     }
+
     public void UpdateEndPoint(Point point)
     {
         if(SourcePin is null)
@@ -83,6 +87,7 @@ public class NodeConnection : Control
         }
 
         TargetPin = null;
+        _line.EndAngle = null;
         _line.EndPoint = point;
     }
 
@@ -138,17 +143,26 @@ public class NodeConnection : Control
         if(args.OldValue is NodePin oldPin)
         {
             oldPin.IsConnected = false;
+            oldPin.ParentNode!.PositionXChanged -= self._OnNodePositionChanged;
+            oldPin.ParentNode!.PositionYChanged -= self._OnNodePositionChanged;
         }
 
         if(args.NewValue is NodePin newPin)
         {
             newPin.IsConnected = true;
-            self._line.StartPoint = self._GePinCenterPosition(newPin);
+            newPin.ParentNode!.PositionXChanged += self._OnNodePositionChanged;
+            newPin.ParentNode!.PositionYChanged += self._OnNodePositionChanged;
         }
         else if (self.TargetPin is null)
         {
             throw new InvalidOperationException("TargetPin is null. At least one pin has to be connected.");
         }
+        else
+        {
+            self._line.StartAngle = null;
+        }
+
+        self._UpdateLine();
     }
 
     private static void _OnTargetPinPropertyChanged(NodeConnection self, AvaloniaPropertyChangedEventArgs args)
@@ -156,17 +170,26 @@ public class NodeConnection : Control
         if (args.OldValue is NodePin oldPin)
         {
             oldPin.IsConnected = false;
+            oldPin.ParentNode!.PositionXChanged -= self._OnNodePositionChanged;
+            oldPin.ParentNode!.PositionYChanged -= self._OnNodePositionChanged;
         }
 
         if (args.NewValue is NodePin newPin)
         {
             newPin.IsConnected = true;
-            self._line.EndPoint = self._GePinCenterPosition(newPin);
+            newPin.ParentNode!.PositionXChanged += self._OnNodePositionChanged;
+            newPin.ParentNode!.PositionYChanged += self._OnNodePositionChanged;
         }
         else if (self.SourcePin is null)
         {
             throw new InvalidOperationException("SourcePin is null. At least one pin has to be connected.");
         }
+        else
+        {
+            self._line.EndAngle = null;
+        }
+
+        self._UpdateLine();
     }
 
     private Point _GePinCenterPosition(NodePin pin)
@@ -174,5 +197,63 @@ public class NodeConnection : Control
         Point pinPosition = CanvasExtension.GetCanvasControlCenter(pin);
         Canvas parentNodeCanvas = pin.ParentNode!.GetParentOfType<Canvas>();
         return pin.ParentNode!.TranslatePoint(pinPosition, parentNodeCanvas)!.Value;
+    }
+
+    private double _GetPinConnectionAngle(NodePin pin)
+    {
+        // Check where the pin is located in the node. It can be top, bottom, left or right.
+        // Depending on that, we have to set the angle of the connection.
+        // The angle is the angle of the line that goes from the center of the node to the center of the pin.
+        // Get the center of the node
+        Point nodeCenter = CanvasExtension.GetCanvasControlCenter(pin.ParentNode!);
+        // Get the center of the pin
+        Point pinCenter = _GePinCenterPosition(pin);
+        // Get the angle between the points
+        double angle = KB.SharpCore.Utils.Math.GetRadAngleBetweenPoints(nodeCenter.X, nodeCenter.Y, pinCenter.X, pinCenter.Y);
+
+        // Check where the pin is located in the node. It can be top, bottom, left or right.
+        // Depending on that, we have to set the angle of the connection.
+        if(angle.IsBetween(KB.SharpCore.Utils.Math.PIQuarter, (3 * System.Math.PI) / 4.0d))
+        {
+            //Top
+            angle = KB.SharpCore.Utils.Math.PIHalf;
+        }
+        else if(angle.IsBetween((3 * System.Math.PI) / 4.0d, (5 * System.Math.PI) / 4.0d))
+        {
+            //Left
+            angle = System.Math.PI;
+        }
+        else if(angle.IsBetween((5 * System.Math.PI) / 4.0d, (7 * System.Math.PI) / 4.0d))
+        {
+            //Bottom
+            angle = (System.Math.PI * 3) / 2;
+        }
+        else
+        {
+            //Right
+            angle = 0;
+        }
+
+        return KB.SharpCore.Utils.Math.RadToDeg(angle);
+    }
+
+    private void _UpdateLine()
+    {
+        if(SourcePin is not null)
+        {
+            _line.StartPoint = _GePinCenterPosition(SourcePin);
+            _line.StartAngle = _GetPinConnectionAngle(SourcePin);
+        }
+
+        if(TargetPin is not null)
+        {
+            _line.EndPoint = _GePinCenterPosition(TargetPin);
+            _line.EndAngle = _GetPinConnectionAngle(TargetPin);
+        }
+    }
+
+    private void _OnNodePositionChanged(object? sender, ValueChangedEventArgs<double> e)
+    {
+        _UpdateLine();
     }
 }
