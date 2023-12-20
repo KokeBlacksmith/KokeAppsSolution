@@ -66,6 +66,8 @@ public class EditorCanvas : Control
     {
         AffectsRender<Panel>(BackgroundProperty);
         EditorCanvas.SelectedItemsProperty.Changed.AddClassHandler<EditorCanvas>((s, e) => s._OnSelectedItemsPropertyChanged(e));
+        EditorCanvas.HorizontalScrollBarVisibilityProperty.Changed.AddClassHandler<EditorCanvas>((s, e) => s._scrollViewer.HorizontalScrollBarVisibility = (ScrollBarVisibility)e.NewValue!);
+        EditorCanvas.VerticalScrollBarVisibilityProperty.Changed.AddClassHandler<EditorCanvas>((s, e) => s._scrollViewer.VerticalScrollBarVisibility = (ScrollBarVisibility)e.NewValue!);
     }
 
     public EditorCanvas()
@@ -90,10 +92,11 @@ public class EditorCanvas : Control
             HorizontalScrollBarVisibility = ScrollBarVisibility.Auto,
             VerticalScrollBarVisibility = ScrollBarVisibility.Auto,
         };
-        Grid canvasContainer = new Grid();
-        canvasContainer.Children.Add(_childrenCanvas);
-        canvasContainer.Children.Add(_editionCanvas);
-        _scrollViewer.Content = canvasContainer;
+
+        Grid gridCanvasContainer = new Grid();
+        gridCanvasContainer.Children.Add(_childrenCanvas);
+        gridCanvasContainer.Children.Add(_editionCanvas);
+        _scrollViewer.Content = gridCanvasContainer;
 
         LogicalChildren.Add(_scrollViewer);
         VisualChildren.Add(_scrollViewer);
@@ -123,6 +126,12 @@ public class EditorCanvas : Control
     /// </summary>
     public static readonly StyledProperty<IBrush?> BackgroundProperty = Border.BackgroundProperty.AddOwner<EditorCanvas>();
 
+    public static readonly StyledProperty<ScrollBarVisibility> HorizontalScrollBarVisibilityProperty =
+            AvaloniaProperty.Register<EditorCanvas, ScrollBarVisibility>(nameof(ScrollBarVisibility));
+
+    public static readonly StyledProperty<ScrollBarVisibility> VerticalScrollBarVisibilityProperty =
+        AvaloniaProperty.Register<EditorCanvas, ScrollBarVisibility>(nameof(ScrollBarVisibility));
+
     public AvaloniaList<IEditableControl> SelectedItems
     {
         get { return GetValue(SelectedItemsProperty); }
@@ -136,6 +145,18 @@ public class EditorCanvas : Control
     {
         get => GetValue(BackgroundProperty);
         set => SetValue(BackgroundProperty, value);
+    }
+
+    public ScrollBarVisibility HorizontalScrollBarVisibility
+    {
+        get => GetValue(HorizontalScrollBarVisibilityProperty);
+        set => SetValue(HorizontalScrollBarVisibilityProperty, value);
+    }
+
+    public ScrollBarVisibility VerticalScrollBarVisibility
+    {
+        get => GetValue(VerticalScrollBarVisibilityProperty);
+        set => SetValue(VerticalScrollBarVisibilityProperty, value);
     }
 
     #endregion
@@ -343,7 +364,6 @@ public class EditorCanvas : Control
                         _OnEditableControlAddedToChildrenCollection(element);
                     }
                     break;
-
             }
         }
     }

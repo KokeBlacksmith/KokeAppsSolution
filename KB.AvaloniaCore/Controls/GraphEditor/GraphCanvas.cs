@@ -19,8 +19,6 @@ public class GraphCanvas : Control
     private readonly ZoomDecorator _zoomDecorator;
     private readonly ScrollViewer _scrollViewer;
 
-
-
     /// <summary>
     /// Canvas to edit editable controls. Nodes.
     /// Drag and scale
