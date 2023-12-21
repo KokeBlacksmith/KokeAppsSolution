@@ -145,6 +145,8 @@ public class NodeConnection : Control
             oldPin.IsConnected = false;
             oldPin.ParentNode!.PositionXChanged -= self._OnNodePositionChanged;
             oldPin.ParentNode!.PositionYChanged -= self._OnNodePositionChanged;
+            oldPin.ParentNode!.WidthChanged -= self._OnNodePositionChanged;
+            oldPin.ParentNode!.HeightChanged -= self._OnNodePositionChanged;
         }
 
         if(args.NewValue is NodePin newPin)
@@ -152,6 +154,8 @@ public class NodeConnection : Control
             newPin.IsConnected = true;
             newPin.ParentNode!.PositionXChanged += self._OnNodePositionChanged;
             newPin.ParentNode!.PositionYChanged += self._OnNodePositionChanged;
+            newPin.ParentNode!.WidthChanged += self._OnNodePositionChanged;
+            newPin.ParentNode!.HeightChanged += self._OnNodePositionChanged;
         }
         else if (self.TargetPin is null)
         {
@@ -172,6 +176,8 @@ public class NodeConnection : Control
             oldPin.IsConnected = false;
             oldPin.ParentNode!.PositionXChanged -= self._OnNodePositionChanged;
             oldPin.ParentNode!.PositionYChanged -= self._OnNodePositionChanged;
+            oldPin.ParentNode!.WidthChanged -= self._OnNodePositionChanged;
+            oldPin.ParentNode!.HeightChanged -= self._OnNodePositionChanged;
         }
 
         if (args.NewValue is NodePin newPin)
@@ -179,6 +185,8 @@ public class NodeConnection : Control
             newPin.IsConnected = true;
             newPin.ParentNode!.PositionXChanged += self._OnNodePositionChanged;
             newPin.ParentNode!.PositionYChanged += self._OnNodePositionChanged;
+            newPin.ParentNode!.WidthChanged += self._OnNodePositionChanged;
+            newPin.ParentNode!.HeightChanged += self._OnNodePositionChanged;
         }
         else if (self.SourcePin is null)
         {

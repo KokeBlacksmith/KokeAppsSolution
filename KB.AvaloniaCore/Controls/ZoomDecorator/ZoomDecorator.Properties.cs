@@ -2,11 +2,6 @@
 using Avalonia.Data;
 using Avalonia.Media.Transformation;
 using Avalonia;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Avalonia.Media;
 using KB.AvaloniaCore.Controls.Events;
 
@@ -14,12 +9,6 @@ namespace KB.AvaloniaCore.Controls;
 
 public partial class ZoomDecorator
 {
-    /// <summary>
-    /// Identifies the <seealso cref="PanButton"/> avalonia property.
-    /// </summary>
-    //public static readonly StyledProperty<ButtonName> PanButtonProperty =
-    //    AvaloniaProperty.Register<ZoomDecorator, ButtonName>(nameof(PanButton), ButtonName.Middle, false, BindingMode.TwoWay);
-
     /// <summary>
     /// Identifies the <seealso cref="ZoomSpeed"/> avalonia property.
     /// </summary>
@@ -135,24 +124,6 @@ public partial class ZoomDecorator
         AvaloniaProperty.Register<ZoomDecorator, bool>(nameof(EnableZoom), true, false, BindingMode.TwoWay);
 
     /// <summary>
-    /// Identifies the <seealso cref="EnableGestureZoom"/> avalonia property.
-    /// </summary>
-    public static readonly StyledProperty<bool> EnableGestureZoomProperty =
-        AvaloniaProperty.Register<ZoomDecorator, bool>(nameof(EnableGestureZoom), true, false, BindingMode.TwoWay);
-
-    /// <summary>
-    /// Identifies the <seealso cref="EnableGestureRotation"/> avalonia property.
-    /// </summary>
-    public static readonly StyledProperty<bool> EnableGestureRotationProperty =
-        AvaloniaProperty.Register<ZoomDecorator, bool>(nameof(EnableGestureRotation), true, false, BindingMode.TwoWay);
-
-    /// <summary>
-    /// Identifies the <seealso cref="EnableGestureTranslation"/> avalonia property.
-    /// </summary>
-    public static readonly StyledProperty<bool> EnableGestureTranslationProperty =
-        AvaloniaProperty.Register<ZoomDecorator, bool>(nameof(EnableGestureTranslation), true, false, BindingMode.TwoWay);
-
-    /// <summary>
     /// Identifies the <seealso cref="IsZoomEnabled"/> avalonia property.
     /// </summary>
     public static readonly StyledProperty<bool> IsZoomEnabledProperty =
@@ -183,7 +154,7 @@ public partial class ZoomDecorator
         Decorator.BoundsProperty.Changed.AddClassHandler<ZoomDecorator>((s, e) => s.BoundsChanged(e.GetNewValue<Rect>()));
     }
 
-    private Control? _element;
+    private Control? _child;
     private Point _pan;
     private Point _previous;
     private Matrix _matrix;
@@ -200,15 +171,6 @@ public partial class ZoomDecorator
     /// Zoom changed event.
     /// </summary>
     public event ZoomChangedEventHandler? ZoomChanged;
-
-    /// <summary>
-    /// Gets or sets pan input button.
-    /// </summary>
-    //public ButtonName PanButton
-    //{
-    //    get => GetValue(PanButtonProperty);
-    //    set => SetValue(PanButtonProperty, value);
-    //}
 
     /// <summary>
     /// Gets or sets zoom speed ratio.
@@ -368,33 +330,6 @@ public partial class ZoomDecorator
     {
         get => GetValue(EnableZoomProperty);
         set => SetValue(EnableZoomProperty, value);
-    }
-
-    /// <summary>
-    /// Gets or sets flag indicating whether zoom gesture is enabled.
-    /// </summary>
-    public bool EnableGestureZoom
-    {
-        get => GetValue(EnableGestureZoomProperty);
-        set => SetValue(EnableGestureZoomProperty, value);
-    }
-
-    /// <summary>
-    /// Gets or sets flag indicating whether rotation gesture is enabled.
-    /// </summary>
-    public bool EnableGestureRotation
-    {
-        get => GetValue(EnableGestureRotationProperty);
-        set => SetValue(EnableGestureRotationProperty, value);
-    }
-
-    /// <summary>
-    /// Gets or sets flag indicating whether translation (pan) gesture is enabled.
-    /// </summary>
-    public bool EnableGestureTranslation
-    {
-        get => GetValue(EnableGestureTranslationProperty);
-        set => SetValue(EnableGestureTranslationProperty, value);
     }
 
     public bool IsZoomEnabled

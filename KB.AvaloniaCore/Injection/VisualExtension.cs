@@ -108,6 +108,16 @@ public static class VisualExtension
         return self.Height * 0.5d;
     }
 
+    public static double GetHalfBoundsWidth(this Layoutable self)
+    {
+        return self.Bounds.Width * 0.5d;
+    }
+
+    public static double GetHalfBoundsHeight(this Layoutable self)
+    {
+        return self.Bounds.Height * 0.5d;
+    }
+
     public static Point GetCenter(this Layoutable self)
     {
         return new Point(self.GetHalfWidth(), self.GetHalfHeight());

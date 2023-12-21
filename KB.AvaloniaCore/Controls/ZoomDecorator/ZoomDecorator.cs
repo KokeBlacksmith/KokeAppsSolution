@@ -76,12 +76,12 @@ public partial class ZoomDecorator : Decorator
     protected override Size ArrangeOverride(Size finalSize)
     {
         var size = base.ArrangeOverride(finalSize);
-        if (_element == null || !_element.IsMeasureValid)
+        if (_child == null || !_child.IsMeasureValid)
         {
             return size;
         }
 
-        AutoFit(size.Width, size.Height, _element.Bounds.Width, _element.Bounds.Height);
+        AutoFit(size.Width, size.Height, _child.Bounds.Width, _child.Bounds.Height);
 
         return size;
     }
@@ -128,12 +128,12 @@ public partial class ZoomDecorator : Decorator
     }
     private void ChildChanged(Control? element)
     {
-        if (element != null && element != _element && _element != null)
+        if (element != null && element != _child && _child != null)
         {
             DetachElement();
         }
 
-        if (element != null && element != _element)
+        if (element != null && element != _child)
         {
             AttachElement(element);
         }
@@ -146,7 +146,7 @@ public partial class ZoomDecorator : Decorator
             return;
         }
 
-        _element = element;
+        _child = element;
         PointerWheelChanged += Border_PointerWheelChanged;
         PointerPressed += Border_PointerPressed;
         PointerReleased += Border_PointerReleased;
@@ -155,7 +155,7 @@ public partial class ZoomDecorator : Decorator
 
     private void DetachElement()
     {
-        if (_element == null)
+        if (_child == null)
         {
             return;
         }
@@ -164,17 +164,17 @@ public partial class ZoomDecorator : Decorator
         PointerPressed -= Border_PointerPressed;
         PointerReleased -= Border_PointerReleased;
         PointerMoved -= Border_PointerMoved;
-        _element.RenderTransform = null;
-        _element = null;
+        _child.RenderTransform = null;
+        _child = null;
     }
 
     private void Wheel(PointerWheelEventArgs e)
     {
-        if (_element == null || _captured)
+        if (_child == null || _captured)
         {
             return;
         }
-        var point = e.GetPosition(_element);
+        var point = e.GetPosition(_child);
         ZoomDeltaTo(e.Delta.Y, point.X, point.Y);
     }
 
@@ -191,9 +191,9 @@ public partial class ZoomDecorator : Decorator
             return;
         }
 
-        if (_element != null && _captured == false && _isPanning == false)
+        if (_child != null && _captured == false && _isPanning == false)
         {
-            var point = e.GetPosition(_element);
+            var point = e.GetPosition(_child);
             BeginPanTo(point.X, point.Y);
             _captured = true;
             _isPanning = true;
@@ -207,7 +207,7 @@ public partial class ZoomDecorator : Decorator
             return;
         }
 
-        if (_element == null || _captured != true || _isPanning != true)
+        if (_child == null || _captured != true || _isPanning != true)
         {
             return;
         }
@@ -223,12 +223,12 @@ public partial class ZoomDecorator : Decorator
             return;
         }
 
-        if (_element == null || _captured != true || _isPanning != true)
+        if (_child == null || _captured != true || _isPanning != true)
         {
             return;
         }
 
-        var point = e.GetPosition(_element);
+        Point point = e.GetPosition(_child);
         ContinuePanTo(point.X, point.Y, true);
     }
 
@@ -243,16 +243,52 @@ public partial class ZoomDecorator : Decorator
 
     private void _RaiseZoomChanged()
     {
-        var args = new ZoomChangedEventArgs(_zoomX, _zoomY, _offsetX, _offsetY);
+        ZoomChangedEventArgs args = new ZoomChangedEventArgs(_zoomX, _zoomY, _offsetX, _offsetY);
         m_OnZoomChanged(args);
     }
 
     private void _Constrain()
     {
-        var zoomX = System.Math.Clamp(_matrix.GetScaleX(), MinZoomX, MaxZoomX);
-        var zoomY = System.Math.Clamp(_matrix.GetScaleY(), MinZoomY, MaxZoomY);
-        var offsetX = System.Math.Clamp(_matrix.GetTranslateX(), MinOffsetX, MaxOffsetX);
-        var offsetY = System.Math.Clamp(_matrix.GetTranslateY(), MinOffsetY, MaxOffsetY);
+        //if(Double.IsNaN(MinZoomX) && !Double.IsNaN(MaxZoomX))
+        //{
+        //    throw new Exception($"{nameof(MinZoomX)} is NaN");
+        //}
+
+        //if (Double.IsNaN(MinZoomY) && !Double.IsNaN(MaxZoomY))
+        //{
+        //    throw new Exception($"{nameof(MinZoomY)} is NaN");
+        //}
+
+        //if (Double.IsNaN(MinOffsetX) && !Double.IsNaN(MaxOffsetX))
+        //{
+        //    throw new Exception($"{nameof(MinOffsetX)} is NaN");
+        //}
+
+        //if (Double.IsNaN(MinOffsetY) && !Double.IsNaN(MaxOffsetY))
+        //{
+        //    throw new Exception($"{nameof(MinOffsetY)} is NaN");
+        //}
+
+        //if (Double.IsNaN(MaxZoomX) && !Double.IsNaN(MinZoomX))
+        //{
+        //    throw new Exception($"{nameof(MaxZoomX)} is NaN");
+        //}
+
+        //if (Double.IsNaN(MaxZoomY) && !Double.IsNaN(MinZoomY))
+        //{
+        //    throw new Exception($"{nameof(MaxZoomY)} is NaN");
+        //}
+
+        //double zoomX = System.Math.Clamp(_matrix.GetScaleX(), MinZoomX, MaxZoomX);
+        //double zoomY = System.Math.Clamp(_matrix.GetScaleY(), MinZoomY, MaxZoomY);
+        //double offsetX = System.Math.Clamp(_matrix.GetTranslateX(), MinOffsetX, MaxOffsetX);
+        //double offsetY = System.Math.Clamp(_matrix.GetTranslateY(), MinOffsetY, MaxOffsetY);
+
+        double zoomX = System.Math.Clamp(_matrix.GetScaleX(), MinZoomX, MaxZoomX);
+        double zoomY = System.Math.Clamp(_matrix.GetScaleY(), MinZoomY, MaxZoomY);
+        double offsetX = System.Math.Clamp(_matrix.GetTranslateX(), MinOffsetX, MaxOffsetX);
+        double offsetY = System.Math.Clamp(_matrix.GetTranslateY(), MinOffsetY, MaxOffsetY);
+
         _matrix = new Matrix(zoomX, 0.0, 0.0, zoomY, offsetX, offsetY);
     }
 
@@ -262,7 +298,7 @@ public partial class ZoomDecorator : Decorator
     /// <param name="skipTransitions">The flag indicating whether transitions on the child element should be temporarily disabled.</param>
     private void _Invalidate(bool skipTransitions = false)
     {
-        if (_element == null)
+        if (_child == null)
         {
             return;
         }
@@ -295,7 +331,7 @@ public partial class ZoomDecorator : Decorator
     /// <param name="skipTransitions">The flag indicating whether transitions on the child element should be temporarily disabled.</param>
     private void InvalidateElement(bool skipTransitions)
     {
-        if (_element == null)
+        if (_child == null)
         {
             return;
         }
@@ -304,7 +340,7 @@ public partial class ZoomDecorator : Decorator
 
         if (skipTransitions)
         {
-            Avalonia.Animation.Animatable ? anim = _element as Avalonia.Animation.Animatable;
+            Avalonia.Animation.Animatable? anim = _child;
 
             if (anim != null)
             {
@@ -313,14 +349,14 @@ public partial class ZoomDecorator : Decorator
             }
         }
 
-        _element.RenderTransformOrigin = new RelativePoint(new Point(0, 0), RelativeUnit.Relative);
+        _child.RenderTransformOrigin = new RelativePoint(new Point(0, 0), RelativeUnit.Relative);
         _transformBuilder = new TransformOperations.Builder(1);
         _transformBuilder.AppendMatrix(_matrix);
-        _element.RenderTransform = _transformBuilder.Build();
+        _child.RenderTransform = _transformBuilder.Build();
 
         if (skipTransitions && backupTransitions != null)
         {
-            Avalonia.Animation.Animatable? anim = _element as Avalonia.Animation.Animatable;
+            Avalonia.Animation.Animatable? anim = _child as Avalonia.Animation.Animatable;
 
             if (anim != null)
             {
@@ -328,7 +364,7 @@ public partial class ZoomDecorator : Decorator
             }
         }
 
-        _element.InvalidateVisual();
+        _child.InvalidateVisual();
     }
 
     /// <summary>
@@ -376,10 +412,17 @@ public partial class ZoomDecorator : Decorator
     /// <param name="skipTransitions">The flag indicating whether transitions on the child element should be temporarily disabled.</param>
     public void Zoom(double zoom, double x, double y, bool skipTransitions = false)
     {
+        if (!EnableZoom)
+        {
+            _updating = false;
+            return;
+        }
+
         if (_updating)
         {
             return;
         }
+
         _updating = true;
 
         _matrix = MatrixMath.CreateScaleAt(zoom, zoom, x, y);
@@ -397,6 +440,12 @@ public partial class ZoomDecorator : Decorator
     /// <param name="skipTransitions">The flag indicating whether transitions on the child element should be temporarily disabled.</param>
     public void ZoomTo(double ratio, double x, double y, bool skipTransitions = false)
     {
+        if (!EnableZoom)
+        {
+            _updating = false;
+            return;
+        }
+
         if (_updating)
         {
             return;
@@ -415,13 +464,13 @@ public partial class ZoomDecorator : Decorator
     /// <param name="skipTransitions">The flag indicating whether transitions on the child element should be temporarily disabled.</param>
     public void ZoomIn(bool skipTransitions = false)
     {
-        if (_element == null)
+        if (_child == null)
         {
             return;
         }
 
-        var x = _element.Bounds.Width / 2.0;
-        var y = _element.Bounds.Height / 2.0;
+        var x = _child.Bounds.Width / 2.0;
+        var y = _child.Bounds.Height / 2.0;
         ZoomTo(ZoomSpeed, x, y, skipTransitions);
     }
 
@@ -431,13 +480,13 @@ public partial class ZoomDecorator : Decorator
     /// <param name="skipTransitions">The flag indicating whether transitions on the child element should be temporarily disabled.</param>
     public void ZoomOut(bool skipTransitions = false)
     {
-        if (_element == null)
+        if (_child == null)
         {
             return;
         }
 
-        var x = _element.Bounds.Width / 2.0;
-        var y = _element.Bounds.Height / 2.0;
+        var x = _child.GetHalfBoundsWidth();
+        var y = _child.GetHalfBoundsHeight();
         ZoomTo(1 / ZoomSpeed, x, y, skipTransitions);
     }
 
@@ -462,10 +511,17 @@ public partial class ZoomDecorator : Decorator
     /// <param name="skipTransitions">The flag indicating whether transitions on the child element should be temporarily disabled.</param>
     public void PanDelta(double dx, double dy, bool skipTransitions = false)
     {
+        if (!EnablePan)
+        {
+            _updating = false;
+            return;
+        }
+
         if (_updating)
         {
             return;
         }
+
         _updating = true;
 
         _matrix = MatrixMath.CreateScaleAndTranslate(_zoomX, _zoomY, _matrix.GetTranslateX() + dx, _matrix.GetTranslateY() + dy);
@@ -482,10 +538,17 @@ public partial class ZoomDecorator : Decorator
     /// <param name="skipTransitions">The flag indicating whether transitions on the child element should be temporarily disabled.</param>
     public void Pan(double x, double y, bool skipTransitions = false)
     {
+        if (!EnablePan)
+        {
+            _updating = false;
+            return;
+        }
+
         if (_updating)
         {
             return;
         }
+
         _updating = true;
 
         _matrix = MatrixMath.CreateScaleAndTranslate(_zoomX, _zoomY, x, y);
@@ -513,10 +576,17 @@ public partial class ZoomDecorator : Decorator
     /// <param name="skipTransitions">The flag indicating whether transitions on the child element should be temporarily disabled.</param>
     public void ContinuePanTo(double x, double y, bool skipTransitions = false)
     {
+        if(!EnablePan)
+        {
+            _updating = false;
+            return;
+        }
+
         if (_updating)
         {
             return;
         }
+
         _updating = true;
 
         var dx = x - _previous.X;
@@ -544,13 +614,14 @@ public partial class ZoomDecorator : Decorator
         {
             return;
         }
-        _updating = true;
 
-        if (_element == null)
+        if (_child == null)
         {
-            _updating = false;
             return;
         }
+
+        _updating = true;
+
 
         _matrix = CalculateMatrix(panelWidth, panelHeight, elementWidth, elementHeight, Stretch.None);
         _Invalidate(skipTransitions);
@@ -572,9 +643,10 @@ public partial class ZoomDecorator : Decorator
         {
             return;
         }
+
         _updating = true;
 
-        if (_element == null)
+        if (_child == null)
         {
             _updating = false;
             return;
@@ -602,7 +674,7 @@ public partial class ZoomDecorator : Decorator
         }
         _updating = true;
 
-        if (_element == null)
+        if (_child == null)
         {
             _updating = false;
             return;
@@ -631,7 +703,7 @@ public partial class ZoomDecorator : Decorator
 
         _updating = true;
 
-        if (_element == null)
+        if (_child == null)
         {
             _updating = false;
             return;
@@ -653,7 +725,7 @@ public partial class ZoomDecorator : Decorator
     /// <param name="skipTransitions">The flag indicating whether transitions on the child element should be temporarily disabled.</param>
     public void AutoFit(double panelWidth, double panelHeight, double elementWidth, double elementHeight, bool skipTransitions = false)
     {
-        if (_element == null)
+        if (_child == null)
         {
             return;
         }
@@ -702,12 +774,12 @@ public partial class ZoomDecorator : Decorator
     /// <param name="skipTransitions">The flag indicating whether transitions on the child element should be temporarily disabled.</param>
     public void None(bool skipTransitions = false)
     {
-        if (_element == null)
+        if (_child == null)
         {
             return;
         }
 
-        None(Bounds.Width, Bounds.Height, _element.Bounds.Width, _element.Bounds.Height, skipTransitions);
+        None(Bounds.Width, Bounds.Height, _child.Bounds.Width, _child.Bounds.Height, skipTransitions);
     }
 
     /// <summary>
@@ -716,12 +788,12 @@ public partial class ZoomDecorator : Decorator
     /// <param name="skipTransitions">The flag indicating whether transitions on the child element should be temporarily disabled.</param>
     public void Fill(bool skipTransitions = false)
     {
-        if (_element == null)
+        if (_child == null)
         {
             return;
         }
 
-        Fill(Bounds.Width, Bounds.Height, _element.Bounds.Width, _element.Bounds.Height, skipTransitions);
+        Fill(Bounds.Width, Bounds.Height, _child.Bounds.Width, _child.Bounds.Height, skipTransitions);
     }
 
     /// <summary>
@@ -730,12 +802,12 @@ public partial class ZoomDecorator : Decorator
     /// <param name="skipTransitions">The flag indicating whether transitions on the child element should be temporarily disabled.</param>
     public void Uniform(bool skipTransitions = false)
     {
-        if (_element == null)
+        if (_child == null)
         {
             return;
         }
 
-        Uniform(Bounds.Width, Bounds.Height, _element.Bounds.Width, _element.Bounds.Height, skipTransitions);
+        Uniform(Bounds.Width, Bounds.Height, _child.Bounds.Width, _child.Bounds.Height, skipTransitions);
     }
 
     /// <summary>
@@ -744,12 +816,12 @@ public partial class ZoomDecorator : Decorator
     /// <param name="skipTransitions">The flag indicating whether transitions on the child element should be temporarily disabled.</param>
     public void UniformToFill(bool skipTransitions = false)
     {
-        if (_element == null)
+        if (_child == null)
         {
             return;
         }
 
-        UniformToFill(Bounds.Width, Bounds.Height, _element.Bounds.Width, _element.Bounds.Height, skipTransitions);
+        UniformToFill(Bounds.Width, Bounds.Height, _child.Bounds.Width, _child.Bounds.Height, skipTransitions);
     }
 
     /// <summary>
@@ -758,22 +830,22 @@ public partial class ZoomDecorator : Decorator
     /// <param name="skipTransitions">The flag indicating whether transitions on the child element should be temporarily disabled.</param>
     public void AutoFit(bool skipTransitions = false)
     {
-        if (_element == null)
+        if (_child == null)
         {
             return;
         }
 
-        AutoFit(Bounds.Width, Bounds.Height, _element.Bounds.Width, _element.Bounds.Height, skipTransitions);
+        AutoFit(Bounds.Width, Bounds.Height, _child.Bounds.Width, _child.Bounds.Height, skipTransitions);
     }
 
     private void InvalidateScrollable()
     {
-        if (_element == null)
+        if (_child == null)
         {
             return;
         }
 
-        s_CalculateScrollable(_element.Bounds, _matrix, out var extent, out var viewport, out var offset);
+        s_CalculateScrollable(_child.Bounds, _matrix, out var extent, out var viewport, out var offset);
 
         _extent = extent;
         _offset = offset;

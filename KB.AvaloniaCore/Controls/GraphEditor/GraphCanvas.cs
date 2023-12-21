@@ -1,6 +1,8 @@
 ﻿using Avalonia;
 using Avalonia.Collections;
 using Avalonia.Controls;
+using Avalonia.Controls.Primitives;
+using Avalonia.Data;
 using Avalonia.Media;
 using Avalonia.Metadata;
 using Avalonia.Xaml.Interactions.Custom;
@@ -10,12 +12,13 @@ using KB.SharpCore.Utils;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
+using System.Reactive.Linq;
+using System.Reactive.Subjects;
 
 namespace KB.AvaloniaCore.Controls.GraphEditor;
 
 public class GraphCanvas : Control
 {
-    //TODO: Move this controls to EditorCanvas
     private readonly ZoomDecorator _zoomDecorator;
     private readonly ScrollViewer _scrollViewer;
 
@@ -34,23 +37,46 @@ public class GraphCanvas : Control
 
     static GraphCanvas()
     {
-        ChildNodesProperty.Changed.AddClassHandler<GraphCanvas>((s, e) => s.m_OnChildNodesPropertyChanged(e));
-        BackgroundProperty.Changed.AddClassHandler<GraphCanvas>((s, e) => s._OnBackgroundPropertyChanged(e));
+        GraphCanvas.ChildNodesProperty.Changed.AddClassHandler<GraphCanvas>((s, e) => s.m_OnChildNodesPropertyChanged(e));
+        GraphCanvas.BackgroundProperty.Changed.AddClassHandler<GraphCanvas>((s, e) => s._OnBackgroundPropertyChanged(e));
+        GraphCanvas.HorizontalScrollBarVisibilityProperty.Changed.AddClassHandler<GraphCanvas>((s, e) => s._scrollViewer.HorizontalScrollBarVisibility = (ScrollBarVisibility)e.NewValue!);
+        GraphCanvas.VerticalScrollBarVisibilityProperty.Changed.AddClassHandler<GraphCanvas>((s, e) => s._scrollViewer.VerticalScrollBarVisibility = (ScrollBarVisibility)e.NewValue!);
+        GraphCanvas.CanZoomProperty.Changed.AddClassHandler<GraphCanvas>((s, e) => s._zoomDecorator.EnableZoom = (bool)e.NewValue!);
+        GraphCanvas.CanPanProperty.Changed.AddClassHandler<GraphCanvas>((s, e) => s._zoomDecorator.EnablePan = (bool)e.NewValue!);
     }
 
     public GraphCanvas()
     {
         _edittingConnection = null;
+
         _scrollViewer = new ScrollViewer();
         _zoomDecorator = new ZoomDecorator();
+
+        _zoomDecorator.EnableConstrains = true;
+        _zoomDecorator.MinZoomX = 1.0d;
+        _zoomDecorator.MinZoomY = 1.0d;
+        _zoomDecorator.MaxZoomX = 5.0d;
+        _zoomDecorator.MaxZoomY = 5.0d;
+
         _editorCanvas = new EditorCanvas();
         _nodeConnectionsCanvas = new Canvas();
-
+        
         _scrollViewer.Content = _zoomDecorator;
         Grid canvasContainer = new Grid();
         canvasContainer.Children.Add(_editorCanvas);
         canvasContainer.Children.Add(_nodeConnectionsCanvas);
         _zoomDecorator.Child = canvasContainer;
+
+
+        Binding editorCanvasWidthBinding = new Binding(nameof(EditorCanvas.Width)) { Source = _editorCanvas, Mode = BindingMode.OneWay };
+        Binding editorCanvasHeightBinding = new Binding(nameof(EditorCanvas.Height)) { Source = _editorCanvas, Mode = BindingMode.OneWay };
+        _zoomDecorator[!ZoomDecorator.WidthProperty] = editorCanvasWidthBinding;
+        _zoomDecorator[!ZoomDecorator.HeightProperty] = editorCanvasHeightBinding;
+        _nodeConnectionsCanvas[!Canvas.WidthProperty] = editorCanvasWidthBinding;
+        _nodeConnectionsCanvas[!Canvas.HeightProperty] = editorCanvasHeightBinding;
+
+        _zoomDecorator[!ZoomDecorator.MaxOffsetXProperty] = editorCanvasWidthBinding;
+        _zoomDecorator[!ZoomDecorator.MaxOffsetYProperty] = editorCanvasHeightBinding;
 
         LogicalChildren.Add(_scrollViewer);
         VisualChildren.Add(_scrollViewer);
@@ -63,6 +89,10 @@ public class GraphCanvas : Control
     public readonly static StyledProperty<IAvaloniaList<Node>> ChildNodesProperty = AvaloniaProperty.Register<GraphCanvas, IAvaloniaList<Node>>(nameof(GraphCanvas.ChildNodes));
     public readonly static StyledProperty<IEnumerable<NodeConnection>> NodeConnectionsProperty = AvaloniaProperty.Register<GraphCanvas, IEnumerable<NodeConnection>>(nameof(GraphCanvas.NodeConnections));
     public readonly static StyledProperty<IBrush> BackgroundProperty = AvaloniaProperty.Register<GraphCanvas, IBrush>(nameof(GraphCanvas.Background), Brushes.White);
+    public static readonly StyledProperty<ScrollBarVisibility> HorizontalScrollBarVisibilityProperty = AvaloniaProperty.Register<GraphCanvas, ScrollBarVisibility>(nameof(ScrollBarVisibility));
+    public static readonly StyledProperty<ScrollBarVisibility> VerticalScrollBarVisibilityProperty = AvaloniaProperty.Register<GraphCanvas, ScrollBarVisibility>(nameof(ScrollBarVisibility));
+    public static readonly StyledProperty<bool> CanZoomProperty = AvaloniaProperty.Register<GraphCanvas, bool>(nameof(CanZoom), true);
+    public static readonly StyledProperty<bool> CanPanProperty = AvaloniaProperty.Register<GraphCanvas, bool>(nameof(CanPan), true);
 
     [Content]
     public IAvaloniaList<Node> ChildNodes
@@ -81,6 +111,30 @@ public class GraphCanvas : Control
     {
         get { return GetValue(GraphCanvas.BackgroundProperty); }
         set { SetValue(GraphCanvas.BackgroundProperty, value); }
+    }
+
+    public ScrollBarVisibility HorizontalScrollBarVisibility
+    {
+        get => GetValue(HorizontalScrollBarVisibilityProperty);
+        set => SetValue(HorizontalScrollBarVisibilityProperty, value);
+    }
+
+    public ScrollBarVisibility VerticalScrollBarVisibility
+    {
+        get => GetValue(VerticalScrollBarVisibilityProperty);
+        set => SetValue(VerticalScrollBarVisibilityProperty, value);
+    }
+
+    public bool CanZoom
+    {
+        get => GetValue(CanZoomProperty);
+        set => SetValue(CanZoomProperty, value);
+    }
+
+    public bool CanPan
+    {
+        get => GetValue(CanPanProperty);
+        set => SetValue(CanPanProperty, value);
     }
 
     #endregion
