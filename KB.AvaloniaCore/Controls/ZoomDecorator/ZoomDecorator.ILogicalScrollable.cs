@@ -2,6 +2,7 @@
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.Input;
+using Avalonia.Media;
 using KB.AvaloniaCore.Injection;
 using KB.AvaloniaCore.Math;
 
@@ -74,23 +75,27 @@ namespace KB.AvaloniaCore.Controls
             get => _offset;
             set
             {
-                if (_updating)
+                if (!_updating.CanExecute())
                 {
                     return;
                 }
 
-                _updating = true;
+                if (_child == null)
+                {
+                    return;
+                }
 
-                var (x, y) = _offset;
-                var dx = x - value.X;
-                var dy = y - value.Y;
+                using (_updating.Execute())
+                {
+                    var (x, y) = _offset;
+                    var dx = x - value.X;
+                    var dy = y - value.Y;
 
-                _offset = value;
+                    _offset = value;
 
-                _matrix = MatrixMath.CreateScaleAndTranslate(_zoomX, _zoomY, _matrix.GetTranslateX() + dx, _matrix.GetTranslateY() + dy);
-                _Invalidate(!this.IsPointerOver);
-
-                _updating = false;
+                    _matrix = MatrixMath.CreateScaleAndTranslate(_zoomX, _zoomY, _matrix.GetTranslateX() + dx, _matrix.GetTranslateY() + dy);
+                    _Invalidate(!this.IsPointerOver);
+                }
             }
         }
 

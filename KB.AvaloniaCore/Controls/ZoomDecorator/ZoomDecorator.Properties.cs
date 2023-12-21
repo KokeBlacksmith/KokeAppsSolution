@@ -4,6 +4,7 @@ using Avalonia.Media.Transformation;
 using Avalonia;
 using Avalonia.Media;
 using KB.AvaloniaCore.Controls.Events;
+using KB.SharpCore.Synchronization;
 
 namespace KB.AvaloniaCore.Controls;
 
@@ -160,7 +161,7 @@ public partial class ZoomDecorator
     private Matrix _matrix;
     private TransformOperations.Builder _transformBuilder;
     private bool _isPanning;
-    private volatile bool _updating = false;
+    private readonly BooleanRAIIOperation _updating = new BooleanRAIIOperation();
     private double _zoomX = 1.0;
     private double _zoomY = 1.0;
     private double _offsetX = 0.0;

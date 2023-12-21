@@ -374,16 +374,16 @@ public partial class ZoomDecorator : Decorator
     /// <param name="skipTransitions">The flag indicating whether transitions on the child element should be temporarily disabled.</param>
     public void SetMatrix(Matrix matrix, bool skipTransitions = false)
     {
-        if (_updating)
+        if (!_updating.CanExecute())
         {
             return;
         }
-        _updating = true;
 
-        _matrix = matrix;
-        _Invalidate(skipTransitions);
-
-        _updating = false;
+        using (_updating.Execute())
+        {
+            _matrix = matrix;
+            _Invalidate(skipTransitions);
+        }
     }
 
     /// <summary>
@@ -412,23 +412,21 @@ public partial class ZoomDecorator : Decorator
     /// <param name="skipTransitions">The flag indicating whether transitions on the child element should be temporarily disabled.</param>
     public void Zoom(double zoom, double x, double y, bool skipTransitions = false)
     {
+        if(!_updating.CanExecute())
+        {
+            return;
+        }
+
         if (!EnableZoom)
         {
-            _updating = false;
             return;
         }
 
-        if (_updating)
+        using (_updating.Execute())
         {
-            return;
+            _matrix = MatrixMath.CreateScaleAt(zoom, zoom, x, y);
+            _Invalidate(skipTransitions);
         }
-
-        _updating = true;
-
-        _matrix = MatrixMath.CreateScaleAt(zoom, zoom, x, y);
-        _Invalidate(skipTransitions);
-
-        _updating = false;
     }
 
     /// <summary>
@@ -440,22 +438,21 @@ public partial class ZoomDecorator : Decorator
     /// <param name="skipTransitions">The flag indicating whether transitions on the child element should be temporarily disabled.</param>
     public void ZoomTo(double ratio, double x, double y, bool skipTransitions = false)
     {
+        if (!_updating.CanExecute())
+        {
+            return;
+        }
+
         if (!EnableZoom)
         {
-            _updating = false;
             return;
         }
 
-        if (_updating)
+        using (_updating.Execute())
         {
-            return;
+            _matrix = MatrixMath.CreateScaleAtPrepend(_matrix, ratio, ratio, x, y);
+            _Invalidate(skipTransitions);
         }
-        _updating = true;
-
-        _matrix = MatrixMath.CreateScaleAtPrepend(_matrix, ratio, ratio, x, y);
-        _Invalidate(skipTransitions);
-
-        _updating = false;
     }
 
     /// <summary>
@@ -511,23 +508,21 @@ public partial class ZoomDecorator : Decorator
     /// <param name="skipTransitions">The flag indicating whether transitions on the child element should be temporarily disabled.</param>
     public void PanDelta(double dx, double dy, bool skipTransitions = false)
     {
+        if(!_updating.CanExecute())
+        {
+            return;
+        }
+
         if (!EnablePan)
         {
-            _updating = false;
             return;
         }
 
-        if (_updating)
+        using (_updating.Execute())
         {
-            return;
+            _matrix = MatrixMath.CreateScaleAndTranslate(_zoomX, _zoomY, _matrix.GetTranslateX() + dx, _matrix.GetTranslateY() + dy);
+            _Invalidate(skipTransitions);
         }
-
-        _updating = true;
-
-        _matrix = MatrixMath.CreateScaleAndTranslate(_zoomX, _zoomY, _matrix.GetTranslateX() + dx, _matrix.GetTranslateY() + dy);
-        _Invalidate(skipTransitions);
-
-        _updating = false;
     }
 
     /// <summary>
@@ -538,23 +533,21 @@ public partial class ZoomDecorator : Decorator
     /// <param name="skipTransitions">The flag indicating whether transitions on the child element should be temporarily disabled.</param>
     public void Pan(double x, double y, bool skipTransitions = false)
     {
+        if (!_updating.CanExecute())
+        {
+            return;
+        }
+
         if (!EnablePan)
         {
-            _updating = false;
             return;
         }
 
-        if (_updating)
+        using (_updating.Execute())
         {
-            return;
+            _matrix = MatrixMath.CreateScaleAndTranslate(_zoomX, _zoomY, x, y);
+            _Invalidate(skipTransitions);
         }
-
-        _updating = true;
-
-        _matrix = MatrixMath.CreateScaleAndTranslate(_zoomX, _zoomY, x, y);
-        _Invalidate(skipTransitions);
-
-        _updating = false;
     }
 
     /// <summary>
@@ -576,28 +569,26 @@ public partial class ZoomDecorator : Decorator
     /// <param name="skipTransitions">The flag indicating whether transitions on the child element should be temporarily disabled.</param>
     public void ContinuePanTo(double x, double y, bool skipTransitions = false)
     {
-        if(!EnablePan)
-        {
-            _updating = false;
-            return;
-        }
-
-        if (_updating)
+        if (!_updating.CanExecute())
         {
             return;
         }
 
-        _updating = true;
+        if (!EnablePan)
+        {
+            return;
+        }
 
-        var dx = x - _previous.X;
-        var dy = y - _previous.Y;
-        var delta = new Point(dx, dy);
-        _previous = new Point(x, y);
-        _pan = new Point(_pan.X + delta.X, _pan.Y + delta.Y);
-        _matrix = MatrixMath.CreateTranslatePrepend(_matrix, _pan.X, _pan.Y);
-        _Invalidate(skipTransitions);
-
-        _updating = false;
+        using (_updating.Execute())
+        {
+            var dx = x - _previous.X;
+            var dy = y - _previous.Y;
+            var delta = new Point(dx, dy);
+            _previous = new Point(x, y);
+            _pan = new Point(_pan.X + delta.X, _pan.Y + delta.Y);
+            _matrix = MatrixMath.CreateTranslatePrepend(_matrix, _pan.X, _pan.Y);
+            _Invalidate(skipTransitions);
+        }
     }
 
     /// <summary>
@@ -610,7 +601,7 @@ public partial class ZoomDecorator : Decorator
     /// <param name="skipTransitions">The flag indicating whether transitions on the child element should be temporarily disabled.</param>
     public void None(double panelWidth, double panelHeight, double elementWidth, double elementHeight, bool skipTransitions = false)
     {
-        if (_updating)
+        if (!_updating.CanExecute())
         {
             return;
         }
@@ -620,13 +611,11 @@ public partial class ZoomDecorator : Decorator
             return;
         }
 
-        _updating = true;
-
-
-        _matrix = CalculateMatrix(panelWidth, panelHeight, elementWidth, elementHeight, Stretch.None);
-        _Invalidate(skipTransitions);
-
-        _updating = false;
+        using (_updating.Execute())
+        {
+            _matrix = CalculateMatrix(panelWidth, panelHeight, elementWidth, elementHeight, Stretch.None);
+            _Invalidate(skipTransitions);
+        }
     }
 
     /// <summary>
@@ -639,23 +628,21 @@ public partial class ZoomDecorator : Decorator
     /// <param name="skipTransitions">The flag indicating whether transitions on the child element should be temporarily disabled.</param>
     public void Fill(double panelWidth, double panelHeight, double elementWidth, double elementHeight, bool skipTransitions = false)
     {
-        if (_updating)
+        if (!_updating.CanExecute())
         {
             return;
         }
-
-        _updating = true;
 
         if (_child == null)
         {
-            _updating = false;
             return;
         }
 
-        _matrix = CalculateMatrix(panelWidth, panelHeight, elementWidth, elementHeight, Stretch.Fill);
-        _Invalidate(skipTransitions);
-
-        _updating = false;
+        using (_updating.Execute())
+        {
+            _matrix = CalculateMatrix(panelWidth, panelHeight, elementWidth, elementHeight, Stretch.Fill);
+            _Invalidate(skipTransitions);
+        }
     }
 
     /// <summary>
@@ -668,22 +655,21 @@ public partial class ZoomDecorator : Decorator
     /// <param name="skipTransitions">The flag indicating whether transitions on the child element should be temporarily disabled.</param>
     public void Uniform(double panelWidth, double panelHeight, double elementWidth, double elementHeight, bool skipTransitions = false)
     {
-        if (_updating)
+        if (!_updating.CanExecute())
         {
             return;
         }
-        _updating = true;
 
         if (_child == null)
         {
-            _updating = false;
             return;
         }
 
-        _matrix = CalculateMatrix(panelWidth, panelHeight, elementWidth, elementHeight, Stretch.Uniform);
-        _Invalidate(skipTransitions);
-
-        _updating = false;
+        using (_updating.Execute())
+        {
+            _matrix = CalculateMatrix(panelWidth, panelHeight, elementWidth, elementHeight, Stretch.Uniform);
+            _Invalidate(skipTransitions);
+        }
     }
 
     /// <summary>
@@ -696,23 +682,21 @@ public partial class ZoomDecorator : Decorator
     /// <param name="skipTransitions">The flag indicating whether transitions on the child element should be temporarily disabled.</param>
     public void UniformToFill(double panelWidth, double panelHeight, double elementWidth, double elementHeight, bool skipTransitions = false)
     {
-        if (_updating)
+        if (!_updating.CanExecute())
         {
             return;
         }
-
-        _updating = true;
 
         if (_child == null)
         {
-            _updating = false;
             return;
         }
 
-        _matrix = CalculateMatrix(panelWidth, panelHeight, elementWidth, elementHeight, Stretch.UniformToFill);
-        _Invalidate(skipTransitions);
-
-        _updating = false;
+        using (_updating.Execute())
+        {
+            _matrix = CalculateMatrix(panelWidth, panelHeight, elementWidth, elementHeight, Stretch.UniformToFill);
+            _Invalidate(skipTransitions);
+        }
     }
 
     /// <summary>
