@@ -249,41 +249,6 @@ public partial class ZoomDecorator : Decorator
 
     private void _Constrain()
     {
-        //if(Double.IsNaN(MinZoomX) && !Double.IsNaN(MaxZoomX))
-        //{
-        //    throw new Exception($"{nameof(MinZoomX)} is NaN");
-        //}
-
-        //if (Double.IsNaN(MinZoomY) && !Double.IsNaN(MaxZoomY))
-        //{
-        //    throw new Exception($"{nameof(MinZoomY)} is NaN");
-        //}
-
-        //if (Double.IsNaN(MinOffsetX) && !Double.IsNaN(MaxOffsetX))
-        //{
-        //    throw new Exception($"{nameof(MinOffsetX)} is NaN");
-        //}
-
-        //if (Double.IsNaN(MinOffsetY) && !Double.IsNaN(MaxOffsetY))
-        //{
-        //    throw new Exception($"{nameof(MinOffsetY)} is NaN");
-        //}
-
-        //if (Double.IsNaN(MaxZoomX) && !Double.IsNaN(MinZoomX))
-        //{
-        //    throw new Exception($"{nameof(MaxZoomX)} is NaN");
-        //}
-
-        //if (Double.IsNaN(MaxZoomY) && !Double.IsNaN(MinZoomY))
-        //{
-        //    throw new Exception($"{nameof(MaxZoomY)} is NaN");
-        //}
-
-        //double zoomX = System.Math.Clamp(_matrix.GetScaleX(), MinZoomX, MaxZoomX);
-        //double zoomY = System.Math.Clamp(_matrix.GetScaleY(), MinZoomY, MaxZoomY);
-        //double offsetX = System.Math.Clamp(_matrix.GetTranslateX(), MinOffsetX, MaxOffsetX);
-        //double offsetY = System.Math.Clamp(_matrix.GetTranslateY(), MinOffsetY, MaxOffsetY);
-
         double zoomX = System.Math.Clamp(_matrix.GetScaleX(), MinZoomX, MaxZoomX);
         double zoomY = System.Math.Clamp(_matrix.GetScaleY(), MinZoomY, MaxZoomY);
         double offsetX = System.Math.Clamp(_matrix.GetTranslateX(), MinOffsetX, MaxOffsetX);
