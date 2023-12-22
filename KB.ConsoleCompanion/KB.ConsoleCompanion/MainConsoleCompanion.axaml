@@ -6,24 +6,46 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="KB.ConsoleCompanion.MainConsoleCompanion">
 
-	<!--<UserControl.Resources>
+	<UserControl.Resources>
 		<ResourceDictionary>
 			<ResourceDictionary.MergedDictionaries>
-				<ResourceInclude Source="avares://KB.AvaloniaCore/Themes/ConstantsResourceDictionary.axaml" />
-				<ResourceInclude Source="avares://KB.AvaloniaCore/Themes/ConvertersResourceDictionary.axaml" />
-				<ResourceInclude Source="avares://KB.AvaloniaCore/Themes/Controls/ControlsThemesResourceDictionary.axaml" />
+				<ResourceInclude Source="avares://KB.ConsoleCompanion/Resources/IconGeometryResources.axaml" />
 			</ResourceDictionary.MergedDictionaries>
 		</ResourceDictionary>
-	</UserControl.Resources>-->
-
-
-	<!--<UserControl.Resources>
-		<ResourceDictionary>
-			<ResourceDictionary.MergedDictionaries>
-				<ResourceInclude Source="/Themes/Controls/ControlsThemesResourceDictionary.axaml" />
-			</ResourceDictionary.MergedDictionaries>
-		</ResourceDictionary>
-	</UserControl.Resources>-->
+	</UserControl.Resources>
 	
-    <command_view:CommandView />
+	<SplitView
+           DisplayMode="CompactInline">
+		
+		<SplitView.Pane>
+			<StackPanel Orientation="Vertical">
+				<Button Background="Transparent" Click="_OnHomeClickButton">
+					<Image>
+						<Image.Source>
+							<DrawingImage Drawing="{StaticResource BoxIcons.SolidHome}"/>
+						</Image.Source>
+					</Image>
+				</Button>
+
+				<Button Background="Transparent" Click="_OnGraphViewClickButton">
+					<Image>
+						<Image.Source>
+							<DrawingImage Drawing="{StaticResource VSImageLib.DependencyGraph_16x}"/>
+						</Image.Source>
+					</Image>
+				</Button>
+
+				<Button Background="Transparent" Click="_OnConnectionViewClickButton">
+					<Image>
+						<Image.Source>
+							<DrawingImage Drawing="{StaticResource Material.Connection}"/>
+						</Image.Source>
+					</Image>
+				</Button>
+			</StackPanel>
+		</SplitView.Pane>
+
+		<Border x:FieldModifier="private" x:Name="_viewContainer" />
+		
+	</SplitView>
 </UserControl>

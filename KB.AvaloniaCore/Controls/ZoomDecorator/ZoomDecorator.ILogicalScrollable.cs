@@ -135,14 +135,14 @@ namespace KB.AvaloniaCore.Controls
         /// <param name="offset">The current scroll offset.</param>
         private static void s_CalculateScrollable(Rect source, Matrix matrix, out Size extent, out Size viewport, out Vector offset)
         {
-            var bounds = new Rect(0, 0, source.Width, source.Height);
+            Rect bounds = new Rect(0, 0, source.Width, source.Height);
 
             viewport = bounds.Size;
 
-            var transformed = bounds.TransformToAABB(matrix);
+            Rect transformed = bounds.TransformToAABB(matrix);
 
-            var width = transformed.Size.Width;
-            var height = transformed.Size.Height;
+            double width = transformed.Size.Width;
+            double height = transformed.Size.Height;
 
             if (width < viewport.Width)
             {
@@ -154,7 +154,7 @@ namespace KB.AvaloniaCore.Controls
                 }
                 else
                 {
-                    var widthTranslated = transformed.Size.Width + transformed.Position.X;
+                    double widthTranslated = transformed.Size.Width + transformed.Position.X;
                     if (widthTranslated > width)
                     {
                         width += widthTranslated - width;
@@ -176,7 +176,7 @@ namespace KB.AvaloniaCore.Controls
                 }
                 else
                 {
-                    var heightTranslated = transformed.Size.Height + transformed.Position.Y;
+                    double heightTranslated = transformed.Size.Height + transformed.Position.Y;
                     if (heightTranslated > height)
                     {
                         height += heightTranslated - height;
@@ -190,11 +190,11 @@ namespace KB.AvaloniaCore.Controls
 
             extent = new Size(width, height);
 
-            var ox = transformed.Position.X;
-            var oy = transformed.Position.Y;
+            double ox = transformed.Position.X;
+            double oy = transformed.Position.Y;
 
-            var offsetX = ox < 0 ? System.Math.Abs(ox) : 0;
-            var offsetY = oy < 0 ? System.Math.Abs(oy) : 0;
+            double offsetX = ox < 0 ? System.Math.Abs(ox) : 0;
+            double offsetY = oy < 0 ? System.Math.Abs(oy) : 0;
 
             offset = new Vector(offsetX, offsetY);
         }
