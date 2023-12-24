@@ -404,6 +404,7 @@ public class EditorCanvas : Control
         editableControl.WidthChanged += _OnEditableControlLayoutAffectedPropertyChanged;
         editableControl.HeightChanged += _OnEditableControlLayoutAffectedPropertyChanged;
         _UpdateEditableControlPosition(editableControl);
+        InvalidateMeasure();
     }
 
     private void _OnEditableControlRemovedFromChildrenCollection(IEditableControl editableControl)
@@ -415,6 +416,7 @@ public class EditorCanvas : Control
         editableControl.PositionYChanged -= _OnEditableControlLayoutAffectedPropertyChanged;
         editableControl.WidthChanged -= _OnEditableControlLayoutAffectedPropertyChanged;
         editableControl.HeightChanged -= _OnEditableControlLayoutAffectedPropertyChanged;
+        InvalidateMeasure();
     }
 
     /// <summary>

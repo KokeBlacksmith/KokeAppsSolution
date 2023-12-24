@@ -19,9 +19,6 @@ namespace KB.AvaloniaCore.Controls.GraphEditor;
 
 public class GraphCanvas : Control
 {
-    private readonly ZoomDecorator _zoomDecorator;
-    private readonly ScrollViewer _scrollViewer;
-
     /// <summary>
     /// Canvas to edit editable controls. Nodes.
     /// Drag and scale
@@ -39,60 +36,38 @@ public class GraphCanvas : Control
     {
         GraphCanvas.ChildNodesProperty.Changed.AddClassHandler<GraphCanvas>((s, e) => s.m_OnChildNodesPropertyChanged(e));
         GraphCanvas.BackgroundProperty.Changed.AddClassHandler<GraphCanvas>((s, e) => s._OnBackgroundPropertyChanged(e));
-        GraphCanvas.HorizontalScrollBarVisibilityProperty.Changed.AddClassHandler<GraphCanvas>((s, e) => s._scrollViewer.HorizontalScrollBarVisibility = (ScrollBarVisibility)e.NewValue!);
-        GraphCanvas.VerticalScrollBarVisibilityProperty.Changed.AddClassHandler<GraphCanvas>((s, e) => s._scrollViewer.VerticalScrollBarVisibility = (ScrollBarVisibility)e.NewValue!);
-        GraphCanvas.CanZoomProperty.Changed.AddClassHandler<GraphCanvas>((s, e) => s._zoomDecorator.EnableZoom = (bool)e.NewValue!);
-        GraphCanvas.CanPanProperty.Changed.AddClassHandler<GraphCanvas>((s, e) => s._zoomDecorator.EnablePan = (bool)e.NewValue!);
     }
 
     public GraphCanvas()
     {
         _edittingConnection = null;
 
-        _scrollViewer = new ScrollViewer();
-        _zoomDecorator = new ZoomDecorator();
-
-        _zoomDecorator.EnableConstrains = true;
-        _zoomDecorator.MinZoomX = 1.0d;
-        _zoomDecorator.MinZoomY = 1.0d;
-        _zoomDecorator.MaxZoomX = 5.0d;
-        _zoomDecorator.MaxZoomY = 5.0d;
-
         _editorCanvas = new EditorCanvas();
         _nodeConnectionsCanvas = new Canvas();
         
-        _scrollViewer.Content = _zoomDecorator;
         Grid canvasContainer = new Grid();
         canvasContainer.Children.Add(_editorCanvas);
         canvasContainer.Children.Add(_nodeConnectionsCanvas);
-        _zoomDecorator.Child = canvasContainer;
 
 
         Binding editorCanvasWidthBinding = new Binding(nameof(EditorCanvas.Width)) { Source = _editorCanvas, Mode = BindingMode.OneWay };
         Binding editorCanvasHeightBinding = new Binding(nameof(EditorCanvas.Height)) { Source = _editorCanvas, Mode = BindingMode.OneWay };
-        _zoomDecorator[!ZoomDecorator.WidthProperty] = editorCanvasWidthBinding;
-        _zoomDecorator[!ZoomDecorator.HeightProperty] = editorCanvasHeightBinding;
         _nodeConnectionsCanvas[!Canvas.WidthProperty] = editorCanvasWidthBinding;
         _nodeConnectionsCanvas[!Canvas.HeightProperty] = editorCanvasHeightBinding;
-
-        _zoomDecorator[!ZoomDecorator.MaxOffsetXProperty] = editorCanvasWidthBinding;
-        _zoomDecorator[!ZoomDecorator.MaxOffsetYProperty] = editorCanvasHeightBinding;
-
-        LogicalChildren.Add(_scrollViewer);
-        VisualChildren.Add(_scrollViewer);
+        LogicalChildren.Add(canvasContainer);
+        VisualChildren.Add(canvasContainer);
 
         this.Background = Brushes.Purple;
+        ChildNodes.CollectionChanged += m_OnChildNodesCollectionChanged;
     }
 
     #region StyledProperties
 
-    public readonly static StyledProperty<IAvaloniaList<Node>> ChildNodesProperty = AvaloniaProperty.Register<GraphCanvas, IAvaloniaList<Node>>(nameof(GraphCanvas.ChildNodes));
+    public readonly static StyledProperty<IAvaloniaList<Node>> ChildNodesProperty = AvaloniaProperty.Register<GraphCanvas, IAvaloniaList<Node>>(nameof(GraphCanvas.ChildNodes), new AvaloniaList<Node>());
     public readonly static StyledProperty<IEnumerable<NodeConnection>> NodeConnectionsProperty = AvaloniaProperty.Register<GraphCanvas, IEnumerable<NodeConnection>>(nameof(GraphCanvas.NodeConnections));
     public readonly static StyledProperty<IBrush> BackgroundProperty = AvaloniaProperty.Register<GraphCanvas, IBrush>(nameof(GraphCanvas.Background), Brushes.White);
     public static readonly StyledProperty<ScrollBarVisibility> HorizontalScrollBarVisibilityProperty = AvaloniaProperty.Register<GraphCanvas, ScrollBarVisibility>(nameof(ScrollBarVisibility));
     public static readonly StyledProperty<ScrollBarVisibility> VerticalScrollBarVisibilityProperty = AvaloniaProperty.Register<GraphCanvas, ScrollBarVisibility>(nameof(ScrollBarVisibility));
-    public static readonly StyledProperty<bool> CanZoomProperty = AvaloniaProperty.Register<GraphCanvas, bool>(nameof(CanZoom), true);
-    public static readonly StyledProperty<bool> CanPanProperty = AvaloniaProperty.Register<GraphCanvas, bool>(nameof(CanPan), true);
 
     [Content]
     public IAvaloniaList<Node> ChildNodes
@@ -111,30 +86,6 @@ public class GraphCanvas : Control
     {
         get { return GetValue(GraphCanvas.BackgroundProperty); }
         set { SetValue(GraphCanvas.BackgroundProperty, value); }
-    }
-
-    public ScrollBarVisibility HorizontalScrollBarVisibility
-    {
-        get => GetValue(HorizontalScrollBarVisibilityProperty);
-        set => SetValue(HorizontalScrollBarVisibilityProperty, value);
-    }
-
-    public ScrollBarVisibility VerticalScrollBarVisibility
-    {
-        get => GetValue(VerticalScrollBarVisibilityProperty);
-        set => SetValue(VerticalScrollBarVisibilityProperty, value);
-    }
-
-    public bool CanZoom
-    {
-        get => GetValue(CanZoomProperty);
-        set => SetValue(CanZoomProperty, value);
-    }
-
-    public bool CanPan
-    {
-        get => GetValue(CanPanProperty);
-        set => SetValue(CanPanProperty, value);
     }
 
     #endregion
@@ -167,21 +118,23 @@ public class GraphCanvas : Control
 
     private void m_OnChildNodesCollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
     {
-        if (e.NewItems is IEnumerable<Node> newNodes)
+        if (e.NewItems != null)
         {
-            foreach (Node node in newNodes)
+            foreach (Node node in e.NewItems)
             {
                 _AddNode(node);
             }
         }
 
-        if (e.OldItems is IEnumerable<Node> oldNodes)
+        if (e.OldItems != null)
         {
-            foreach (Node node in oldNodes)
+            foreach (Node node in e.OldItems)
             {
                 _RemoveNode(node);
             }
         }
+
+        InvalidateMeasure();
     }
 
     private void _AddNode(Node node)
@@ -191,6 +144,7 @@ public class GraphCanvas : Control
         node.ConnectionPinReleased += _OnNodePinReleased;
         node.ConnectionPinPointerMoved += _OnNodePinPointerMoved;
     }
+
     private bool _RemoveNode(Node node)
     {
         node.ConnectionPinPressed -= _OnNodePinPressed;
@@ -329,28 +283,28 @@ public class GraphCanvas : Control
     }
 
     #region Inhertied Members
-    public override void Render(DrawingContext context)
-    {
-        base.Render(context);
+    //public override void Render(DrawingContext context)
+    //{
+    //    base.Render(context);
 
-        DrawGrid(context);
-    }
+    //    DrawGrid(context);
+    //}
 
-    private void DrawGrid(DrawingContext context)
-    {
-        Pen pen = new Pen(Brushes.LightGray, 1);
-        double spacing = 25;
+    //private void DrawGrid(DrawingContext context)
+    //{
+    //    Pen pen = new Pen(Brushes.LightGray, 1);
+    //    double spacing = 25;
 
-        for (double x = 0; x < Bounds.Width; x += spacing)
-        {
-            context.DrawLine(pen, new Point(x, 0), new Point(x, Bounds.Height));
-        }
+    //    for (double x = 0; x < Bounds.Width; x += spacing)
+    //    {
+    //        context.DrawLine(pen, new Point(x, 0), new Point(x, Bounds.Height));
+    //    }
 
-        for (double y = 0; y < Bounds.Height; y += spacing)
-        {
-            context.DrawLine(pen, new Point(0, y), new Point(Bounds.Width, y));
-        }
-    }
+    //    for (double y = 0; y < Bounds.Height; y += spacing)
+    //    {
+    //        context.DrawLine(pen, new Point(0, y), new Point(Bounds.Width, y));
+    //    }
+    //}
 
     #endregion
 }
