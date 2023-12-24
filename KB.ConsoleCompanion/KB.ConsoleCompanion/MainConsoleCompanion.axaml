@@ -45,7 +45,7 @@
 			</StackPanel>
 		</SplitView.Pane>
 
-		<Border x:FieldModifier="private" x:Name="_viewContainer" />
+		<ContentControl x:FieldModifier="private" x:Name="_viewContainer" />
 		
 	</SplitView>
 </UserControl>

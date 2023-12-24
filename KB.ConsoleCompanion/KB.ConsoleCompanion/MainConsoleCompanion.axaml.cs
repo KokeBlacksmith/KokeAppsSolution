@@ -1,7 +1,5 @@
-﻿using Avalonia;
-using Avalonia.Controls;
+﻿using Avalonia.Controls;
 using Avalonia.Interactivity;
-using Avalonia.Markup.Xaml;
 using ConsoleCompanionAPI;
 using ConsoleCompanionAPI.Data;
 using ConsoleCompanionAPI.Interfaces;
@@ -26,7 +24,7 @@ public partial class MainConsoleCompanion : UserControl
         _commandView = new CommandView.CommandView();
         _macroEditView = new MacroEditView.MacroEditView();
         _configurationView = new ConfigurationView.ConfigurationView();
-        _viewContainer.Child = _commandView;
+        _viewContainer.Content = _commandView;
     }
 
     private string[] _availableCommands = { 
@@ -60,16 +58,16 @@ public partial class MainConsoleCompanion : UserControl
 
     private void _OnHomeClickButton(object sender, RoutedEventArgs args)
     {
-        _viewContainer.Child = _commandView;
+        _viewContainer.Content = _commandView;
     }
 
     private void _OnGraphViewClickButton(object sender, RoutedEventArgs args)
     {
-        _viewContainer.Child = _macroEditView;
+        _viewContainer.Content = _macroEditView;
     }
 
     private void _OnConfigurationViewClickButton(object sender, RoutedEventArgs args)
     {
-        _viewContainer.Child = _configurationView;
+        _viewContainer.Content = _configurationView;
     }
 }

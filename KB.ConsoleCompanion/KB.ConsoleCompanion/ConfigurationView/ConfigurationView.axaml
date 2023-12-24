@@ -4,5 +4,13 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="KB.ConsoleCompanion.ConfigurationView.ConfigurationView">
-  Welcome to Configuration view!
+	<Grid RowDefinitions="30, *">
+		<TextBlock Grid.Row="0" Text="Configuration" />
+
+		<Grid Grid.Row="1" ColumnDefinitions="4*, 2, 6*">
+			<ListBox Grid.Column="0" ItemsSource="{Binding ConfigurationItems}" SelectedItem="{Binding SelectedConfigurationItem}" />
+			<GridSplitter Grid.Column="1" />
+			<ContentControl Grid.Column="2" Content="{Binding SelectedConfigurationItem}" />
+		</Grid>
+	</Grid>
 </UserControl>
