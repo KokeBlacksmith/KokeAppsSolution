@@ -12,6 +12,7 @@ public partial class MainConsoleCompanion : UserControl
 {
     private readonly CommandView.CommandView _commandView;
     private readonly MacroEditView.MacroEditView _macroEditView;
+    private readonly ConfigurationView.ConfigurationView _configurationView;
 
     IServerProtocolAPI _server;
     public MainConsoleCompanion()
@@ -24,6 +25,7 @@ public partial class MainConsoleCompanion : UserControl
 
         _commandView = new CommandView.CommandView();
         _macroEditView = new MacroEditView.MacroEditView();
+        _configurationView = new ConfigurationView.ConfigurationView();
         _viewContainer.Child = _commandView;
     }
 
@@ -66,8 +68,8 @@ public partial class MainConsoleCompanion : UserControl
         _viewContainer.Child = _macroEditView;
     }
 
-    private void _OnConnectionViewClickButton(object sender, RoutedEventArgs args)
+    private void _OnConfigurationViewClickButton(object sender, RoutedEventArgs args)
     {
-        _viewContainer.Child = null;
+        _viewContainer.Child = _configurationView;
     }
 }

@@ -35,7 +35,7 @@
 					</Image>
 				</Button>
 
-				<Button Background="Transparent" Click="_OnConnectionViewClickButton">
+				<Button Background="Transparent" Click="_OnConfigurationViewClickButton">
 					<Image>
 						<Image.Source>
 							<DrawingImage Drawing="{StaticResource Material.Connection}"/>
