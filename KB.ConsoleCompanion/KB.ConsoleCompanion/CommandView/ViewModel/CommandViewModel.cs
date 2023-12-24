@@ -57,33 +57,41 @@ internal sealed class CommandViewModel : BaseViewModel
             return;
         }
 
-        if(_client == null)
+        if(IsBusy)
         {
-            ConsoleCommand errorCommand = new ConsoleCommand("Not connected to server", ConsoleCommand.ECommandType.Error);
-            CommandsCollection.Add(errorCommand);
             return;
         }
 
-        ConsoleCommand userCommand = ConsoleCommand.CreateUserInput(parameter!);
+        using (m_ExecuteBusyOperation())
+        {
+            if (_client == null)
+            {
+                ConsoleCommand errorCommand = new ConsoleCommand("Not connected to server", ConsoleCommand.ECommandType.Error);
+                CommandsCollection.Add(errorCommand);
+                return;
+            }
+
+            ConsoleCommand userCommand = ConsoleCommand.CreateUserInput(parameter!);
         
-        // Add command to collection and to view
-        CommandsCollection.Add(userCommand);
+            // Add command to collection and to view
+            CommandsCollection.Add(userCommand);
 
-        // Send Command to desired application
-        Task<ConsoleCommand> responseTask = _client.SendCommand(userCommand);
-        Task _ = responseTask.ContinueWith((t) => { }, TaskContinuationOptions.OnlyOnFaulted);
-        await responseTask;
-        ConsoleCommand response;
-        if (!responseTask.IsFaulted)
-        {
-            response = responseTask.Result;
-        }
-        else
-        {
-            response = ConsoleCommand.CreateResponseError(userCommand, responseTask.Exception!.Message);
-        }
+            // Send Command to desired application
+            Task<ConsoleCommand> responseTask = _client.SendCommand(userCommand);
+            Task _ = responseTask.ContinueWith((t) => { }, TaskContinuationOptions.OnlyOnFaulted);
+            await responseTask;
+            ConsoleCommand response;
+            if (!responseTask.IsFaulted)
+            {
+                response = responseTask.Result;
+            }
+            else
+            {
+                response = ConsoleCommand.CreateResponseError(userCommand, responseTask.Exception!.Message);
+            }
 
-        CommandsCollection.Add(response);
+            CommandsCollection.Add(response);
+        }
     }
 
     private void _OnClearCommandCollectionExecuted()

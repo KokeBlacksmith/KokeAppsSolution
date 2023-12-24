@@ -16,7 +16,7 @@
              x:Class="KB.ConsoleCompanion.CommandView.CommandView">
 
 	<UserControl.DataContext>
-        <vm:CommandViewModel />
+        <vm:CommandViewModel/>
     </UserControl.DataContext>
 
 	<UserControl.Resources>

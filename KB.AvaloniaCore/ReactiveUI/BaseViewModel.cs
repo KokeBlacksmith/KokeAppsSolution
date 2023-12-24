@@ -1,4 +1,5 @@
 ﻿using System.Runtime.CompilerServices;
+using KB.AvaloniaCore.Synchronization;
 using KB.SharpCore.Synchronization;
 using ReactiveUI;
 
@@ -6,16 +7,21 @@ namespace KB.AvaloniaCore.ReactiveUI;
 
 public abstract class BaseViewModel : ReactiveObject
 {
-    protected readonly ReactiveEntryCounter m_busyOperation;
+    private readonly BooleanRAIIOperation _isBusy;
 
     protected BaseViewModel()
     {
-        m_busyOperation = new ReactiveEntryCounter(this, nameof(BaseViewModel.IsBusy));
+        _isBusy = new ReactiveBooleanRAIIOperation(this, nameof(BaseViewModel.IsBusy));
     }
 
     public bool IsBusy
     {
-        get { return m_busyOperation.HasEnters; }
+        get { return !_isBusy.CanExecute(); }
+    }
+
+    protected IDisposable m_ExecuteBusyOperation()
+    {
+        return _isBusy.Execute();
     }
     
     protected void m_SetProperty<T>(ref T store, T value, [CallerMemberName] string propertyName = null)
