@@ -23,6 +23,7 @@ internal class EditableControlAdorner : TemplatedControl
 {
     private Point _previousPosition;
     private readonly Control _host;
+    private AdornerLayer? _adornerLayer;
 
     private Thumb? _leftTopThumb;
     private Thumb? _leftBottomThumb;
@@ -52,7 +53,9 @@ internal class EditableControlAdorner : TemplatedControl
 
     public EditableControlAdorner(Control host)
     {
-        _host = host;
+        _host = host ?? throw new ArgumentException($"{nameof(host)} can't be null.");
+        _host.AttachedToVisualTree += _OnHostAttachedToVisualTree;
+        _host.DetachedFromVisualTree += _OnHostDetachedFromVisualTree;
         AdornerLayer.SetAdornedElement(this, _host);
         _previousDeltaPositionChangeOnThumbDelta = default(Point);
         _cursorHolder = new ViewCursorHolder(this);
@@ -61,16 +64,30 @@ internal class EditableControlAdorner : TemplatedControl
         _oldHeights = null;
     }
 
+    private void _OnHostAttachedToVisualTree(object? sender, VisualTreeAttachmentEventArgs e)
+    {
+        // If we come from a detached state, we have to activate the adorner
+        if (AdornedElements != null)
+        {
+            Activate();
+        }
+    }
+
+    private void _OnHostDetachedFromVisualTree(object? sender, VisualTreeAttachmentEventArgs e)
+    {
+        Deactivate();
+    }
+
     /// <summary>
     /// Event raised when the adorned elements finished moving.
     /// Argument is the old positions of the elements.
     /// </summary>
-    public event Action<Point[]> OnAdornedElementsMoveFinished;
+    public event Action<Point[]>? OnAdornedElementsMoveFinished;
     /// <summary>
     /// Event raised when the adorned elements finished scaling.
     /// Argument is the old sizes of the elements. Widht and Height.
     /// </summary>
-    public event Action<double[], double[]> OnAdornedElementsScaleFinished; 
+    public event Action<double[], double[]>? OnAdornedElementsScaleFinished; 
 
     public bool IsDraggingElements { get; private set; }
     public bool IsScalingElements { get; private set; }
@@ -183,8 +200,8 @@ internal class EditableControlAdorner : TemplatedControl
         }
 
         IsActive = true;
-        AdornerLayer layer = AdornerLayer.GetAdornerLayer(_host.FindAncestorOfType<Canvas>()!)!;
-        layer.Children.Add(this);
+        _adornerLayer = AdornerLayer.GetAdornerLayer(_host.FindAncestorOfType<Canvas>()!)!;
+        _adornerLayer.Children.Add(this);
 
         if (AdornedElements == null)
         {
@@ -205,8 +222,7 @@ internal class EditableControlAdorner : TemplatedControl
         }
 
         IsActive = false;
-        AdornerLayer layer = AdornerLayer.GetAdornerLayer(_host.FindAncestorOfType<Canvas>()!)!;
-        layer.Children.Remove(this);
+        _adornerLayer!.Children.Remove(this);
     }
 
     public void OnCanvasPointerPressed(object? sender, PointerPressedEventArgs e)

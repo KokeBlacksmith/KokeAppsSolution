@@ -15,6 +15,6 @@ public partial class MacroEditView : UserControl
     public override void Render(DrawingContext context)
     {
         base.Render(context);
-        RenderBackgroundUtils.DrawGrid(context, Bounds, Brushes.LightGray, 25);
+        RenderBackgroundUtils.DrawGrid(context, Bounds, Brushes.LightBlue, 30);
     }
 }
