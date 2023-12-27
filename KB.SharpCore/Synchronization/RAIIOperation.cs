@@ -29,7 +29,7 @@ public abstract class RAIIOperation<T>
 
     protected RAIIOperation(T resource)
     {
-        _voidDisposable = new VoidDisposable(OnDispose);
+        _voidDisposable = new VoidDisposable(m_ReleaseResource);
         m_resource = resource;
     }
 
@@ -45,5 +45,5 @@ public abstract class RAIIOperation<T>
 
     public abstract bool CanExecute();
 
-    public abstract void OnDispose();
+    protected abstract void m_ReleaseResource();
 }

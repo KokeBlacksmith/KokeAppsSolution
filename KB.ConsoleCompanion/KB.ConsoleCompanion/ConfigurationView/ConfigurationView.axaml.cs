@@ -1,4 +1,5 @@
 using Avalonia.Controls;
+using KB.ConsoleCompanion.ConfigurationView.ViewModel;
 
 namespace KB.ConsoleCompanion.ConfigurationView
 {

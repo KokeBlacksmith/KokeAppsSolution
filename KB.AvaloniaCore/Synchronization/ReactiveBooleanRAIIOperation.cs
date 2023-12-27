@@ -26,9 +26,9 @@ public class ReactiveBooleanRAIIOperation : BooleanRAIIOperation
         return base.CanExecute();
     }
 
-    public override void OnDispose()
+    protected override void m_ReleaseResource()
     {
-        base.OnDispose();
+        base.m_ReleaseResource();
         _parentViewModel.RaisePropertyChanged(_propertyName);
     }
 }

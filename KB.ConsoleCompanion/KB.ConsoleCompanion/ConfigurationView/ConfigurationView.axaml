@@ -2,15 +2,24 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+			 xmlns:vm="clr-namespace:KB.ConsoleCompanion.ConfigurationView.ViewModel;assembly=KB.ConsoleCompanion"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="KB.ConsoleCompanion.ConfigurationView.ConfigurationView">
-	<Grid RowDefinitions="30, *">
+
+	<UserControl.DataContext>
+		<vm:ConfigurationViewModel/>
+	</UserControl.DataContext>
+	
+	<Grid RowDefinitions="30, *, 30">
 		<TextBlock Grid.Row="0" Text="Configuration" />
 
 		<Grid Grid.Row="1" ColumnDefinitions="4*, 2, 6*">
-			<ListBox Grid.Column="0" ItemsSource="{Binding ConfigurationItems}" SelectedItem="{Binding SelectedConfigurationItem}" />
-			<GridSplitter Grid.Column="1" />
-			<ContentControl Grid.Column="2" Content="{Binding SelectedConfigurationItem}" />
+			
 		</Grid>
+
+		<StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right">
+			<Button Content="Apply" Command="{Binding ApplyCommand}" />
+			<Button Content="Cancel" Command="{Binding CancelCommand}" />
+		</StackPanel>
 	</Grid>
 </UserControl>

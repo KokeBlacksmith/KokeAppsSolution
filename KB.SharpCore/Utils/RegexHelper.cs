@@ -29,6 +29,11 @@ public static class RegexHelper
         return matches.Cast<Match>().Select(m => m.Groups[group].Value).ToArray();
     }
 
+    public static string SplitByUpperCase(string input)
+    {
+        return Regex.Replace(input, @"([A-Z])", " $1", RegexOptions.Compiled).Trim();
+    }
+
     public static class Network
     {
         public static bool IsIPAddress(string ip)

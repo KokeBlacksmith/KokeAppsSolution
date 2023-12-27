@@ -17,7 +17,7 @@ public class BooleanRAIIOperation : RAIIOperation<bool>
         return !m_resource;
     }
 
-    public override void OnDispose()
+    protected override void m_ReleaseResource()
     {
         m_resource = false;
     }
