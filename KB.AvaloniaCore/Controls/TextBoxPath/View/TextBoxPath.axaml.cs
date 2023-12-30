@@ -3,8 +3,10 @@ using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Layout;
 using Avalonia.Markup.Xaml;
+using Avalonia.Platform.Storage;
 using Avalonia.VisualTree;
 using KB.SharpCore.IO;
+using KB.SharpCore.Utils;
 
 namespace KB.AvaloniaCore.Controls;
 
@@ -24,7 +26,6 @@ public partial class TextBoxPath : UserControl
         get { return GetValue(TextBoxPath.PathTextProperty); }
         set
         {
-            SetValue(TextBoxPath.PathTextProperty, value);
             if (String.IsNullOrWhiteSpace(value))
             {
                 Path = null;
@@ -33,6 +34,8 @@ public partial class TextBoxPath : UserControl
             {
                 Path = new KB.SharpCore.IO.Path(value);
             }
+
+            SetValue(TextBoxPath.PathTextProperty, value);
         }
     }
     
@@ -53,26 +56,58 @@ public partial class TextBoxPath : UserControl
         _btSearchPath!.Click += _OnSearchPathClick;
     }
 
-    private async void _OnSearchPathClick(object sender, RoutedEventArgs e)
+    private async void _OnSearchPathClick(object? sender, RoutedEventArgs e)
     {
         Window parentWindow = this.FindAncestorOfType<Window>()!;
-        string selectedDirectory = null;
+        TopLevel topLevel = TopLevel.GetTopLevel(this)!;
+        string? selectedPath = null;
+
+        string? currentPath = PathText;
+        IStorageFolder? startPath = null;
+        if (!String.IsNullOrWhiteSpace(currentPath))
+        {
+            startPath = await topLevel.StorageProvider.TryGetFolderFromPathAsync(currentPath!);
+        }
+        
+        if (startPath == null)
+        {
+            startPath = await topLevel.StorageProvider.TryGetFolderFromPathAsync(System.Environment.GetFolderPath(System.Environment.SpecialFolder.Desktop));
+        }
 
         if (PathType == EPathType.Directory)
         {
-            OpenFolderDialog dialog = new OpenFolderDialog();
-            selectedDirectory = await dialog.ShowAsync(parentWindow);
+            IReadOnlyList<IStorageFolder> directories = await topLevel.StorageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions()
+            {
+                AllowMultiple = false,
+                SuggestedStartLocation = startPath
+            });
+
+            if(CollectionHelper.HasAny(directories))
+            {
+                IStorageFolder directory = directories.First();
+                selectedPath = directory.Path.LocalPath;
+                CollectionHelper.Dispose(directories);
+            }
         }
         else
         {
-            OpenFileDialog dialog = new OpenFileDialog();
-            dialog.AllowMultiple = false;
-            selectedDirectory = (await dialog.ShowAsync(parentWindow))?.FirstOrDefault();
+            IReadOnlyList<IStorageFile> files = await topLevel.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions()
+            {
+                AllowMultiple = false,
+                SuggestedStartLocation = startPath
+            });
+
+            if (CollectionHelper.HasAny(files))
+            {
+                IStorageFile file = files.First();
+                selectedPath = file.Path.LocalPath;
+                CollectionHelper.Dispose(files);
+            }
         }
 
-        if (!String.IsNullOrWhiteSpace(selectedDirectory))
+        if (!String.IsNullOrWhiteSpace(selectedPath))
         {
-            PathText = selectedDirectory;
+            PathText = selectedPath;
         }
     }
     
@@ -83,7 +118,14 @@ public partial class TextBoxPath : UserControl
         TextBoxPath textBoxPath = (TextBoxPath)change.Sender;
         if (change.Property == TextBoxPath.PathTextProperty)
         {
-            textBoxPath._tbPath.Text = change.GetNewValue<string>();
+            if(Path != null && Path.IsValidPath())
+            {
+                textBoxPath._tbPath.Text = Path.GetPath();
+            }
+            else
+            {
+                textBoxPath._tbPath.Text = null;
+            }
         }
         else if (change.Property == TextBoxPath.HorizontalAlignmentProperty)
         {

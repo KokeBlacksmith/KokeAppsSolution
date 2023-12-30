@@ -25,6 +25,17 @@ public static class CollectionHelper
         return !CollectionHelper.IsEmpty(enumerable);
     }
 
+    public static void Dispose<T>(IEnumerable<T>? enumerable)
+    {
+        foreach (T item in enumerable ?? Enumerable.Empty<T>())
+        {
+            if (item is IDisposable disposable)
+            {
+                disposable.Dispose();
+            }
+        }
+    }
+
     /// <summary>
     /// Returns a single string with each element of the array on a new line.
     /// </summary>

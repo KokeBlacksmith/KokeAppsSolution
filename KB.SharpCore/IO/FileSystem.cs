@@ -66,7 +66,7 @@ public static class FileSystem
         try
         {
             // Move all files from the source directory to the destination directory
-            foreach (string filePath in sourceDirectoryPath.GetFilesInDirectory())
+            foreach (string filePath in GetFilesInDirectory(sourceDirectoryPath))
             {
                 string fileName = System.IO.Path.GetFileName(filePath);
                 string destinationFilePath = System.IO.Path.Combine(destinationDirectoryPath.FullPath, fileName);
@@ -74,7 +74,7 @@ public static class FileSystem
             }
 
             // Move all subdirectories from the source directory to the destination directory
-            foreach (Path subdirectoryPath in sourceDirectoryPath.GetDirectories())
+            foreach (Path subdirectoryPath in GetDirectories(sourceDirectoryPath))
             {
                 string subdirectoryName = subdirectoryPath.GetShortDirectoryName()!;
                 Path destinationSubdirectoryPath = Path.Join(destinationDirectoryPath, subdirectoryName);
@@ -87,5 +87,84 @@ public static class FileSystem
         {
             return Result.CreateFailure(e);
         }
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static DirectoryInfo CreateDirectory(Path path)
+    {
+        return Directory.CreateDirectory(path.GetDirectoryName()!);
+    }
+
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static bool DeleteDirectory(Path path, bool recursive)
+    {
+        if (Directory.Exists(path.FullPath))
+        {
+            Directory.Delete(path.FullPath, recursive);
+        }
+
+        return Directory.Exists(path.FullPath);
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static Result DeleteFile(Path path)
+    {
+        try
+        {
+            if (!path.IsFile)
+            {
+                return Result.CreateFailure($"The path '{path.FullPath}' is not a file");
+            }
+
+            File.Delete(path.FullPath);
+            return Result.CreateSuccess();
+        }
+        catch (Exception e)
+        {
+            return Result.CreateFailure(e);
+        }
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static bool CreateFile(Path path, bool overrideExisting)
+    {
+        if (!path.IsFile)
+        {
+            throw new Exception("Path is not a file");
+        }
+
+        if (path.Exists())
+        {
+            if (overrideExisting)
+            {
+                File.Delete(path.FullPath);
+            }
+            else
+            {
+                return true;
+            }
+        }
+
+        using FileStream fs = File.Create(path.FullPath);
+        return path.Exists();
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static IEnumerable<string> GetDirectories(Path path)
+    {
+        return System.IO.Directory.GetDirectories(path.FullPath).Select(dir => dir + System.IO.Path.DirectorySeparatorChar);
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static IEnumerable<string> GetFilesInDirectory(Path path)
+    {
+        return System.IO.Directory.GetFiles(path.GetDirectoryName() ?? String.Empty);
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static string GetRootDirectoryName(Path path)
+    {
+        return Directory.GetDirectoryRoot(path.FullPath);
     }
 }

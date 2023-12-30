@@ -1,6 +1,4 @@
 ﻿using System.Runtime.CompilerServices;
-using System.Runtime.Serialization;
-using KB.SharpCore.Utils;
 
 namespace KB.SharpCore.IO;
 
@@ -36,7 +34,7 @@ public class Path
         return path?.FullPath ?? String.Empty;
     }
     
-    public bool TryGetParent(out Path parentPath)
+    public bool TryGetParent(out Path? parentPath)
     {
         DirectoryInfo? parent = Directory.GetParent(FullPath);
         if (parent != null)
@@ -133,83 +131,6 @@ public class Path
     public string GetExtension()
     {
         return System.IO.Path.GetExtension(FullPath);
-    }
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public DirectoryInfo CreateDirectory()
-    {
-        return Directory.CreateDirectory(GetDirectoryName()!);
-    }
-
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public bool DeleteDirectory(bool recursive)
-    {
-        if (Directory.Exists(FullPath))
-            Directory.Delete(FullPath, recursive);
-
-        return Directory.Exists(FullPath);
-    }
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public Result DeleteFile()
-    {
-        try
-        {
-            if (_pathType != EPathType.File)
-                return Result.CreateFailure($"The path '{FullPath}' is not a file");
-
-            File.Delete(FullPath);
-            return Result.CreateSuccess();
-        }
-        catch (Exception e)
-        {
-            return Result.CreateFailure(e);
-        }
-    }
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public bool CreateFile(bool overrideExisting)
-    {
-        if (_pathType != EPathType.File)
-        {
-            throw new Exception("Path is not a file");
-        }
-
-        if (Exists())
-        {
-            if (overrideExisting)
-            {
-                File.Delete(FullPath);
-            }
-            else
-            {
-                return true;
-            }
-        }
-
-        FileStream fs = File.Create(FullPath);
-        fs.Dispose();
-
-        return Exists();
-    }
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public IEnumerable<string> GetDirectories()
-    {
-        return System.IO.Directory.GetDirectories(this.FullPath).Select(dir => dir + System.IO.Path.DirectorySeparatorChar);
-    }
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public IEnumerable<string> GetFilesInDirectory()
-    {
-        return System.IO.Directory.GetFiles(this.GetDirectoryName() ?? String.Empty);
-    }
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public string GetRootDirectoryName()
-    {
-        return Directory.GetDirectoryRoot(FullPath);
     }
 
     public Path ConvertToDirectory()

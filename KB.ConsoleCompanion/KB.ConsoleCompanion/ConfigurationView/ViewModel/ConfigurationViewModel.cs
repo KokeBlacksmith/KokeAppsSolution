@@ -1,4 +1,5 @@
 ﻿using KB.AvaloniaCore.ReactiveUI;
+using KB.SharpCore.Utils;
 
 namespace KB.ConsoleCompanion.ConfigurationView.ViewModel;
 
@@ -6,6 +7,7 @@ internal class ConfigurationViewModel : BaseViewModel
 {
     private readonly EmptyCommand _applyCommand;
     private readonly EmptyCommand _cancelCommand;
+    private readonly GenericCommand<string?> _connectCommand;
     private string _ipAddress;
     private bool _isConnected;
     private KB.SharpCore.IO.Path _storagePath;
@@ -16,10 +18,12 @@ internal class ConfigurationViewModel : BaseViewModel
         _storagePath = new KB.SharpCore.IO.Path(System.IO.Path.Combine(System.IO.Path.GetTempPath(), "KB_ConsoleCompanion"));
         _applyCommand = new EmptyCommand(_OnApplyCommandExecute, null);
         _cancelCommand = new EmptyCommand(_OnCancelCommandExecute, null);
+        _connectCommand = new GenericCommand<string?>(_OnConnectCommandExecute, _OnConnectCommandCanExecute);
     }
 
     public EmptyCommand ApplyCommand => _applyCommand;
     public EmptyCommand CancelCommand => _cancelCommand;
+    public GenericCommand<string?> ConnectCommand => _connectCommand;
 
 
     public string IPAddress
@@ -48,5 +52,20 @@ internal class ConfigurationViewModel : BaseViewModel
     private void _OnCancelCommandExecute()
     {
         // TODO: Get values from model
+    }
+
+    private void _OnConnectCommandExecute(string? ipAddress)
+    {
+
+    }
+
+    private bool _OnConnectCommandCanExecute(string? ipAddress)
+    {
+        if(String.IsNullOrWhiteSpace(ipAddress))
+        {
+            return false;
+        }
+
+        return RegexHelper.Network.IsIPAddress(ipAddress!);
     }
 }

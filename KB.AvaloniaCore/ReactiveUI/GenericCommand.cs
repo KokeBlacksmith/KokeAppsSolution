@@ -33,11 +33,13 @@ public sealed class GenericCommand<T> : ICommand
 
     bool ICommand.CanExecute(object? parameter)
     {
-        if(typeof(T).IsAssignableFrom(parameter?.GetType() ?? null))
+        if (_IsAssignable(parameter))
         {
             if(parameter == null)
             {
+#pragma warning disable CS8604 // Possible null reference argument.
                 return CanExecute(default(T));
+#pragma warning restore CS8604 // Possible null reference argument.
             }
             else
             {
@@ -52,11 +54,13 @@ public sealed class GenericCommand<T> : ICommand
 
     void ICommand.Execute(object? parameter)
     {
-        if (typeof(T).IsAssignableFrom(parameter?.GetType() ?? null))
+        if (_IsAssignable(parameter))
         {
             if (parameter == null)
             {
+#pragma warning disable CS8604 // Possible null reference argument.
                 Execute(default(T));
+#pragma warning restore CS8604 // Possible null reference argument.
             }
             else
             {
@@ -66,6 +70,21 @@ public sealed class GenericCommand<T> : ICommand
         else
         {
             throw new ArgumentException($"Parameter must be of type {typeof(T)}");
+        }
+    }
+
+    private bool _IsAssignable(object? parameter)
+    {
+        if (parameter == null)
+        {
+            // Handle null case. 
+            // Assuming T is a reference type, null is assignable.
+            // If T is a value type, null is not assignable.
+            return !typeof(T).IsValueType;
+        }
+        else
+        {
+            return typeof(T).IsAssignableFrom(parameter.GetType());
         }
     }
 }
