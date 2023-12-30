@@ -9,6 +9,7 @@ internal class ConfigurationViewModel : BaseViewModel
     private readonly EmptyCommand _cancelCommand;
     private readonly GenericCommand<string?> _connectCommand;
     private string _ipAddress;
+    private string _portNumber;
     private bool _isConnected;
     private KB.SharpCore.IO.Path _storagePath;
 
@@ -30,6 +31,12 @@ internal class ConfigurationViewModel : BaseViewModel
     {
         get { return _ipAddress; }
         set { m_SetProperty(ref _ipAddress, value); }
+    }
+
+    public string PortNumber
+    {
+        get { return _portNumber; }
+        set { m_SetProperty(ref _portNumber, value); }
     }
 
     public bool IsConnected

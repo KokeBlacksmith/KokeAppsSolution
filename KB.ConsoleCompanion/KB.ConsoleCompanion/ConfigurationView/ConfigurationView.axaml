@@ -22,6 +22,7 @@
 				<RowDefinition Height="30" />
 				<RowDefinition Height="30" />
 				<RowDefinition Height="30" />
+				<RowDefinition Height="30" />
 			</Grid.RowDefinitions>
 			
 			<TextBlock Grid.Row="0" Text="Configuration" />
@@ -29,17 +30,20 @@
 			<TextBlock Grid.Row="1" Text="IP Address" VerticalAlignment="Center"/>
 			<TextBox Grid.Row="1" Grid.Column="1" Text="{Binding IPAddress}"
 						x:FieldModifier="private" x:Name="_ipAddressTextBox"/>
+
+			<TextBlock Grid.Row="2" Text="Port Number" VerticalAlignment="Center"/>
+			<TextBox Grid.Row="2" Grid.Column="1" Text="{Binding PortNumber}"/>
 						
-			<TextBlock Grid.Row="2" Text="Is Connected" VerticalAlignment="Center"/>
-			<CheckBox Grid.Row="2" Grid.Column="1" IsChecked="{Binding IsConnected}" IsEnabled="False"/>
+			<TextBlock Grid.Row="3" Text="Is Connected" VerticalAlignment="Center"/>
+			<CheckBox Grid.Row="3" Grid.Column="1" IsChecked="{Binding IsConnected}" IsEnabled="False"/>
 						
-			<Button Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Content="Connect" 
+			<Button Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" Content="Connect" 
 					Command="{Binding ConnectCommand}" CommandParameter="{Binding #_ipAddressTextBox.Text}"/>
 
-			<TextBlock Grid.Row="4" Text="Storage" />
+			<TextBlock Grid.Row="5" Text="Storage" />
 			
-			<TextBlock Grid.Row="5" Text="Storage Path" VerticalAlignment="Center"/>
-			<core_controls:TextBoxPath Grid.Row="5" Grid.Column="1" PathText="{Binding StorageDirectoryPath}"
+			<TextBlock Grid.Row="6" Text="Storage Path" VerticalAlignment="Center"/>
+			<core_controls:TextBoxPath Grid.Row="6" Grid.Column="1" PathText="{Binding StorageDirectoryPath}"
 									   PathType="Directory"/>
 		</Grid>
 		
