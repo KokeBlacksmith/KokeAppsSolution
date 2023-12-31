@@ -17,6 +17,17 @@ public readonly struct Path
         }
     }
 
+    public Path()
+    {
+        FullPath = String.Empty;
+        _pathType = EPathType.Directory;
+    }
+
+    public bool IsEmpty
+    {
+        get { return String.IsNullOrWhiteSpace(FullPath); }
+    }
+
     public bool IsFile
     {
         get { return _pathType == EPathType.File; }

@@ -1,5 +1,6 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Data;
 using Avalonia.Interactivity;
 using Avalonia.Layout;
 using Avalonia.Markup.Xaml;
@@ -27,6 +28,7 @@ public partial class TextBoxPath : UserControl
     public TextBoxPath()
     {
         InitializeComponent();
+        PathText = String.Empty;
     }
 
     public string PathText
@@ -36,7 +38,7 @@ public partial class TextBoxPath : UserControl
         {
             if (String.IsNullOrWhiteSpace(value))
             {
-                Path = null;
+                Path = new KB.SharpCore.IO.Path();
             }
             else
             {
@@ -47,7 +49,7 @@ public partial class TextBoxPath : UserControl
         }
     }
     
-    public KB.SharpCore.IO.Path? Path { get; private set; }
+    public KB.SharpCore.IO.Path Path { get; private set; }
 
     public EPathType PathType
     {
@@ -121,13 +123,13 @@ public partial class TextBoxPath : UserControl
 
     private void _OnPathTextPropertyChanged(AvaloniaPropertyChangedEventArgs change)
     {
-        if (Path.HasValue && Path.Value.IsValidPath())
+        DataValidationErrors.ClearErrors(_tbPath);
+        
+        _tbPath.Text = Path.GetPath();
+        if(!Path.IsValidPath())
         {
-            _tbPath.Text = Path.Value.GetPath();
-        }
-        else
-        {
-            _tbPath.Text = null;
+            string errorMessage = Path.IsEmpty ? "Path has no value" : $"Value: '{Path.GetPath()}'";
+            DataValidationErrors.SetError(_tbPath, new DataValidationException($"Invalid path! {errorMessage}"));
         }
     }
 
