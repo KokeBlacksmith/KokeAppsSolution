@@ -26,10 +26,9 @@ public static class DataContractSerializableHelper
     public static Result Save<T>(T serializable, Path path, ESerializationType serializationType)
     {
         if (serializable == null)
+        {
             throw new ArgumentNullException(nameof(serializable));
-
-        if (path == null)
-            throw new ArgumentNullException(nameof(path));
+        }
 
         try
         {
@@ -71,8 +70,6 @@ public static class DataContractSerializableHelper
 
     public static Result<T> Load<T>(Path path, ESerializationType serializationType)
     {
-        if (path == null)
-            throw new ArgumentNullException(nameof(path));
 
         if (!path.Exists())
         {

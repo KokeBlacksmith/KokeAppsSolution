@@ -15,7 +15,9 @@ internal class ConfigurationViewModel : BaseViewModel
 
     public ConfigurationViewModel()
     {
+        // Localhost is the default IP address
         _ipAddress = System.Net.IPAddress.Loopback.ToString();
+        _portNumber = "5555";
         _storagePath = new KB.SharpCore.IO.Path(System.IO.Path.Combine(System.IO.Path.GetTempPath(), "KB_ConsoleCompanion"));
         _applyCommand = new EmptyCommand(_OnApplyCommandExecute, null);
         _cancelCommand = new EmptyCommand(_OnCancelCommandExecute, null);

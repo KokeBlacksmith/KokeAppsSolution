@@ -118,9 +118,9 @@ public partial class TextBoxPath : UserControl
         TextBoxPath textBoxPath = (TextBoxPath)change.Sender;
         if (change.Property == TextBoxPath.PathTextProperty)
         {
-            if(Path != null && Path.IsValidPath())
+            if(Path.HasValue && Path.Value.IsValidPath())
             {
-                textBoxPath._tbPath.Text = Path.GetPath();
+                textBoxPath._tbPath.Text = Path.Value.GetPath();
             }
             else
             {

@@ -2,7 +2,7 @@
 
 namespace KB.SharpCore.IO;
 
-public class Path
+public readonly struct Path
 {
     private readonly EPathType _pathType;
 
@@ -34,7 +34,7 @@ public class Path
         return path?.FullPath ?? String.Empty;
     }
     
-    public bool TryGetParent(out Path? parentPath)
+    public bool TryGetParentDirectory(out Path? parentPath)
     {
         DirectoryInfo? parent = Directory.GetParent(FullPath);
         if (parent != null)
@@ -149,7 +149,7 @@ public class Path
     }
 
 
-    public static Path operator +(Path path1, Path path2)
+    public static Path operator +(in Path path1, in Path path2)
     {
         return Path.Combine(path1.GetPath(), path2.GetPath());
     }
@@ -159,8 +159,33 @@ public class Path
         return new Path(a);
     }
 
-    public static explicit operator string(Path a)
+    public static explicit operator string(in Path a)
     {
         return a.GetPath() ?? String.Empty;
+    }
+
+    public static bool operator ==(in Path a, in Path b)
+    {
+        return a.FullPath == b.FullPath;
+    }
+
+    public static bool operator !=(in Path a, in Path b)
+    {
+        return !(a.FullPath == b.FullPath);
+    }
+
+    public override bool Equals(object? obj)
+    {
+        if (obj is Path path)
+        {
+            return this == path;
+        }
+
+        return false;
+    }
+
+    public override int GetHashCode()
+    {
+        return FullPath.GetHashCode();
     }
 }
