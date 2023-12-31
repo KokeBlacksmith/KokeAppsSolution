@@ -106,7 +106,7 @@ public partial class TextBoxPath : UserControl
                 AllowMultiple = false,
                 SuggestedStartLocation = startPath
             });
-
+            
             if (CollectionHelper.HasAny(files))
             {
                 IStorageFile file = files.First();

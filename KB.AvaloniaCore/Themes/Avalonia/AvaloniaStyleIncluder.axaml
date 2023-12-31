@@ -11,5 +11,4 @@
     <StyleInclude Source="/Themes/Avalonia/TextBlockStyle.axaml" />
     <StyleInclude Source="/Themes/Avalonia/TextBoxStyle.axaml" />
     <StyleInclude Source="/Themes/Avalonia/WindowStyle.axaml" />
-
 </Style>
