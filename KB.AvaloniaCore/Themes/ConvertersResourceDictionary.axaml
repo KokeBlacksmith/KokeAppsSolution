@@ -4,6 +4,6 @@
                     xmlns:conv="clr-namespace:KB.AvaloniaCore.Converters">
 
     <conv:MatchValueConverter x:Key="MatchValueConverter" />
-
+	<conv:DateTimeToDateTimeOffsetConverter x:Key="DateTimeToDateTimeOffsetConverter" />
 
 </ResourceDictionary>

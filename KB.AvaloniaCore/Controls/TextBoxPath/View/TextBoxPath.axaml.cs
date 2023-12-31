@@ -16,6 +16,14 @@ public partial class TextBoxPath : UserControl
 
     public readonly static StyledProperty<EPathType> PathTypeProperty = AvaloniaProperty.Register<TextBoxPath, EPathType>(nameof(TextBoxPath.PathType), EPathType.Directory);
 
+    static TextBoxPath()
+    {
+        PathTextProperty.Changed.AddClassHandler<TextBoxPath>((textBoxPath, change) => textBoxPath._OnPathTextPropertyChanged(change));
+        HorizontalAlignmentProperty.Changed.AddClassHandler<TextBoxPath>((textBoxPath, change) => textBoxPath._OnHorizontalAlignmentPropertyChanged(change));
+        VerticalAlignmentProperty.Changed.AddClassHandler<TextBoxPath>((textBoxPath, change) => textBoxPath._OnVerticalAlignmentPropertyChanged(change));
+    }
+
+
     public TextBoxPath()
     {
         InitializeComponent();
@@ -110,30 +118,26 @@ public partial class TextBoxPath : UserControl
             PathText = selectedPath;
         }
     }
-    
-    protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)
-    {
-        base.OnPropertyChanged(change);
 
-        TextBoxPath textBoxPath = (TextBoxPath)change.Sender;
-        if (change.Property == TextBoxPath.PathTextProperty)
+    private void _OnPathTextPropertyChanged(AvaloniaPropertyChangedEventArgs change)
+    {
+        if (Path.HasValue && Path.Value.IsValidPath())
         {
-            if(Path.HasValue && Path.Value.IsValidPath())
-            {
-                textBoxPath._tbPath.Text = Path.Value.GetPath();
-            }
-            else
-            {
-                textBoxPath._tbPath.Text = null;
-            }
+            _tbPath.Text = Path.Value.GetPath();
         }
-        else if (change.Property == TextBoxPath.HorizontalAlignmentProperty)
+        else
         {
-            textBoxPath._container.HorizontalAlignment = change.GetNewValue<HorizontalAlignment>();
+            _tbPath.Text = null;
         }
-        else if (change.Property == TextBoxPath.VerticalAlignmentProperty)
-        {
-            textBoxPath._container.VerticalAlignment = change.GetNewValue<VerticalAlignment>();
-        }
+    }
+
+    private void _OnHorizontalAlignmentPropertyChanged(AvaloniaPropertyChangedEventArgs change)
+    {
+        _container.HorizontalAlignment = change.GetNewValue<HorizontalAlignment>();
+    }
+
+    private void _OnVerticalAlignmentPropertyChanged(AvaloniaPropertyChangedEventArgs change)
+    {
+        _container.VerticalAlignment = change.GetNewValue<VerticalAlignment>();
     }
 }
