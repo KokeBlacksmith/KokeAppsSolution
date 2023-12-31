@@ -3,7 +3,7 @@
 
     <Design.PreviewWith>
         <!-- Add Controls for Previewer Here -->
-        <Border Padding="20" Background="{StaticResource DarkestBackgroundColor}">
+        <Border Padding="20" Background="Black">
             <StackPanel Orientation="Vertical">
                 <ButtonSpinner Content="I am normal spinner" />
                 <ButtonSpinner Content="I am disabled spinner" IsEnabled="False" />
@@ -11,15 +11,7 @@
         </Border>
     </Design.PreviewWith>
 
-    <StyleInclude Source="/Themes/Dark/ButtonStyle.axaml" />
-
-    <Styles.Resources>
-        <ResourceDictionary>
-            <ResourceDictionary.MergedDictionaries>
-                <ResourceInclude Source="/Themes/Dark/ThemeColors.axaml" />
-            </ResourceDictionary.MergedDictionaries>
-        </ResourceDictionary>
-    </Styles.Resources>
+    <StyleInclude Source="/Themes/Avalonia/ButtonStyle.axaml" />
 
     <!-- Add Styles Here -->
 
@@ -36,13 +28,13 @@
         <Setter Property="CornerRadius" Value="5" />
     </Style>
 
-    <Style Selector="RepeatButton.ButtonSpinnerRepeatButton#PART_IncreaseButton /template/ ContentPresenter">
+    <!--<Style Selector="RepeatButton.ButtonSpinnerRepeatButton#PART_IncreaseButton /template/ ContentPresenter">
         <Setter Property="Background" Value="{StaticResource DarkGreenColor}" />
     </Style>
 
     <Style Selector="RepeatButton.ButtonSpinnerRepeatButton#PART_DecreaseButton /template/ ContentPresenter">
         <Setter Property="Background" Value="{StaticResource DarkRedColor}" />
-    </Style>
+    </Style>-->
 
 
     <!-- <Style Selector="ButtonSpinner /template/ RepeatButton:pointerover"> -->

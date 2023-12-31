@@ -1,0 +1,15 @@
+﻿<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!-- <Style Selector="Border.container"> -->
+    <Style Selector="Border.control_container">
+        <!--<Setter Property="Background" Value="{x:Null}" />-->
+        <!--<Setter Property="BorderBrush" Value="{DynamicResource ThemeAccentBrush}" />-->
+        <Setter Property="BorderThickness" Value="2" />
+        <Setter Property="CornerRadius" Value="0" />
+        <Setter Property="Margin" Value="0" />
+        <Setter Property="Padding" Value="0" />
+        <Setter Property="HorizontalAlignment" Value="Stretch" />
+        <Setter Property="VerticalAlignment" Value="Stretch" />
+    </Style>
+</Styles>

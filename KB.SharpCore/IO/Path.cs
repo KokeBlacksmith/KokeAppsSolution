@@ -54,7 +54,7 @@ public readonly struct Path
             return true;
         }
 
-        parentPath = default(Path);
+        parentPath = null;
         return false;
     }
 
@@ -64,7 +64,9 @@ public readonly struct Path
     public static Path Combine(params string[] paths)
     {
         if (paths == null)
+        {
             throw new ArgumentNullException(nameof(paths));
+        }
 
         bool endsWithSeparator = !System.IO.Path.HasExtension(paths[^1]) && !paths[^1].EndsWith(System.IO.Path.DirectorySeparatorChar);
         return new Path(System.IO.Path.Combine(paths) + (endsWithSeparator ? System.IO.Path.DirectorySeparatorChar.ToString() : default(string)));

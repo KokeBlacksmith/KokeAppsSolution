@@ -1,0 +1,7 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui">
+
+	<ResourceDictionary.MergedDictionaries>
+		<ResourceInclude Source="/Themes/CustomControls/NodePin.axaml" />
+		<ResourceInclude Source="/Themes/CustomControls/EditableControlAdorner.axaml" />
+	</ResourceDictionary.MergedDictionaries>
+</ResourceDictionary>

@@ -10,33 +10,14 @@
             </StackPanel>
         </Border>
     </Design.PreviewWith>
-
-    <Styles.Resources>
-        <ResourceDictionary>
-            <ResourceDictionary.MergedDictionaries>
-                <ResourceInclude Source="/Themes/Dark/ThemeColors.axaml" />
-            </ResourceDictionary.MergedDictionaries>
-        </ResourceDictionary>
-    </Styles.Resources>
-
+	
     <!-- Add Styles Here -->
     <Style Selector="TextBox">
         <Setter Property="Margin" Value="1" />
         <Setter Property="FontSize" Value="12" />
-        <Setter Property="BorderBrush" Value="{StaticResource DarkBorderColor}" />
-        <Setter Property="Foreground" Value="{StaticResource DarkTextColor}" />
         <Setter Property="HorizontalContentAlignment" Value="Left" />
         <Setter Property="HorizontalAlignment" Value="Stretch" />
         <Setter Property="VerticalAlignment" Value="Center" />
     </Style>
-
-    <Style Selector="TextBox:focus">
-        <Setter Property="BorderBrush" Value="{StaticResource DarkBackgroundColor}" />
-    </Style>
-
-    <Style Selector="TextBox:pointerover /template/ Border#PART_BorderElement">
-        <Setter Property="BorderBrush" Value="{StaticResource DarkHighLightBackgroundColor}" />
-    </Style>
-
 
 </Styles>

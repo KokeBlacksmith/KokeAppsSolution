@@ -14,22 +14,7 @@
         </Border>
     </Design.PreviewWith>
 
-    <Styles.Resources>
-        <ResourceDictionary>
-            <ResourceDictionary.MergedDictionaries>
-                <ResourceInclude Source="/Themes/Dark/ThemeColors.axaml" />
-            </ResourceDictionary.MergedDictionaries>
-        </ResourceDictionary>
-    </Styles.Resources>
-
-    <Style Selector="ListBox">
-        <Setter Property="ItemsPanel">
-            <VirtualizingStackPanel />
-        </Setter>
-        <Setter Property="Background" Value="{StaticResource DarkestBackgroundColor}" />
-    </Style>
-
-    <Style Selector="ListBoxItem">
+    <!--<Style Selector="ListBoxItem">
         <Setter Property="Padding" Value="10" />
         <Setter Property="Background" Value="{StaticResource DarkBackgroundColor}" />
         <Setter Property="Foreground" Value="{StaticResource DarkTextColor}" />
@@ -51,5 +36,5 @@
 
     <Style Selector="ListBoxItem:selected:pressed /template/ ContentPresenter#PART_ContentPresenter">
         <Setter Property="Background" Value="{StaticResource DarkPressedBackgroundColor}" />
-    </Style>
+    </Style>-->
 </Styles>

@@ -15,16 +15,8 @@
         </Border>
     </Design.PreviewWith>
 
-    <Styles.Resources>
-        <ResourceDictionary>
-            <ResourceDictionary.MergedDictionaries>
-                <ResourceInclude Source="/Themes/Dark/ThemeColors.axaml" />
-            </ResourceDictionary.MergedDictionaries>
-        </ResourceDictionary>
-    </Styles.Resources>
-
     <!-- Add Styles Here -->
-    <Style Selector="TabControl">
+    <!--<Style Selector="TabControl">
         <Setter Property="Padding" Value="2.5, 0, 2.5, 0" />
     </Style>
 
@@ -38,7 +30,7 @@
         <Setter Property="Foreground" Value="{StaticResource DarkTextColor}" />
     </Style>
 
-    <!-- [PseudoClasses(":pressed", ":selected")] -->
+    --><!-- [PseudoClasses(":pressed", ":selected")] --><!--
     <Style Selector="TabItem:selected">
         <Setter Property="BorderThickness" Value="2.5" />
         <Setter Property="Background" Value="{StaticResource DarkestBackgroundColor}" />
@@ -61,8 +53,8 @@
     <Style Selector="TabItem:selected:pointerover /template/ Border#PART_LayoutRoot">
         <Setter Property="Background" Value="Black" />
         <Setter Property="BorderBrush" Value="{StaticResource DarkHighLightBackgroundColor}" />
-        <!-- <Setter Property="TextElement.Foreground" Value="{DynamicResource TabItemHeaderForegroundSelectedPointerOver}" /> -->
-    </Style>
+        --><!-- <Setter Property="TextElement.Foreground" Value="{DynamicResource TabItemHeaderForegroundSelectedPointerOver}" /> --><!--
+    </Style>-->
 
     <!-- ~1~  Pressed state  @1@ -->
     <!-- <Style Selector="TabItem:pressed /template/ Border#PART_LayoutRoot"> -->

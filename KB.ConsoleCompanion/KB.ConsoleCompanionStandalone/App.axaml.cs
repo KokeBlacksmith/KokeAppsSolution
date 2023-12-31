@@ -16,11 +16,14 @@ namespace KB.ConsoleCompanionStandalone
         {
             if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             {
-                desktop.MainWindow = new MainWindow {
+                MainWindow mainWindow = new MainWindow
+                {
                     DataContext = null,
                     MinWidth = 600,
                     MinHeight = 400,
                 };
+
+                desktop.MainWindow = mainWindow;
             }
         
             base.OnFrameworkInitializationCompleted();

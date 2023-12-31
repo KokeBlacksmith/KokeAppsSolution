@@ -38,7 +38,7 @@
 		<Grid Grid.Column="0" RowDefinitions="30,*,30">
 			<!-- Toolbar -->
 			<Grid Grid.Row="0" ColumnDefinitions="*, 40" Background="Gray">
-				<StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch">
+				<StackPanel Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Stretch">
 					<Menu>
 						<MenuItem Header="File">
 							
@@ -88,7 +88,7 @@
 			</Grid>
         
 			<!-- Content -->
-			<ListBox Grid.Row="1" x:FieldModifier="private" x:Name="_listBox"
+			<ListBox Grid.Row="1" Grid.Column="0" x:FieldModifier="private" x:Name="_listBox"
 					 ItemsSource="{Binding CommandsCollection}" SelectionMode="Single"
 					 ScrollViewer.HorizontalScrollBarVisibility="Disabled">
 				<ListBox.ItemTemplate>
@@ -99,7 +99,7 @@
 			</ListBox>
 
 			<!--Textbox to write commands and a button to send them. Textbox should occupy nearly whole view horizontally-->
-			<Grid Grid.Row="2" ColumnDefinitions="*, 80">
+			<Grid Grid.Row="2" Grid.Column="0" ColumnDefinitions="*, 80">
 				<coreControls:EnchancedAutoCompleteBox Grid.Column="0" x:FieldModifier="private" x:Name="_commandInputTextBox"
 						 HorizontalAlignment="Stretch"
 						 ConfirmOnReturn="True" ConfirmOnReturnCommand="{Binding AddCommandLineCommand}" ConfirmReturn="_OnCommandInputTextBoxSendsCommand"
