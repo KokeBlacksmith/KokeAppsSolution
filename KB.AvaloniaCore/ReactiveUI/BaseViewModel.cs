@@ -26,12 +26,6 @@ public abstract class BaseViewModel : ReactiveObject
     
     protected void m_SetProperty<T>(ref T store, T value, [CallerMemberName] string propertyName = null)
     {
-        if (EqualityComparer<T>.Default.Equals(store, value))
-        {
-            return;
-        }
-
-        store = value;
-        this.RaisePropertyChanged(propertyName);
+        this.RaiseAndSetIfChanged(ref store, value, propertyName);
     }
 }

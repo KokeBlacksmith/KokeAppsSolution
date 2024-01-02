@@ -1,12 +1,14 @@
 ﻿using KB.AvaloniaCore.ReactiveUI;
+using KB.SharpCore.DataAnnotations;
 using KB.SharpCore.Utils;
+using System.ComponentModel.DataAnnotations;
 
 namespace KB.ConsoleCompanion.ConfigurationView.ViewModel;
 
 internal class ConfigurationViewModel : BaseViewModel
 {
-    private readonly EmptyCommand _applyCommand;
-    private readonly EmptyCommand _cancelCommand;
+    private readonly VoidCommand _applyCommand;
+    private readonly VoidCommand _cancelCommand;
     private readonly GenericCommand<string?> _connectCommand;
     private string _ipAddress;
     private string _portNumber;
@@ -18,16 +20,18 @@ internal class ConfigurationViewModel : BaseViewModel
         // Localhost is the default IP address
         _ipAddress = System.Net.IPAddress.Loopback.ToString();
         _portNumber = "5555";
-        _storagePath = new KB.SharpCore.IO.Path(System.IO.Path.Combine(System.IO.Path.GetTempPath(), "KB_ConsoleCompanion"));
-        _applyCommand = new EmptyCommand(_OnApplyCommandExecute, null);
-        _cancelCommand = new EmptyCommand(_OnCancelCommandExecute, null);
+        _storagePath = new KB.SharpCore.IO.Path(System.IO.Path.Combine(System.IO.Path.GetTempPath(), "KB_ConsoleCompanion", System.IO.Path.DirectorySeparatorChar.ToString()));
+        _applyCommand = new VoidCommand(_OnApplyCommandExecute, null);
+        _cancelCommand = new VoidCommand(_OnCancelCommandExecute, null);
         _connectCommand = new GenericCommand<string?>(_OnConnectCommandExecute, _OnConnectCommandCanExecute);
     }
 
-    public EmptyCommand ApplyCommand => _applyCommand;
-    public EmptyCommand CancelCommand => _cancelCommand;
+    public VoidCommand ApplyCommand => _applyCommand;
+    public VoidCommand CancelCommand => _cancelCommand;
     public GenericCommand<string?> ConnectCommand => _connectCommand;
 
+    [Required]
+    [IPAddress(isIPv4: true, isIPv6: false)]
 
     public string IPAddress
     {
@@ -35,6 +39,8 @@ internal class ConfigurationViewModel : BaseViewModel
         set { m_SetProperty(ref _ipAddress, value); }
     }
 
+    [Required]
+    [PortNumber]
     public string PortNumber
     {
         get { return _portNumber; }
@@ -70,11 +76,7 @@ internal class ConfigurationViewModel : BaseViewModel
 
     private bool _OnConnectCommandCanExecute(string? ipAddress)
     {
-        if(String.IsNullOrWhiteSpace(ipAddress))
-        {
-            return false;
-        }
-
-        return RegexHelper.Network.IsIPAddress(ipAddress!);
+        //return RegexHelper.Network.IsIPAddress(ipAddress!);
+        return !String.IsNullOrWhiteSpace(ipAddress) && RegexHelper.Network.IsIPv4(ipAddress!);
     }
 }

@@ -43,12 +43,7 @@ public static class RegexHelper
 
         public static bool IsPort(string port)
         {
-            return Regex.IsMatch(port, @"^\d{1,5}$");
-        }
-
-        public static bool IsPassword(string password)
-        {
-            return Regex.IsMatch(password, @"^[a-zA-Z0-9]+$");
+            return Regex.IsMatch(port, @"^([0-9]{1,4}|[1-5][0-9]{4}|6[0-4][0-9]{3}|65[0-4][0-9]{2}|655[0-2][0-9]|6553[0-5])$");
         }
 
         public static bool IsHostname(string hostname)
@@ -56,7 +51,7 @@ public static class RegexHelper
             return Regex.IsMatch(hostname, @"^[a-zA-Z0-9]+$");
         }
 
-        public static bool IsURL(string url)
+        public static bool IsWebURL(string url)
         {
             return Regex.IsMatch(url, @"^http(s)?://([\w-]+.)+[\w-]+(/[\w- ./?%&=])?$");
         }
@@ -73,57 +68,12 @@ public static class RegexHelper
 
         public static bool IsIPv4(string ip)
         {
-            return Regex.IsMatch(ip, @"^(\d{1,3}\.){3}\d{1,3}$");
+            return Regex.IsMatch(ip, @"^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$");
         }
 
         public static bool IsIPv6(string ip)
         {
-            return Regex.IsMatch(ip, @"^([0-9A-Fa-f]{1,4}:){7}[0-9A-Fa-f]{1,4}$");
-        }
-
-        public static bool IsIPv4MappedIPv6(string ip)
-        {
-            return Regex.IsMatch(ip, @"^::[fF]{4}:\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$");
-        }
-
-        public static bool IsIPv4EmbeddedIPv6(string ip)
-        {
-            return Regex.IsMatch(ip, @"^::\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$");
-        }
-
-        public static bool IsIPv4CompatibleIPv6(string ip)
-        {
-            return Regex.IsMatch(ip, @"^::\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$");
-        }
-
-        public static bool IsIPv6UniqueLocalAddress(string ip)
-        {
-            return Regex.IsMatch(ip, @"^fc00:(::|[\w:]{1,4}){0,4}/\d{1,3}$");
-        }
-
-        public static bool IsIPv6LinkLocalAddress(string ip)
-        {
-            return Regex.IsMatch(ip, @"^fe80:(::|[\w:]{1,4}){0,4}/\d{1,3}$");
-        }
-
-        public static bool IsIPv6SiteLocalAddress(string ip)
-        {
-            return Regex.IsMatch(ip, @"^fec0:(::|[\w:]{1,4}){0,4}/\d{1,3}$");
-        }
-
-        public static bool IsIPv6MulticastAddress(string ip)
-        {
-            return Regex.IsMatch(ip, @"^ff[0-9a-f]{2}:(::|[\w:]{1,4}){0,4}/\d{1,3}$");
-        }
-
-        public static bool IsIPv6LoopbackAddress(string ip)
-        {
-            return Regex.IsMatch(ip, @"^::1$");
-        }
-
-        public static bool IsIPv6GlobalUnicastAddress(string ip)
-        {
-            return Regex.IsMatch(ip, @"^([0-9A-Fa-f]{1,4}:){7}[0-9A-Fa-f]{1,4}$");
+            return Regex.IsMatch(ip, @"^((([0-9a-fA-F]{1,4}:){7}([0-9a-fA-F]{1,4})|(([0-9a-fA-F]{1,4}:){1,7}:)|(([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4})|(([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2})|(([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3})|(([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4})|(([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5})|([0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6}))|(:((:[0-9a-fA-F]{1,4}){1,7}|:))|(::[fF]{4}(:[0-9a-fA-F]{1,4}){1,4})|(([0-9a-fA-F]{1,4}:){1,4}:[fF]{4}(:[0-9a-fA-F]{1,4}){1,2}))$");
         }
     }
 

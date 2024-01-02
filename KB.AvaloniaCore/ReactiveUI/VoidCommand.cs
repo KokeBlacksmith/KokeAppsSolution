@@ -2,12 +2,12 @@
 
 namespace KB.AvaloniaCore.ReactiveUI
 {
-    public sealed class EmptyCommand : ICommand
+    public sealed class VoidCommand : ICommand
     {
         private readonly Action _execute;
         private readonly Func<bool>? _canExecute;
 
-        public EmptyCommand(Action execute, Func<bool>? canExecute)
+        public VoidCommand(Action execute, Func<bool>? canExecute)
         {
             _execute = execute ?? throw new ArgumentNullException(nameof(execute));
             _canExecute = canExecute;

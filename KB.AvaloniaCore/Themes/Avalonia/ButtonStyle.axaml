@@ -27,8 +27,8 @@
 		<Setter Property="Padding" Value="2.5" />
     </Style>-->
 
-    <Style Selector="Button:pressed /template/ ContentPresenter#PART_ContentPresenter">
+    <!--<Style Selector="Button:pressed /template/ ContentPresenter#PART_ContentPresenter">
         <Setter Property="BorderBrush" Value="Transparent" />
         <Setter Property="BorderThickness" Value="1" />
-    </Style>
+    </Style>-->
 </Styles>

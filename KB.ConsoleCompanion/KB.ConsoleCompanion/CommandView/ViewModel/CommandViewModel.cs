@@ -12,14 +12,14 @@ internal sealed class CommandViewModel : BaseViewModel
     private IClientProtocolAPI? _client;
     private ObservableCollection<ConsoleCommand> _commandsCollection;
     private GenericCommand<string?> _addCommandLineCommand;
-    private EmptyCommand _clearCommandCollectionCommand;
+    private VoidCommand _clearCommandCollectionCommand;
     private string[]? _availableCommands;
  
     public CommandViewModel()
     {
         _commandsCollection = new ObservableCollection<ConsoleCommand>();
         _addCommandLineCommand = new GenericCommand<string?>(_OnUserCommandExecuted, null);
-        _clearCommandCollectionCommand = new EmptyCommand(_OnClearCommandCollectionExecuted, null);
+        _clearCommandCollectionCommand = new VoidCommand(_OnClearCommandCollectionExecuted, null);
 
         if (!Design.IsDesignMode)
         {
@@ -39,7 +39,7 @@ internal sealed class CommandViewModel : BaseViewModel
         get { return _addCommandLineCommand; }
     }
 
-    public EmptyCommand ClearCommandCollectionCommand
+    public VoidCommand ClearCommandCollectionCommand
     {
         get { return _clearCommandCollectionCommand; }
     }
