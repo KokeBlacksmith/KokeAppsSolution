@@ -1,4 +1,4 @@
-﻿using System.Collections.ObjectModel;
+﻿using Avalonia.Collections;
 using Avalonia.Controls;
 using ConsoleCompanionAPI;
 using ConsoleCompanionAPI.Data;
@@ -10,14 +10,16 @@ namespace KB.ConsoleCompanion.CommandView;
 internal sealed class CommandViewModel : BaseViewModel
 {
     private IClientProtocolAPI? _client;
-    private ObservableCollection<ConsoleCommand> _commandsCollection;
+    private AvaloniaList<ConsoleCommand> _commandsCollection;
+    private AvaloniaList<ConsoleCommand> _userCommandsHistoryCollection;
     private GenericCommand<string?> _addCommandLineCommand;
     private VoidCommand _clearCommandCollectionCommand;
-    private string[]? _availableCommands;
+    private ConsoleCommand[]? _availableCommands;
  
     public CommandViewModel()
     {
-        _commandsCollection = new ObservableCollection<ConsoleCommand>();
+        _commandsCollection = new AvaloniaList<ConsoleCommand>();
+        _userCommandsHistoryCollection = new AvaloniaList<ConsoleCommand>();
         _addCommandLineCommand = new GenericCommand<string?>(_OnUserCommandExecuted, null);
         _clearCommandCollectionCommand = new VoidCommand(_OnClearCommandCollectionExecuted, null);
 
@@ -28,10 +30,16 @@ internal sealed class CommandViewModel : BaseViewModel
         }
     }
 
-    public ObservableCollection<ConsoleCommand> CommandsCollection
+    public AvaloniaList<ConsoleCommand> CommandsCollection
     {
         get { return _commandsCollection; }
         set { m_SetProperty(ref _commandsCollection, value); }
+    }
+
+    public AvaloniaList<ConsoleCommand> UserCommandsHistoryCollection
+    {
+        get { return _userCommandsHistoryCollection; }
+        set { m_SetProperty(ref _userCommandsHistoryCollection, value); }
     }
 
     public GenericCommand<string?> AddCommandLineCommand
@@ -44,7 +52,7 @@ internal sealed class CommandViewModel : BaseViewModel
         get { return _clearCommandCollectionCommand; }
     }
 
-    public string[]? AvailableCommands
+    public ConsoleCommand[]? AvailableCommands
     {
         get { return _availableCommands; }
         set { m_SetProperty(ref _availableCommands, value); }
@@ -75,6 +83,7 @@ internal sealed class CommandViewModel : BaseViewModel
         
             // Add command to collection and to view
             CommandsCollection.Add(userCommand);
+            UserCommandsHistoryCollection.Add(userCommand);
 
             // Send Command to desired application
             Task<ConsoleCommand> responseTask = _client.SendCommand(userCommand);
@@ -102,6 +111,6 @@ internal sealed class CommandViewModel : BaseViewModel
     private async void _RequestAvailableCommands()
     {
         IEnumerable<ConsoleCommand> availableCommands = await _client!.RequestAvailableCommands();
-        AvailableCommands = availableCommands.Select(c => c.Command).ToArray();
+        AvailableCommands = availableCommands.ToArray();
     }
 }

@@ -121,23 +121,41 @@
 				<RowDefinition Height="*" MinHeight="80" />
 			</Grid.RowDefinitions>
 			
-			<!-- Available Commands-->
-			<Grid Grid.Row="0" RowDefinitions="30, *">
-				<TextBlock Grid.Row="0" Text="Available Commands" />
-				<ListBox Grid.Row="1" x:FieldModifier="private" x:Name="_availableCommandsListBox" ItemsSource="{Binding AvailableCommands}">
-					<ListBox.ItemTemplate>
-						<DataTemplate>
-							<Border Background="Transparent">
-								<TextBlock Text="{Binding }" />
-								<i:Interaction.Behaviors>
-									<kbIav:DoubleTappedEventSubscriber DoubleTapped="_OnAvailableListBoxItemDoubleTapped"/>
-								</i:Interaction.Behaviors>
-							</Border>
-						</DataTemplate>
-					</ListBox.ItemTemplate>
-				</ListBox>
-			</Grid>
+			<!-- Available Commands / History -->
+			<TabControl Grid.Row="0" Margin="0" Padding="0">
+				<TabItem Header="Commands">
+					<ListBox x:FieldModifier="private" x:Name="_availableCommandsListBox" ItemsSource="{Binding AvailableCommands}">
+						<ListBox.ItemTemplate>
+							<DataTemplate>
+								<Border Background="Transparent">
+									<TextBlock Text="{Binding Command}" />
+									<i:Interaction.Behaviors>
+										<kbIav:DoubleTappedEventSubscriber DoubleTapped="_OnCommandsListBoxItemDoubleTapped"/>
+									</i:Interaction.Behaviors>
+								</Border>
+							</DataTemplate>
+						</ListBox.ItemTemplate>
+					</ListBox>
+				</TabItem>
+
+				<TabItem Header="History">
+					<ListBox x:FieldModifier="private" x:Name="_userCommandsHistoryListBox" ItemsSource="{Binding UserCommandsHistoryCollection}">
+						<ListBox.ItemTemplate>
+							<DataTemplate>
+								<Border Background="Transparent">
+									<TextBlock Text="{Binding Command}" />
+									<i:Interaction.Behaviors>
+										<kbIav:DoubleTappedEventSubscriber DoubleTapped="_OnCommandsListBoxItemDoubleTapped"/>
+									</i:Interaction.Behaviors>
+								</Border>
+							</DataTemplate>
+						</ListBox.ItemTemplate>
+					</ListBox>
+				</TabItem>
+			</TabControl>
+			
 			<GridSplitter Grid.Row="1"/>
+			
 			<!-- Macros -->
 			<Grid Grid.Row="2" RowDefinitions="30, *">
 				<StackPanel Grid.Row="0" Orientation="Horizontal">
@@ -149,14 +167,7 @@
 							</Image.Source>
 						</Image>
 					</Button>
-
-					<Button ToolTip.Tip="Edit Macro" Background="Transparent" Click="_OnEditMacroButtonClick">
-						<Image>
-							<Image.Source>
-								<DrawingImage Drawing="{StaticResource VSImageLib.EditAssociation_16x}"/>
-							</Image.Source>
-						</Image>
-					</Button>
+					
 				</StackPanel>
 			</Grid>
 		</Grid>

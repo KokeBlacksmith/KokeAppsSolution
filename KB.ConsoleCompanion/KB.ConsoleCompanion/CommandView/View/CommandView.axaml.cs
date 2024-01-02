@@ -16,6 +16,11 @@ namespace KB.ConsoleCompanion.CommandView;
 /// </summary>
 public partial class CommandView : UserControl
 {
+    static CommandView()
+    {
+
+    }
+
     public CommandView()
     {
         InitializeComponent();
@@ -33,11 +38,6 @@ public partial class CommandView : UserControl
         {
             _listBox.ScrollIntoView(_listBox.Items[^1]!);
         }
-    }
-
-    private void _OnSendCommandClick(object sender, RoutedEventArgs args)
-    {
-        _SendUserCommand();
     }
 
     private void _OnAddMacroButtonClick(object sender, RoutedEventArgs args)
@@ -58,14 +58,23 @@ public partial class CommandView : UserControl
         graphWindow.Show();
     }
 
-    private void _OnEditMacroButtonClick(object sender, RoutedEventArgs args)
+    private void _OnSendCommandClick(object sender, RoutedEventArgs args)
     {
-
+        _SendUserCommand();
     }
 
     private void _OnCommandInputTextBoxSendsCommand(object sender, RoutedEventArgs args)
     {
         _SendUserCommand();
+    }
+
+    private void _OnCommandsListBoxItemDoubleTapped(object sender, RoutedEventArgs args)
+    {
+        Control senderControl = (Control)sender;
+        ListBoxItem listBoxItem = (ListBoxItem)senderControl.Parent!;
+        _commandInputTextBox.Text = ((ConsoleCommand)listBoxItem.DataContext!).Command;
+        _commandInputTextBox.Focus();
+        _commandInputTextBox.UnselectAllText();
     }
 
     private void _SendUserCommand()
@@ -74,11 +83,5 @@ public partial class CommandView : UserControl
         _commandInputTextBox.Text = String.Empty;
         _commandInputTextBox.Focus();
     }
-    private void _OnAvailableListBoxItemDoubleTapped(object sender, RoutedEventArgs args)
-    {
-        string? command = _availableCommandsListBox.SelectedItem as string;
-        _commandInputTextBox.Text = command ?? String.Empty;
-        _commandInputTextBox.Focus();
-        _commandInputTextBox.UnselectAllText();
-    }
+
 }
