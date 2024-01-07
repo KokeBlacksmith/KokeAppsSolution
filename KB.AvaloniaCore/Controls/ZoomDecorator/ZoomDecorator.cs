@@ -26,10 +26,10 @@ public partial class ZoomDecorator : Decorator
     /// <param name="mode">The stretch mode.</param>
     public static Matrix CalculateMatrix(double panelWidth, double panelHeight, double elementWidth, double elementHeight, Stretch mode)
     {
-        var scaleX = panelWidth / elementWidth;
-        var scaleY = panelHeight / elementHeight;
-        var centerX = elementWidth / 2.0;
-        var centerY = elementHeight / 2.0;
+        double scaleX = panelWidth / elementWidth;
+        double scaleY = panelHeight / elementHeight;
+        double centerX = elementWidth * 0.5d;
+        double centerY = elementHeight * 0.5d;
 
         switch (mode)
         {
@@ -40,12 +40,12 @@ public partial class ZoomDecorator : Decorator
                 return MatrixMath.CreateScaleAt(scaleX, scaleY, centerX, centerY);
             case Stretch.Uniform:
                 {
-                    var zoom = System.Math.Min(scaleX, scaleY);
+                    double zoom = System.Math.Min(scaleX, scaleY);
                     return MatrixMath.CreateScaleAt(zoom, zoom, centerX, centerY);
                 }
             case Stretch.UniformToFill:
                 {
-                    var zoom = System.Math.Max(scaleX, scaleY);
+                    double zoom = System.Math.Max(scaleX, scaleY);
                     return MatrixMath.CreateScaleAt(zoom, zoom, centerX, centerY);
                 }
         }
@@ -247,14 +247,25 @@ public partial class ZoomDecorator : Decorator
         m_OnZoomChanged(args);
     }
 
-    private void _Constrain()
+    private void _ConstrainMatrix(ref Matrix matrix)
     {
         double zoomX = System.Math.Clamp(_matrix.GetScaleX(), MinZoomX, MaxZoomX);
         double zoomY = System.Math.Clamp(_matrix.GetScaleY(), MinZoomY, MaxZoomY);
         double offsetX = System.Math.Clamp(_matrix.GetTranslateX(), MinOffsetX, MaxOffsetX);
         double offsetY = System.Math.Clamp(_matrix.GetTranslateY(), MinOffsetY, MaxOffsetY);
 
-        _matrix = new Matrix(zoomX, 0.0, 0.0, zoomY, offsetX, offsetY);
+        bool isZoomConstrained = (zoomX == MinZoomX) || (zoomY == MinZoomY);
+        bool areParentBoundValid = (Bounds.Width > 0) && (Bounds.Height > 0);
+
+        if (areParentBoundValid && isZoomConstrained)
+        {
+            // Fit child to the view
+            matrix = CalculateMatrix(this.Bounds.Width, this.Bounds.Height, _child!.Bounds.Width, _child!.Bounds.Height, this.StretchMode);
+        }
+        else
+        {
+            matrix = new Matrix(zoomX, 0.0, 0.0, zoomY, offsetX, offsetY);
+        }
     }
 
     /// <summary>
@@ -270,7 +281,7 @@ public partial class ZoomDecorator : Decorator
 
         if (EnableConstrains)
         {
-            _Constrain();
+            _ConstrainMatrix(ref _matrix);
         }
 
         InvalidateProperties();
@@ -431,8 +442,8 @@ public partial class ZoomDecorator : Decorator
             return;
         }
 
-        var x = _child.Bounds.Width / 2.0;
-        var y = _child.Bounds.Height / 2.0;
+        double x = _child.Bounds.Width / 2.0d;
+        double y = _child.Bounds.Height / 2.0d;
         ZoomTo(ZoomSpeed, x, y, skipTransitions);
     }
 
@@ -447,8 +458,8 @@ public partial class ZoomDecorator : Decorator
             return;
         }
 
-        var x = _child.GetHalfBoundsWidth();
-        var y = _child.GetHalfBoundsHeight();
+        double x = _child.GetHalfBoundsWidth();
+        double y = _child.GetHalfBoundsHeight();
         ZoomTo(1 / ZoomSpeed, x, y, skipTransitions);
     }
 

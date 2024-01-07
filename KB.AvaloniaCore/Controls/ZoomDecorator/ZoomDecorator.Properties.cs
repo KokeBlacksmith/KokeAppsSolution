@@ -168,6 +168,7 @@ public partial class ZoomDecorator
     private double _offsetY = 0.0;
     private bool _captured = false;
 
+
     /// <summary>
     /// Zoom changed event.
     /// </summary>
