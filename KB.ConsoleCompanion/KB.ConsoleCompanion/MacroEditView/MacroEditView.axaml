@@ -16,7 +16,7 @@
 			
 			<view_core:ZoomDecorator
 				x:FieldModifier="private" x:Name="_zoomBorder"
-				EnableConstrains="True"
+				EnableConstrains="True" ConstraintOffsetByParentBounds="True"
 				MinZoomX="1" MaxZoomX="5"
 				MinZoomY="1" MaxZoomY="5">
 			<!--<view_core:ZoomDecorator

@@ -112,6 +112,9 @@ public partial class ZoomDecorator
     public static readonly StyledProperty<double> MaxOffsetYProperty =
         AvaloniaProperty.Register<ZoomDecorator, double>(nameof(MaxOffsetY), double.PositiveInfinity, false, BindingMode.TwoWay);
 
+    public static readonly StyledProperty<bool> ConstraintOffsetByParentBoundsProperty =
+        AvaloniaProperty.Register<ZoomDecorator, bool>(nameof(ConstraintOffsetByParentBounds), false, false, BindingMode.TwoWay);
+
     /// <summary>
     /// Identifies the <seealso cref="EnablePan"/> avalonia property.
     /// </summary>
@@ -142,6 +145,7 @@ public partial class ZoomDecorator
             ZoomSpeedProperty,
             StretchModeProperty,
             EnableConstrainsProperty,
+            ConstraintOffsetByParentBoundsProperty,
             MinZoomXProperty,
             MaxZoomXProperty,
             MinZoomYProperty,
@@ -149,7 +153,8 @@ public partial class ZoomDecorator
             MinOffsetXProperty,
             MaxOffsetXProperty,
             MinOffsetYProperty,
-            MaxOffsetYProperty);
+            MaxOffsetYProperty
+            );
 
         Decorator.ChildProperty.Changed.AddClassHandler<ZoomDecorator>((s, e) => s.ChildChanged(e.GetNewValue<Control?>()));
         Decorator.BoundsProperty.Changed.AddClassHandler<ZoomDecorator>((s, e) => s.BoundsChanged(e.GetNewValue<Rect>()));
@@ -314,6 +319,12 @@ public partial class ZoomDecorator
     {
         get => GetValue(MaxOffsetYProperty);
         set => SetValue(MaxOffsetYProperty, value);
+    }
+
+    public bool ConstraintOffsetByParentBounds
+    {
+        get => GetValue(ConstraintOffsetByParentBoundsProperty);
+        set => SetValue(ConstraintOffsetByParentBoundsProperty, value);
     }
 
     /// <summary>

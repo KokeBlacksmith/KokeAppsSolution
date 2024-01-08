@@ -254,9 +254,34 @@ public partial class ZoomDecorator : Decorator
         double offsetX = System.Math.Clamp(_matrix.GetTranslateX(), MinOffsetX, MaxOffsetX);
         double offsetY = System.Math.Clamp(_matrix.GetTranslateY(), MinOffsetY, MaxOffsetY);
 
-        bool isZoomConstrained = (zoomX == MinZoomX) || (zoomY == MinZoomY);
         bool areParentBoundValid = (Bounds.Width > 0) && (Bounds.Height > 0);
 
+        if(areParentBoundValid && ConstraintOffsetByParentBounds)
+        {
+            // Do not let child element go outside of parent bounds
+            double childWidth = _child!.Bounds.Width * zoomX;
+            double childHeight = _child!.Bounds.Height * zoomY;
+
+            if (childWidth < Bounds.Width)
+            {
+                offsetX = (Bounds.Width - childWidth) * 0.5d;
+            }
+            else
+            {
+                offsetX = System.Math.Clamp(offsetX, Bounds.Width - childWidth, 0);
+            }
+
+            if (childHeight < Bounds.Height)
+            {
+                offsetY = (Bounds.Height - childHeight) * 0.5d;
+            }
+            else
+            {
+                offsetY = System.Math.Clamp(offsetY, Bounds.Height - childHeight, 0);
+            }
+        }
+
+        bool isZoomConstrained = (zoomX == MinZoomX) || (zoomY == MinZoomY);
         if (areParentBoundValid && isZoomConstrained)
         {
             // Fit child to the view
