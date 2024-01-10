@@ -467,8 +467,8 @@ public partial class ZoomDecorator : Decorator
             return;
         }
 
-        double x = _child.Bounds.Width / 2.0d;
-        double y = _child.Bounds.Height / 2.0d;
+        double x = _child.Bounds.Width * 0.5d;
+        double y = _child.Bounds.Height * 0.5d;
         ZoomTo(ZoomSpeed, x, y, skipTransitions);
     }
 

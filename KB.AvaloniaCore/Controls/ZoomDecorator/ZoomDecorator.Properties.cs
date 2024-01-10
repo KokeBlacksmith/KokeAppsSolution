@@ -68,49 +68,49 @@ public partial class ZoomDecorator
     /// Identifies the <seealso cref="MinZoomX"/> avalonia property.
     /// </summary>
     public static readonly StyledProperty<double> MinZoomXProperty =
-        AvaloniaProperty.Register<ZoomDecorator, double>(nameof(MinZoomX), double.NegativeInfinity, false, BindingMode.TwoWay);
+        AvaloniaProperty.Register<ZoomDecorator, double>(nameof(MinZoomX), Double.NegativeInfinity, false, BindingMode.TwoWay);
 
     /// <summary>
     /// Identifies the <seealso cref="MaxZoomX"/> avalonia property.
     /// </summary>
     public static readonly StyledProperty<double> MaxZoomXProperty =
-        AvaloniaProperty.Register<ZoomDecorator, double>(nameof(MaxZoomX), double.PositiveInfinity, false, BindingMode.TwoWay);
+        AvaloniaProperty.Register<ZoomDecorator, double>(nameof(MaxZoomX), Double.PositiveInfinity, false, BindingMode.TwoWay);
 
     /// <summary>
     /// Identifies the <seealso cref="MinZoomY"/> avalonia property.
     /// </summary>
     public static readonly StyledProperty<double> MinZoomYProperty =
-        AvaloniaProperty.Register<ZoomDecorator, double>(nameof(MinZoomY), double.NegativeInfinity, false, BindingMode.TwoWay);
+        AvaloniaProperty.Register<ZoomDecorator, double>(nameof(MinZoomY), Double.NegativeInfinity, false, BindingMode.TwoWay);
 
     /// <summary>
     /// Identifies the <seealso cref="MaxZoomY"/> avalonia property.
     /// </summary>
     public static readonly StyledProperty<double> MaxZoomYProperty =
-        AvaloniaProperty.Register<ZoomDecorator, double>(nameof(MaxZoomY), double.PositiveInfinity, false, BindingMode.TwoWay);
+        AvaloniaProperty.Register<ZoomDecorator, double>(nameof(MaxZoomY), Double.PositiveInfinity, false, BindingMode.TwoWay);
 
     /// <summary>
     /// Identifies the <seealso cref="MinOffsetX"/> avalonia property.
     /// </summary>
     public static readonly StyledProperty<double> MinOffsetXProperty =
-        AvaloniaProperty.Register<ZoomDecorator, double>(nameof(MinOffsetX), double.NegativeInfinity, false, BindingMode.TwoWay);
+        AvaloniaProperty.Register<ZoomDecorator, double>(nameof(MinOffsetX), Double.NegativeInfinity, false, BindingMode.TwoWay);
 
     /// <summary>
     /// Identifies the <seealso cref="MaxOffsetX"/> avalonia property.
     /// </summary>
     public static readonly StyledProperty<double> MaxOffsetXProperty =
-        AvaloniaProperty.Register<ZoomDecorator, double>(nameof(MaxOffsetX), double.PositiveInfinity, false, BindingMode.TwoWay);
+        AvaloniaProperty.Register<ZoomDecorator, double>(nameof(MaxOffsetX), Double.PositiveInfinity, false, BindingMode.TwoWay);
 
     /// <summary>
     /// Identifies the <seealso cref="MinOffsetY"/> avalonia property.
     /// </summary>
     public static readonly StyledProperty<double> MinOffsetYProperty =
-        AvaloniaProperty.Register<ZoomDecorator, double>(nameof(MinOffsetY), double.NegativeInfinity, false, BindingMode.TwoWay);
+        AvaloniaProperty.Register<ZoomDecorator, double>(nameof(MinOffsetY), Double.NegativeInfinity, false, BindingMode.TwoWay);
 
     /// <summary>
     /// Identifies the <seealso cref="MaxOffsetY"/> avalonia property.
     /// </summary>
     public static readonly StyledProperty<double> MaxOffsetYProperty =
-        AvaloniaProperty.Register<ZoomDecorator, double>(nameof(MaxOffsetY), double.PositiveInfinity, false, BindingMode.TwoWay);
+        AvaloniaProperty.Register<ZoomDecorator, double>(nameof(MaxOffsetY), Double.PositiveInfinity, false, BindingMode.TwoWay);
 
     public static readonly StyledProperty<bool> ConstraintOffsetByParentBoundsProperty =
         AvaloniaProperty.Register<ZoomDecorator, bool>(nameof(ConstraintOffsetByParentBounds), false, false, BindingMode.TwoWay);

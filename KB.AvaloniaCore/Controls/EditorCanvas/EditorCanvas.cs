@@ -8,6 +8,7 @@ using Avalonia.Media;
 using Avalonia.Metadata;
 using Avalonia.VisualTree;
 using KB.AvaloniaCore.Controls.UserActions;
+using KB.AvaloniaCore.Injection;
 using KB.SharpCore.DesignPatterns.UserAction;
 using KB.SharpCore.Events;
 using KB.SharpCore.Synchronization;
@@ -454,5 +455,57 @@ public class EditorCanvas : Control
     {
         Canvas.SetLeft(editableControl.Control, editableControl.PositionX);
         Canvas.SetTop(editableControl.Control, editableControl.PositionY);
+
+        //if(!_childrenCanvas.IsInitialized || !_selfUpdatingSelectedItemsRAII.CanExecute())
+        //{
+        //    return;
+        //}
+
+        //using (_selfUpdatingSelectedItemsRAII.Execute())
+        //{
+        //    // Check canvas must be resized to fit the control.
+        //    // The control may be dragged outside the canvas. So the canvas must be resized to fit the control.
+        //    double newWidth = editableControl.PositionX + editableControl.Width;
+        //    double newHeight = editableControl.PositionY + editableControl.Height;
+
+        //    double? leftChange = null;
+        //    double? topChange = null;
+
+        //    if(newWidth > this.Bounds.Width)
+        //    {
+        //        this.Width = newWidth;
+        //    }
+        //    else if(editableControl.PositionX < 0.0d)
+        //    {
+        //        leftChange = System.Math.Abs(editableControl.PositionX);
+        //        this.Width = this.Bounds.Width + leftChange.Value;
+        //    }
+
+        //    if(newHeight > this.Bounds.Height)
+        //    {
+        //        this.Height = newHeight;
+        //    }
+        //    else if(editableControl.PositionY < 0.0d)
+        //    {
+        //        topChange = System.Math.Abs(editableControl.PositionY);
+        //        this.Height = this.Bounds.Height + topChange.Value;
+        //    }
+
+        //    if(leftChange.HasValue || topChange.HasValue)
+        //    {
+        //        foreach(IEditableControl child in Children.Except(SelectedItems))
+        //        {
+        //            if(leftChange.HasValue)
+        //            {
+        //                Canvas.SetLeft(child.Control, child.PositionX + leftChange.Value);
+        //            }
+
+        //            if(topChange.HasValue)
+        //            {
+        //                Canvas.SetTop(child.Control, child.PositionY + topChange.Value);
+        //            }
+        //        }
+        //    }
+        //}
     }
 }

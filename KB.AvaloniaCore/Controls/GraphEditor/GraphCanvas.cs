@@ -5,18 +5,18 @@ using Avalonia.Controls.Primitives;
 using Avalonia.Data;
 using Avalonia.Media;
 using Avalonia.Metadata;
-using Avalonia.Xaml.Interactions.Custom;
 using KB.AvaloniaCore.Controls.GraphEditor.Events;
 using KB.AvaloniaCore.Injection;
+using KB.SharpCore.Events;
 using KB.SharpCore.Utils;
-using System.Collections.Generic;
 using System.Collections.Specialized;
-using System.Linq;
 using System.Reactive.Linq;
-using System.Reactive.Subjects;
 
 namespace KB.AvaloniaCore.Controls.GraphEditor;
 
+/// <summary>
+/// Canvas to draw nodes and connections between them.
+/// </summary>
 public class GraphCanvas : Control
 {
     /// <summary>
@@ -66,8 +66,6 @@ public class GraphCanvas : Control
     public readonly static StyledProperty<IAvaloniaList<Node>> ChildNodesProperty = AvaloniaProperty.Register<GraphCanvas, IAvaloniaList<Node>>(nameof(GraphCanvas.ChildNodes), new AvaloniaList<Node>());
     public readonly static StyledProperty<IEnumerable<NodeConnection>> NodeConnectionsProperty = AvaloniaProperty.Register<GraphCanvas, IEnumerable<NodeConnection>>(nameof(GraphCanvas.NodeConnections));
     public readonly static StyledProperty<IBrush> BackgroundProperty = AvaloniaProperty.Register<GraphCanvas, IBrush>(nameof(GraphCanvas.Background), Brushes.White);
-    public static readonly StyledProperty<ScrollBarVisibility> HorizontalScrollBarVisibilityProperty = AvaloniaProperty.Register<GraphCanvas, ScrollBarVisibility>(nameof(ScrollBarVisibility));
-    public static readonly StyledProperty<ScrollBarVisibility> VerticalScrollBarVisibilityProperty = AvaloniaProperty.Register<GraphCanvas, ScrollBarVisibility>(nameof(ScrollBarVisibility));
 
     [Content]
     public IAvaloniaList<Node> ChildNodes
@@ -112,7 +110,6 @@ public class GraphCanvas : Control
     {
         _editorCanvas.Background = Background;
     }
-
 
     #region Node Management
 
