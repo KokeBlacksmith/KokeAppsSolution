@@ -1,6 +1,8 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Input;
 using Avalonia.Media;
+using KB.AvaloniaCore.Controls.GraphEditor.Events;
 using KB.AvaloniaCore.Injection;
 using KB.SharpCore.Events;
 using KB.SharpCore.Utils;
@@ -16,6 +18,11 @@ public class NodeConnection : Control
     /// Connection drawing
     /// </summary>
     private readonly BezierLine _line;
+
+    /// <summary>
+    /// Invisible line that is used to detect clicks on the connection easier
+    /// </summary>
+    private readonly BezierLine _invisibleClickLine;
 
     static NodeConnection()
     {
@@ -39,8 +46,17 @@ public class NodeConnection : Control
     private NodeConnection(Point sourcePosition, Point targetPosition)
     {
         _line = new BezierLine();
+        _invisibleClickLine = new BezierLine();
         LogicalChildren.Add(_line);
         VisualChildren.Add(_line);
+        VisualChildren.Add(_invisibleClickLine);
+
+        _invisibleClickLine[!BezierLine.StartPointProperty] = _line[!BezierLine.StartPointProperty];
+        _invisibleClickLine[!BezierLine.EndPointProperty] = _line[!BezierLine.EndPointProperty];
+        _invisibleClickLine[!BezierLine.StartAngleProperty] = _line[!BezierLine.StartAngleProperty];
+        _invisibleClickLine[!BezierLine.EndAngleProperty] = _line[!BezierLine.EndAngleProperty];
+        _invisibleClickLine[!BezierLine.ControlPointDistanceProperty] = _line[!BezierLine.ControlPointDistanceProperty];
+        _invisibleClickLine.Stroke = Brushes.Transparent;
 
         // Set start and end point// Set start and end point
         _line.StartPoint = sourcePosition;
@@ -50,7 +66,12 @@ public class NodeConnection : Control
         // Color has to be in styled properties
         _line.Stroke = Brushes.Yellow;
         _line.StrokeThickness = 2;
+        _invisibleClickLine.StrokeThickness = 10;
     }
+
+    public new event EventHandler<NodeConnectionPointerInteractionEventArgs>? PointerPressed;
+    public new event EventHandler<NodeConnectionPointerInteractionEventArgs>? PointerMoved;
+    public new event EventHandler<NodeConnectionPointerInteractionEventArgs>? PointerReleased;
 
     public static readonly StyledProperty<NodePin?> SourcePinProperty = AvaloniaProperty.Register<NodeConnection, NodePin?>(nameof(NodeConnection.SourcePin));
     public static readonly StyledProperty<NodePin?> TargetPinProperty = AvaloniaProperty.Register<NodeConnection, NodePin?>(nameof(NodeConnection.TargetPin));
@@ -167,6 +188,7 @@ public class NodeConnection : Control
         }
 
         self._UpdateLine();
+        self._UpdateConnectionZIndex();
     }
 
     private static void _OnTargetPinPropertyChanged(NodeConnection self, AvaloniaPropertyChangedEventArgs args)
@@ -198,13 +220,7 @@ public class NodeConnection : Control
         }
 
         self._UpdateLine();
-    }
-
-    private Point _GePinCenterPosition(NodePin pin)
-    {
-        Point pinPosition = CanvasExtension.GetCanvasControlCenter(pin);
-        Canvas parentNodeCanvas = pin.ParentNode!.GetParentOfType<Canvas>();
-        return pin.ParentNode!.TranslatePoint(pinPosition, parentNodeCanvas)!.Value;
+        self._UpdateConnectionZIndex();
     }
 
     private double _GetPinConnectionAngle(NodePin pin)
@@ -212,50 +228,48 @@ public class NodeConnection : Control
         // Check where the pin is located in the node. It can be top, bottom, left or right.
         // Depending on that, we have to set the angle of the connection.
         // The angle is the angle of the line that goes from the center of the node to the center of the pin.
+
         // Get the center of the node
         Point nodeCenter = CanvasExtension.GetCanvasControlCenter(pin.ParentNode!);
         // Get the center of the pin
-        Point pinCenter = _GePinCenterPosition(pin);
-        // Get the angle between the points
-        double angle = KB.SharpCore.Utils.Math.GetRadAngleBetweenPoints(nodeCenter.X, nodeCenter.Y, pinCenter.X, pinCenter.Y);
-
-        // Check where the pin is located in the node. It can be top, bottom, left or right.
-        // Depending on that, we have to set the angle of the connection.
-        if(angle.IsBetween(KB.SharpCore.Utils.Math.PIQuarter, (3 * System.Math.PI) / 4.0d))
+        Point pinCenter = pin.GeCenterPositionRelativeToNode();
+        double radiansAngle;
+        switch(KB.SharpCore.Utils.Math.Get2DSideFromCenterToPoint(nodeCenter.X, nodeCenter.Y, pinCenter.X, pinCenter.Y))
         {
-            //Top
-            angle = KB.SharpCore.Utils.Math.PIHalf;
-        }
-        else if(angle.IsBetween((3 * System.Math.PI) / 4.0d, (5 * System.Math.PI) / 4.0d))
-        {
-            //Left
-            angle = System.Math.PI;
-        }
-        else if(angle.IsBetween((5 * System.Math.PI) / 4.0d, (7 * System.Math.PI) / 4.0d))
-        {
-            //Bottom
-            angle = (System.Math.PI * 3) / 2;
-        }
-        else
-        {
-            //Right
-            angle = 0;
+            case 0:
+                //Top
+                radiansAngle = KB.SharpCore.Utils.Math.PIHalf;
+                break;
+            case 1:
+                //Left
+                radiansAngle = System.Math.PI;
+                break;
+            case 2:
+                //Bottom
+                radiansAngle = (System.Math.PI * 3) / 2;
+                break;
+            case 3:
+                //Right
+                radiansAngle = 0;
+                break;
+            default:
+                throw new InvalidOperationException("Pin is not located on any side of the node.");
         }
 
-        return KB.SharpCore.Utils.Math.RadToDeg(angle);
+        return KB.SharpCore.Utils.Math.RadToDeg(radiansAngle);
     }
 
     private void _UpdateLine()
     {
         if(SourcePin is not null)
         {
-            _line.StartPoint = _GePinCenterPosition(SourcePin);
+            _line.StartPoint = SourcePin.GeCenterPositionRelativeToNode();
             _line.StartAngle = _GetPinConnectionAngle(SourcePin);
         }
 
         if(TargetPin is not null)
         {
-            _line.EndPoint = _GePinCenterPosition(TargetPin);
+            _line.EndPoint = TargetPin.GeCenterPositionRelativeToNode();
             _line.EndAngle = _GetPinConnectionAngle(TargetPin);
         }
     }
@@ -263,5 +277,40 @@ public class NodeConnection : Control
     private void _OnNodePositionChanged(object? sender, ValueChangedEventArgs<double> e)
     {
         _UpdateLine();
+    }
+
+    private void _UpdateConnectionZIndex()
+    {
+        // Connections have to be behind the nodes
+        int? sourceNodeZIndez = SourcePin?.ParentNode?.ZIndex;
+        int? targetNodeZIndez = TargetPin?.ParentNode?.ZIndex;
+
+        if(sourceNodeZIndez.HasValue && targetNodeZIndez.HasValue)
+        {
+            this.ZIndex = sourceNodeZIndez <= targetNodeZIndez ? sourceNodeZIndez.Value - 1 : targetNodeZIndez.Value - 1;
+        }
+        else if(sourceNodeZIndez.HasValue)
+        {
+            this.ZIndex = sourceNodeZIndez.Value - 1;
+        }
+        else if(targetNodeZIndez.HasValue)
+        {
+            this.ZIndex = targetNodeZIndez.Value - 1;
+        }
+    }
+
+    protected override void OnPointerPressed(PointerPressedEventArgs e)
+    {
+        PointerPressed?.Invoke(this, new NodeConnectionPointerInteractionEventArgs(this, e.GetPosition(this)));
+    }
+
+    protected override void OnPointerMoved(PointerEventArgs e)
+    {
+        PointerMoved?.Invoke(this, new NodeConnectionPointerInteractionEventArgs(this, e.GetPosition(this)));
+    }
+
+    protected override void OnPointerReleased(PointerReleasedEventArgs e)
+    {
+        PointerReleased?.Invoke(this, new NodeConnectionPointerInteractionEventArgs(this, e.GetPosition(this)));
     }
 }

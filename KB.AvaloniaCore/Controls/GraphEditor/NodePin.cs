@@ -75,6 +75,13 @@ public class NodePin : TemplatedControl
         return true;
     }
 
+    public Point GeCenterPositionRelativeToNode()
+    {
+        Point pinPosition = CanvasExtension.GetCanvasControlCenter(this);
+        Canvas parentNodeCanvas = this.ParentNode!.GetParentOfType<Canvas>();
+        return this.ParentNode!.TranslatePoint(pinPosition, parentNodeCanvas)!.Value;
+    }
+
     protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
     {
         base.OnApplyTemplate(e);

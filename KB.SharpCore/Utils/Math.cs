@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
+﻿using System.Drawing;
+using System.Net.NetworkInformation;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace KB.SharpCore.Utils;
 
@@ -14,7 +10,6 @@ public static class Math
     public const double PI2 = System.Math.PI * 2.0d;
     public const double PIHalf = System.Math.PI * 0.5d;
     public const double PIQuarter = System.Math.PI * 0.25d;
-
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool IsBetween<T>(this T item, in T start, in T end)
@@ -67,4 +62,76 @@ public static class Math
     {
         return RadToDeg(GetRadAngleBetweenPoints(p1X, p1Y, p2X, p2Y));
     }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static double GetDistanceBetweenPoints(Point p1, Point p2)
+    {
+        return GetDistanceBetweenPoints(p1.X, p1.Y, p2.X, p2.Y);
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static double GetDistanceBetweenPoints(double x1, double y1, double x2, double y2)
+    {
+        double xDiff = x2 - x1;
+        double yDiff = y2 - y1;
+
+        return System.Math.Sqrt(xDiff * xDiff + yDiff * yDiff);
+    }
+
+    /// <summary>
+    /// Returns from which side the point is located relative to the center.
+    /// </summary>
+    /// <param name="center">Center position</param>
+    /// <param name="point">Position of the point relative to the center</param>
+    /// <returns>
+    /// 0 = Top <br/>
+    /// 1 = Left <br/>
+    /// 2 = Bottom <br/>
+    /// 3 = Right
+    /// </returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static byte Get2DSideFromCenterToPoint(Point center, Point point)
+    {
+        return Get2DSideFromCenterToPoint(center.X, center.Y, point.X, point.Y);
+    }
+
+    /// <summary>
+    /// Returns from which side the point is located relative to the center.
+    /// </summary>
+    /// <returns>
+    /// 0 = Top <br/>
+    /// 1 = Left <br/>
+    /// 2 = Bottom <br/>
+    /// 3 = Right
+    /// </returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static byte Get2DSideFromCenterToPoint(double centerX, double centerY, double pointX, double pointY)
+    {
+        // Get the angle between the points
+        double angle = KB.SharpCore.Utils.Math.GetRadAngleBetweenPoints(centerX, centerY, pointX, pointY);
+
+        // Check where the pin is located in the node. It can be top, bottom, left or right.
+        // Depending on that, we have to set the angle of the connection.
+        if (angle.IsBetween(KB.SharpCore.Utils.Math.PIQuarter, (3 * System.Math.PI) / 4.0d))
+        {
+            //Top
+            return 0;
+        }
+        else if (angle.IsBetween((3 * System.Math.PI) / 4.0d, (5 * System.Math.PI) / 4.0d))
+        {
+            //Left
+            return 1;
+        }
+        else if (angle.IsBetween((5 * System.Math.PI) / 4.0d, (7 * System.Math.PI) / 4.0d))
+        {
+            //Bottom
+            return 2;
+        }
+        else
+        {
+            //Right
+            return 3;
+        }
+    }
+
 }

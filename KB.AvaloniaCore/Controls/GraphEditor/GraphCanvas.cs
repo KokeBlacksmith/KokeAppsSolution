@@ -3,6 +3,7 @@ using Avalonia.Collections;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.Data;
+using Avalonia.Interactivity;
 using Avalonia.Media;
 using Avalonia.Metadata;
 using KB.AvaloniaCore.Controls.GraphEditor.Events;
@@ -156,19 +157,20 @@ public class GraphCanvas : Control
 
     private void _OnNodePinPressed(object? sender, NodePinPointerInteractionEventArgs args)
     {
+        if(_edittingConnection != null)
+        {
+            // Something went wrong. We are already editting a connection
+            // Remove the connection
+            _RemoveEdittingConnection();
+        }
+
         Point point = args.Pin.ParentNode!.TranslatePoint(args.Point, _nodeConnectionsCanvas)!.Value;
-        _edittingConnection = _nodeConnectionsCanvas.Children.OfType<NodeConnection>().FirstOrDefault(x => x.SourcePin == args.Pin || x.TargetPin == args.Pin);
-        if(_edittingConnection is not null)
-        {
-            // We are disconnecting the pin
-            _edittingConnection.DisconnectPin(args.Pin, point);
-        }
-        else
-        {
-            // Creating a new connection
-            _edittingConnection = new NodeConnection(args.Pin, point, point);
-            _nodeConnectionsCanvas.Children.Add(_edittingConnection);
-        }
+        // Creating a new connection
+        _edittingConnection = new NodeConnection(args.Pin, point, point);
+        _nodeConnectionsCanvas.Children.Add(_edittingConnection);
+        _edittingConnection.PointerPressed += _OnNodeConnectionPointerPressed;
+        _edittingConnection.PointerMoved += _OnNodeConnectionPointerMoved;
+        _edittingConnection.PointerReleased += _OnNodeConnectionPointerReleased;
     }
 
     private void _OnNodePinPointerMoved(object? sender, NodePinPointerInteractionEventArgs args)
@@ -178,28 +180,91 @@ public class GraphCanvas : Control
             return;
         }
 
-        Point point = args.Pin.ParentNode!.TranslatePoint(args.Point, _nodeConnectionsCanvas)!.Value;
-        // Update the opposite connection point
-        if (_edittingConnection.SourcePin == args.Pin || _edittingConnection.SourcePin is not null)
+        NodePin connectedPin = _edittingConnection.SourcePin is not null ? _edittingConnection.SourcePin : _edittingConnection.TargetPin!;
+        Point point = connectedPin.ParentNode!.TranslatePoint(args.Point, _nodeConnectionsCanvas)!.Value;
+
+        _NodeConnectionDrag(point);
+    }
+
+    /// <summary>
+    /// Fired when the pointer is released after a <see cref="NodePin"/> was clicked.
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="args"></param>
+    private void _OnNodePinReleased(object? sender, NodePinPointerInteractionEventArgs args)
+    {
+        if (_edittingConnection is null)
         {
-            _edittingConnection.UpdateEndPoint(point);
+            return;
         }
-        else if (_edittingConnection.TargetPin == args.Pin || _edittingConnection.TargetPin is not null)
+
+        NodePin connectedPin = _edittingConnection.SourcePin is not null ? _edittingConnection.SourcePin : _edittingConnection.TargetPin!;
+        Point point = connectedPin.ParentNode!.TranslatePoint(args.Point, _nodeConnectionsCanvas)!.Value;
+        _NodeConnectionEndInteraction(point);
+    }
+
+    private void _OnNodeConnectionPointerPressed(object? sender, NodeConnectionPointerInteractionEventArgs args)
+    {
+        _edittingConnection = _nodeConnectionsCanvas.Children.OfType<NodeConnection>().FirstOrDefault(x => x == args.Connection);
+        if (_edittingConnection is null)
         {
-            _edittingConnection.UpdateStartPoint(point);
+            throw new Exception("Something went wrong. Clicking on a connection that does not belong to the graph.");
+        }
+
+        Point sourcePinCenter = args.Connection.SourcePin!.GeCenterPositionRelativeToNode();
+        Point targetPinCenter = args.Connection.TargetPin!.GeCenterPositionRelativeToNode();
+        double distanceToSource = KB.SharpCore.Utils.Math.GetDistanceBetweenPoints(args.Point.X, args.Point.Y, sourcePinCenter.X, sourcePinCenter.Y);
+        double distanceToTarget = KB.SharpCore.Utils.Math.GetDistanceBetweenPoints(args.Point.X, args.Point.Y, targetPinCenter.X, targetPinCenter.Y);
+
+        // We are disconnecting the pin
+        NodePin closestPin = distanceToSource < distanceToTarget ? args.Connection.SourcePin! : args.Connection.TargetPin!;
+        Point point = _edittingConnection.TranslatePoint(args.Point, _nodeConnectionsCanvas)!.Value;
+        _edittingConnection.DisconnectPin(closestPin, point);
+    }
+
+    private void _OnNodeConnectionPointerMoved(object? sender, NodeConnectionPointerInteractionEventArgs args)
+    {
+        if (_edittingConnection is null)
+        {
+            return;
+        }
+
+        Point point = _edittingConnection.TranslatePoint(args.Point, _nodeConnectionsCanvas)!.Value;
+        _NodeConnectionDrag(point);
+    }
+
+    private void _OnNodeConnectionPointerReleased(object? sender, NodeConnectionPointerInteractionEventArgs args)
+    {
+        Point releasePositionRelativeToCanvas = _edittingConnection!.TranslatePoint(args.Point, _nodeConnectionsCanvas)!.Value;
+        _NodeConnectionEndInteraction(releasePositionRelativeToCanvas);
+    }
+
+    private void _NodeConnectionDrag(Point pointerPosition)
+    {
+        bool isSourcePin = _edittingConnection!.SourcePin is not null;
+        // Update the opposite connection point
+        if (isSourcePin)
+        {
+            _edittingConnection.UpdateEndPoint(pointerPosition);
         }
         else
         {
-            throw new Exception("Updating a pin that is not being editted. An unhandled exception occurred.");
+            _edittingConnection.UpdateStartPoint(pointerPosition);
         }
     }
 
-    private void _OnNodePinReleased(object? sender, NodePinPointerInteractionEventArgs args)
+    /// <summary>
+    /// Check if the connection can be made and if so, connect the pins.
+    /// </summary>
+    /// <param name="pointerPosition"></param>
+    private void _NodeConnectionEndInteraction(Point pointerPosition)
     {
-        //TODO: more responsive check if we are over a pin.
-        // Right now is hard to release the mouse over a pin.
+        if(_edittingConnection == null)
+        {
+            return;
+        }
 
-        Point releasePositionRelativeToCanvas = args.Pin.ParentNode!.TranslatePoint(args.Point, _nodeConnectionsCanvas)!.Value;
+        NodePin connectedPin = _edittingConnection.SourcePin is not null ? _edittingConnection.SourcePin : _edittingConnection.TargetPin!;
 
         NodePin? newPin = null;
         // Get the pin if we are over it
@@ -210,15 +275,14 @@ public class GraphCanvas : Control
             {
                 Point targetPinPositionRelativeToNode = CanvasExtension.GetControlLeftTop(targetNodePin);
                 Point targetPinRelativeToCanvasPosition = targetNodePin.ParentNode!.TranslatePoint(targetPinPositionRelativeToNode, _nodeConnectionsCanvas)!.Value;
-                Point distanceBetweenNodePinAndReleasePoint = releasePositionRelativeToCanvas - targetPinRelativeToCanvasPosition;
+                Point distanceBetweenNodePinAndReleasePoint = pointerPosition - targetPinRelativeToCanvasPosition;
 
                 if (distanceBetweenNodePinAndReleasePoint.X.IsBetween(0, targetNodePin.Width) && distanceBetweenNodePinAndReleasePoint.Y.IsBetween(0, targetNodePin.Height))
                 {
-                    if (targetNode == args.Pin.ParentNode)
+                    if (targetNode == connectedPin.ParentNode)
                     {
                         // Interacted pin belongs to the node we are over.
                         // Check that source and target pins do not have the same node. One connection can't be connected to the same node.
-                        NodePin connectedPin = _edittingConnection!.SourcePin is not null ? _edittingConnection.SourcePin : _edittingConnection.TargetPin!;
                         if (connectedPin.ParentNode == targetNode)
                         {
                             _RemoveEdittingConnection();
@@ -232,20 +296,20 @@ public class GraphCanvas : Control
                 }
             }
 
-            if(newPin is not null)
+            if (newPin is not null)
             {
                 break;
             }
         }
 
-        if(newPin is null)
+        if (newPin is null)
         {
             // We are over the node but not over a pin
             _RemoveEdittingConnection();
             return;
         }
 
-        if(!args.Pin.CanConnectToPin(newPin))
+        if (!connectedPin.CanConnectToPin(newPin))
         {
             // The pin does not allow the connection
             _RemoveEdittingConnection();
@@ -265,6 +329,9 @@ public class GraphCanvas : Control
         }
 
         _nodeConnectionsCanvas.Children.Remove(_edittingConnection);
+        _edittingConnection.PointerPressed -= _OnNodeConnectionPointerPressed;
+        _edittingConnection.PointerMoved -= _OnNodeConnectionPointerMoved;
+        _edittingConnection.PointerReleased -= _OnNodeConnectionPointerReleased;
         _edittingConnection = null;
     }
 
@@ -280,6 +347,13 @@ public class GraphCanvas : Control
     }
 
     #region Inhertied Members
+
+    protected override void OnLostFocus(RoutedEventArgs e)
+    {
+        base.OnLostFocus(e);
+        _RemoveEdittingConnection();
+    }
+
     //public override void Render(DrawingContext context)
     //{
     //    base.Render(context);
