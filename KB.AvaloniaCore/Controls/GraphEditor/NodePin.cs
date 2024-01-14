@@ -4,16 +4,24 @@ using Avalonia.Controls.Metadata;
 using Avalonia.Controls.Primitives;
 using Avalonia.Media;
 using KB.AvaloniaCore.Injection;
+using Microsoft.CodeAnalysis.Text;
 
 namespace KB.AvaloniaCore.Controls.GraphEditor;
 
 [TemplatePart("PART_OutterBorder", typeof(Border))]
 [TemplatePart("PART_InnerBorder", typeof(Border))]
+[PseudoClasses(":connected")]
 public class NodePin : TemplatedControl
 {
+    private const double c_InteractionHelperSize = 10d;
+
     private Border? _outterBorder;
     private Border? _innerBorder;
-    
+
+    /// <summary>
+    /// Control that is used to handle mouse events. It is biger than the pin itself, so it is easier to click on it.
+    /// </summary>
+    private readonly Border _interactionHelper;
 
     static NodePin()
     {
@@ -26,6 +34,7 @@ public class NodePin : TemplatedControl
     public NodePin()
     {
         ClipToBounds = false;
+        _interactionHelper = new Border();
     }
 
     public Node? ParentNode { get; private set; }
@@ -78,8 +87,13 @@ public class NodePin : TemplatedControl
     public Point GeCenterPositionRelativeToNode()
     {
         Point pinPosition = CanvasExtension.GetCanvasControlCenter(this);
+        return this.GetPositionRelativeToParentNode(pinPosition);
+    }
+
+    public Point GetPositionRelativeToParentNode(Point pinRelativePosition)
+    {
         Canvas parentNodeCanvas = this.ParentNode!.GetParentOfType<Canvas>();
-        return this.ParentNode!.TranslatePoint(pinPosition, parentNodeCanvas)!.Value;
+        return this.ParentNode!.TranslatePoint(pinRelativePosition, parentNodeCanvas)!.Value;
     }
 
     protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
@@ -89,6 +103,10 @@ public class NodePin : TemplatedControl
         _outterBorder!.BorderBrush = OutterBrush;
         _innerBorder = e.NameScope.Find<Border>("PART_InnerBorder");
         _innerBorder!.Background = InnerBrush;
+
+        _interactionHelper.Background = Brushes.Transparent;
+        LogicalChildren.Add(_interactionHelper);
+        VisualChildren.Add(_interactionHelper);
     }
 
     protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
@@ -103,18 +121,13 @@ public class NodePin : TemplatedControl
 
     private void m_OnIsConnectedPropertyChanged(AvaloniaPropertyChangedEventArgs e)
     {
-        //if (_border != null && _Border != null)
+        //if ((bool)e.NewValue!)
         //{
-        //    if ((bool)e.NewValue!)
-        //    {
-        //        _border.BorderBrush = Brushes.Black;
-        //        _Border.Fill = Brushes.Black;
-        //    }
-        //    else
-        //    {
-        //        _border.BorderBrush = Brushes.Transparent;
-        //        _Border.Fill = Brushes.Transparent;
-        //    }
+        //    this.Classes.Add(":connected");
+        //}
+        //else
+        //{
+        //    this.Classes.Remove(":connected");
         //}
     }
 
@@ -141,5 +154,37 @@ public class NodePin : TemplatedControl
     private void m_OnThicknessPropertyChanged(AvaloniaPropertyChangedEventArgs e)
     {
         _outterBorder!.BorderThickness = (Thickness)e.NewValue!;
+    }
+
+    /// <summary>
+    /// Calculate the desired size of the control, including the helper decorator
+    /// Helper decorator is <see cref="c_InteractionHelperSize"/> points bigger on each side than the control itself
+    /// </summary>
+    protected override Size MeasureOverride(Size availableSize)
+    {
+        // Measure the desired size of the control itself
+        Size size = base.MeasureOverride(availableSize);
+
+        // Adjust the size for the decorator, adding 5 points on each side
+        Size decoratorSize = new Size(size.Width + c_InteractionHelperSize, size.Height + c_InteractionHelperSize);
+        _interactionHelper.Measure(decoratorSize);
+
+        return size;
+    }
+
+    /// <summary>
+    /// Arrange the control, including the helper decorator
+    /// Helper decorator is <see cref="c_InteractionHelperSize"/> points bigger on each side than the control itself
+    /// </summary>
+    protected override Size ArrangeOverride(Size finalSize)
+    {
+        // Arrange the control itself
+        Size size = base.ArrangeOverride(finalSize);
+
+        // Arrange the decorator, offsetting its position and adding 5 points on each side
+        Rect decoratorRect = new Rect(-c_InteractionHelperSize * 0.5d, -c_InteractionHelperSize * 0.5d, size.Width + c_InteractionHelperSize, size.Height + c_InteractionHelperSize);
+        _interactionHelper.Arrange(decoratorRect);
+
+        return size;
     }
 }

@@ -164,7 +164,8 @@ public class GraphCanvas : Control
             _RemoveEdittingConnection();
         }
 
-        Point point = args.Pin.ParentNode!.TranslatePoint(args.Point, _nodeConnectionsCanvas)!.Value;
+        //Point point = args.Pin.ParentNode!.TranslatePoint(args.Point, _nodeConnectionsCanvas)!.Value;
+        Point point = args.Pin.GeCenterPositionRelativeToNode();
         // Creating a new connection
         _edittingConnection = new NodeConnection(args.Pin, point, point);
         _nodeConnectionsCanvas.Children.Add(_edittingConnection);
@@ -180,9 +181,7 @@ public class GraphCanvas : Control
             return;
         }
 
-        NodePin connectedPin = _edittingConnection.SourcePin is not null ? _edittingConnection.SourcePin : _edittingConnection.TargetPin!;
-        Point point = connectedPin.ParentNode!.TranslatePoint(args.Point, _nodeConnectionsCanvas)!.Value;
-
+        Point point = args.Pin.GetPositionRelativeToParentNode(args.Point);
         _NodeConnectionDrag(point);
     }
 
@@ -198,8 +197,7 @@ public class GraphCanvas : Control
             return;
         }
 
-        NodePin connectedPin = _edittingConnection.SourcePin is not null ? _edittingConnection.SourcePin : _edittingConnection.TargetPin!;
-        Point point = connectedPin.ParentNode!.TranslatePoint(args.Point, _nodeConnectionsCanvas)!.Value;
+        Point point = args.Pin.GetPositionRelativeToParentNode(args.Point);
         _NodeConnectionEndInteraction(point);
     }
 
