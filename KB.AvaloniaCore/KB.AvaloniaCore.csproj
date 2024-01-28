@@ -27,6 +27,7 @@
 
     <ItemGroup>
       <Folder Include="Controls\Adorners\" />
+      <Folder Include="Controls\PropertyGrid\" />
     </ItemGroup>
 
 </Project>
