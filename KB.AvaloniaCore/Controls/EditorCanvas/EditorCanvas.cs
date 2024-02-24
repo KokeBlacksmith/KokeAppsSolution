@@ -8,7 +8,6 @@ using Avalonia.Media;
 using Avalonia.Metadata;
 using Avalonia.VisualTree;
 using KB.AvaloniaCore.Controls.UserActions;
-using KB.AvaloniaCore.Injection;
 using KB.SharpCore.DesignPatterns.UserAction;
 using KB.SharpCore.Events;
 using KB.SharpCore.Synchronization;
