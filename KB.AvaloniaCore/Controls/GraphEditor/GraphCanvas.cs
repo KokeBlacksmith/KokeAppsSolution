@@ -1,14 +1,12 @@
 ﻿using Avalonia;
 using Avalonia.Collections;
 using Avalonia.Controls;
-using Avalonia.Controls.Primitives;
 using Avalonia.Data;
 using Avalonia.Interactivity;
 using Avalonia.Media;
 using Avalonia.Metadata;
 using KB.AvaloniaCore.Controls.GraphEditor.Events;
 using KB.AvaloniaCore.Injection;
-using KB.SharpCore.Events;
 using KB.SharpCore.Utils;
 using System.Collections.Specialized;
 using System.Reactive.Linq;
@@ -50,13 +48,17 @@ public class GraphCanvas : Control
         canvasContainer.Children.Add(_editorCanvas);
         canvasContainer.Children.Add(_nodeConnectionsCanvas);
 
-
+        // Bind the node canvas to the editor canvas so they have the same size
         Binding editorCanvasWidthBinding = new Binding(nameof(EditorCanvas.Width)) { Source = _editorCanvas, Mode = BindingMode.OneWay };
         Binding editorCanvasHeightBinding = new Binding(nameof(EditorCanvas.Height)) { Source = _editorCanvas, Mode = BindingMode.OneWay };
         _nodeConnectionsCanvas[!Canvas.WidthProperty] = editorCanvasWidthBinding;
         _nodeConnectionsCanvas[!Canvas.HeightProperty] = editorCanvasHeightBinding;
         LogicalChildren.Add(canvasContainer);
         VisualChildren.Add(canvasContainer);
+
+        // Bind the selected items to the editor canvas
+        Binding selectedItemsBinding = new Binding(nameof(SelectedItems)) { Source = this, Mode = BindingMode.TwoWay };
+        _editorCanvas[!EditorCanvas.SelectedItemsProperty] = selectedItemsBinding;
 
         this.Background = Brushes.Purple;
         ChildNodes.CollectionChanged += m_OnChildNodesCollectionChanged;
@@ -67,6 +69,10 @@ public class GraphCanvas : Control
     public readonly static StyledProperty<IAvaloniaList<Node>> ChildNodesProperty = AvaloniaProperty.Register<GraphCanvas, IAvaloniaList<Node>>(nameof(GraphCanvas.ChildNodes), new AvaloniaList<Node>());
     public readonly static StyledProperty<IEnumerable<NodeConnection>> NodeConnectionsProperty = AvaloniaProperty.Register<GraphCanvas, IEnumerable<NodeConnection>>(nameof(GraphCanvas.NodeConnections));
     public readonly static StyledProperty<IBrush> BackgroundProperty = AvaloniaProperty.Register<GraphCanvas, IBrush>(nameof(GraphCanvas.Background), Brushes.White);
+
+    public static readonly StyledProperty<AvaloniaList<IEditableControl>> SelectedItemsProperty
+        = AvaloniaProperty.Register< GraphCanvas, AvaloniaList<IEditableControl>>(nameof(GraphCanvas.SelectedItems),
+                                        defaultValue: new AvaloniaList<IEditableControl>(), defaultBindingMode: BindingMode.TwoWay);
 
     [Content]
     public IAvaloniaList<Node> ChildNodes
@@ -87,7 +93,15 @@ public class GraphCanvas : Control
         set { SetValue(GraphCanvas.BackgroundProperty, value); }
     }
 
+    public AvaloniaList<IEditableControl> SelectedItems
+    {
+        get { return GetValue(SelectedItemsProperty); }
+        set { SetValue(SelectedItemsProperty, value); }
+    }
+
     #endregion
+
+
 
     protected virtual void m_OnChildNodesPropertyChanged(AvaloniaPropertyChangedEventArgs e)
     {

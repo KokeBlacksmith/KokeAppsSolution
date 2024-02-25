@@ -7,14 +7,18 @@
 			 xmlns:view_graph="clr-namespace:KB.AvaloniaCore.Controls.GraphEditor;assembly=KB.AvaloniaCore"
 			 xmlns:view_nodes="clr-namespace:KB.ConsoleCompanion.Nodes;assembly=KB.ConsoleCompanion"
 			 
+			 xmlns:ext_bodong_pgc="clr-namespace:Avalonia.PropertyGrid.Controls;assembly=Avalonia.PropertyGrid"
+			 
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="KB.ConsoleCompanion.MacroEditView.MacroEditView">
-	<Grid ColumnDefinitions="300, *">
+	<Grid ColumnDefinitions="200, Auto, *">
 		<!-- Property Grid -->
-		<Grid Grid.Column="0" Background="Red"/>
+		<ext_bodong_pgc:PropertyGrid Grid.Column="0" DataContext="{Binding #_graphCanvas.SelectedItems}"/>
+		
+		<GridSplitter Grid.Column="1"/>
 		
 		<!-- Graph-->
-		<ScrollViewer Grid.Column="1"
+		<ScrollViewer Grid.Column="2"
 			VerticalScrollBarVisibility="Auto"
 			HorizontalScrollBarVisibility="Auto">
 
