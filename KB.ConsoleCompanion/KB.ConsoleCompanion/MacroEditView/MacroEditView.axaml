@@ -11,9 +11,16 @@
 			 
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="KB.ConsoleCompanion.MacroEditView.MacroEditView">
-	<Grid ColumnDefinitions="200, Auto, *">
+	<Grid>
+
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="400" MinWidth="300"/>
+			<ColumnDefinition Width="Auto"/>
+			<ColumnDefinition Width="*" MinWidth="300"/>
+		</Grid.ColumnDefinitions>
 		<!-- Property Grid -->
-		<ext_bodong_pgc:PropertyGrid Grid.Column="0" DataContext="{Binding #_graphCanvas.SelectedItems}"/>
+		<ext_bodong_pgc:PropertyGrid x:FieldModifier="private" x:Name="_propertyGrid" Grid.Column="0"
+									 Background="Blue"/>
 		
 		<GridSplitter Grid.Column="1"/>
 		

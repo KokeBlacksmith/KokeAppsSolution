@@ -33,7 +33,7 @@ public class GraphCanvas : Control
 
     static GraphCanvas()
     {
-        GraphCanvas.ChildNodesProperty.Changed.AddClassHandler<GraphCanvas>((s, e) => s.m_OnChildNodesPropertyChanged(e));
+        GraphCanvas.ChildNodesProperty.Changed.AddClassHandler<GraphCanvas>((s, e) => s._OnChildNodesPropertyChanged(e));
         GraphCanvas.BackgroundProperty.Changed.AddClassHandler<GraphCanvas>((s, e) => s._OnBackgroundPropertyChanged(e));
     }
 
@@ -57,11 +57,11 @@ public class GraphCanvas : Control
         VisualChildren.Add(canvasContainer);
 
         // Bind the selected items to the editor canvas
-        Binding selectedItemsBinding = new Binding(nameof(SelectedItems)) { Source = this, Mode = BindingMode.TwoWay };
-        _editorCanvas[!EditorCanvas.SelectedItemsProperty] = selectedItemsBinding;
+        Binding selectedItemsBinding = new Binding(nameof(EditorCanvas.SelectedItems)) { Source = _editorCanvas, Mode = BindingMode.TwoWay };
+        this[!GraphCanvas.SelectedItemsProperty] = selectedItemsBinding;
 
         this.Background = Brushes.Purple;
-        ChildNodes.CollectionChanged += m_OnChildNodesCollectionChanged;
+        ChildNodes.CollectionChanged += _OnChildNodesCollectionChanged;
     }
 
     #region StyledProperties
@@ -71,7 +71,7 @@ public class GraphCanvas : Control
     public readonly static StyledProperty<IBrush> BackgroundProperty = AvaloniaProperty.Register<GraphCanvas, IBrush>(nameof(GraphCanvas.Background), Brushes.White);
 
     public static readonly StyledProperty<AvaloniaList<IEditableControl>> SelectedItemsProperty
-        = AvaloniaProperty.Register< GraphCanvas, AvaloniaList<IEditableControl>>(nameof(GraphCanvas.SelectedItems),
+        = AvaloniaProperty.Register<GraphCanvas, AvaloniaList<IEditableControl>>(nameof(GraphCanvas.SelectedItems),
                                         defaultValue: new AvaloniaList<IEditableControl>(), defaultBindingMode: BindingMode.TwoWay);
 
     [Content]
@@ -95,26 +95,24 @@ public class GraphCanvas : Control
 
     public AvaloniaList<IEditableControl> SelectedItems
     {
-        get { return GetValue(SelectedItemsProperty); }
-        set { SetValue(SelectedItemsProperty, value); }
+        get { return GetValue(GraphCanvas.SelectedItemsProperty); }
+        set { SetValue(GraphCanvas.SelectedItemsProperty, value); }
     }
 
     #endregion
 
-
-
-    protected virtual void m_OnChildNodesPropertyChanged(AvaloniaPropertyChangedEventArgs e)
+    private void _OnChildNodesPropertyChanged(AvaloniaPropertyChangedEventArgs e)
     {
         if(e.OldValue is INotifyCollectionChanged oldNotifyCollection)
         {
-            oldNotifyCollection.CollectionChanged -= m_OnChildNodesCollectionChanged;
+            oldNotifyCollection.CollectionChanged -= _OnChildNodesCollectionChanged;
         }
 
         if(e.NewValue != null)
         {
             if(e.NewValue is INotifyCollectionChanged newNotifyCollection)
             {
-                newNotifyCollection.CollectionChanged += m_OnChildNodesCollectionChanged;
+                newNotifyCollection.CollectionChanged += _OnChildNodesCollectionChanged;
             }
         }
 
@@ -128,7 +126,7 @@ public class GraphCanvas : Control
 
     #region Node Management
 
-    private void m_OnChildNodesCollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+    private void _OnChildNodesCollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
     {
         if (e.NewItems != null)
         {

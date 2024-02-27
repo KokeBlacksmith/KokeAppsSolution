@@ -27,6 +27,7 @@
     <ItemGroup>
       <Folder Include="DataModels\" />
       <Folder Include="Models\" />
+      <Folder Include="Themes\" />
       <Folder Include="Tests\" />
     </ItemGroup>
 

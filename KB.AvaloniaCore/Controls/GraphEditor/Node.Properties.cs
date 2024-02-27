@@ -4,6 +4,7 @@ using Avalonia.Metadata;
 using Avalonia;
 using KB.SharpCore.Events;
 using KB.AvaloniaCore.Controls.GraphEditor.Events;
+using System.ComponentModel;
 
 namespace KB.AvaloniaCore.Controls.GraphEditor;
 
@@ -70,7 +71,7 @@ public abstract partial class Node : IEditableControl
     public static readonly StyledProperty<CornerRadius> CornerRadiusProperty = AvaloniaProperty.Register<Node, CornerRadius>(nameof(Node.CornerRadius), new CornerRadius(0));
     public static readonly StyledProperty<Thickness> PaddingProperty = AvaloniaProperty.Register<Node, Thickness>(nameof(Node.Padding), new Thickness(0));
 
-
+    [Browsable(false)]
     [Content]
     public Control? Child
     {
@@ -78,48 +79,61 @@ public abstract partial class Node : IEditableControl
         set { SetValue(Node.ChildProperty, value); }
     }
 
+    [Category("Transform")]
+    [Description("The X position of the node.")]
+    [Bindable(true)]
+    [Browsable(true)]
     public double PositionX
     {
         get { return GetValue(Node.PositionXProperty); }
         set { SetValue(Node.PositionXProperty, value); }
     }
 
+    [Category("Transform")]
+    [Description("The Y position of the node.")]
+    [Bindable(true)]
     public double PositionY
     {
         get { return GetValue(Node.PositionYProperty); }
         set { SetValue(Node.PositionYProperty, value); }
     }
 
+    [Browsable(false)]
     public bool IsSelected
     {
         get { return GetValue(Node.IsSelectedProperty); }
         set { SetValue(Node.IsSelectedProperty, value); }
     }
 
+    [Browsable(false)]
     public IBrush Background
     {
         get { return GetValue(Node.BackgroundProperty); }
         set { SetValue(Node.BackgroundProperty, value); }
     }
 
+    [Browsable(false)]
     public IBrush BorderBrush
     {
         get { return GetValue(Node.BorderBrushProperty); }
         set { SetValue(Node.BorderBrushProperty, value); }
     }
 
+    [Browsable(false)]
     public Thickness BorderThickness
     {
         get { return GetValue(Node.BorderThicknessProperty); }
         set { SetValue(Node.BorderThicknessProperty, value); }
     }
 
+    [Browsable(false)]
     public CornerRadius CornerRadius
     {
         get { return GetValue(Node.CornerRadiusProperty); }
         set { SetValue(Node.CornerRadiusProperty, value); }
     }
 
+    [Browsable(false)]
     public Thickness Padding
     {
         get { return GetValue(Node.PaddingProperty); }

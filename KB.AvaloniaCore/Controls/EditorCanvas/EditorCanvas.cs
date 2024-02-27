@@ -285,6 +285,7 @@ public class EditorCanvas : Control
         }
     }
 
+    // Fired when the SelectedItems property changes. (Not when updated. Ej. Add, remove, clear..)
     private void _OnSelectedItemsPropertyChanged(AvaloniaPropertyChangedEventArgs e)
     {
         if(e.OldValue is AvaloniaList<IEditableControl> oldList)
