@@ -5,8 +5,9 @@ using Avalonia.Media;
 using KB.AvaloniaCore.Controls;
 using KB.AvaloniaCore.Controls.GraphEditor;
 using KB.AvaloniaCore.Injection;
-
+using KB.SharpCore.Utils;
 using System;
+using System.Collections;
 using System.Collections.Specialized;
 using System.Reactive;
 
@@ -68,7 +69,14 @@ public partial class MacroEditView : UserControl
 
     private void _UpdatePropertyGridItems()
     {
-        _propertyGrid.DataContext = _graphCanvas.SelectedItems.ToArray();
+        if (CollectionHelper.IsNullOrEmpty((IList<IEditableControl>?)_graphCanvas.SelectedItems))
+        {
+            _propertyGrid.DataContext = new object[0];
+        }
+        else
+        {
+            _propertyGrid.DataContext = new object[] { _graphCanvas.SelectedItems[^1] };
+        }
     }
-    
+
 }
