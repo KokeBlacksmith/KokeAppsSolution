@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\KB.SharpCore\KB.SharpCore.csproj" />
+    <ProjectReference Include="..\..\KB.AvaloniaCore\KB.SharpCore\KB.SharpCore.csproj" />
   </ItemGroup>
 
 </Project>

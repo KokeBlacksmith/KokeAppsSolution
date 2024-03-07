@@ -4,6 +4,7 @@ using KB.SharpCore.Serialization;
 using KB.SharpCore.Utils;
 using System.Net;
 using System.Net.Sockets;
+using System.Security;
 using System.Text;
 
 namespace ConsoleCompanionAPI.Protocols;
@@ -24,6 +25,7 @@ internal class TCPServerProtocol : BaseTCPProtocol, IServerProtocolAPI
         get => _listener != null && _listener.Server.IsBound;
     }
 
+    [SecurityCritical]
     public void Start(string ip, string port)
     {
         m_AssertConnectionEndPoint(ip, port);

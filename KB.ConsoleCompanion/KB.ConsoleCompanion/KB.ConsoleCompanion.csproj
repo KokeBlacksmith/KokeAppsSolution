@@ -19,8 +19,8 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\KB.AvaloniaCore\KB.AvaloniaCore.csproj" />
-      <ProjectReference Include="..\..\KB.SharpCore\KB.SharpCore.csproj" />
+      <ProjectReference Include="..\..\KB.AvaloniaCore\KB.AvaloniaCore\KB.AvaloniaCore.csproj" />
+      <ProjectReference Include="..\..\KB.AvaloniaCore\KB.SharpCore\KB.SharpCore.csproj" />
       <ProjectReference Include="..\ConsoleCompanionAPI\ConsoleCompanionAPI.csproj" />
     </ItemGroup>
 
