@@ -1,11 +1,8 @@
 ﻿using ConsoleCompanionAPI.Data;
 using ConsoleCompanionAPI.Interfaces;
-using KB.SharpCore.Serialization;
-using KB.SharpCore.Utils;
 using System.Net;
 using System.Net.Sockets;
 using System.Security;
-using System.Text;
 
 namespace ConsoleCompanionAPI.Protocols;
 
@@ -28,7 +25,7 @@ internal class TCPServerProtocol : BaseTCPProtocol, IServerProtocolAPI
     [SecurityCritical]
     public void Start(string ip, string port)
     {
-        m_AssertConnectionEndPoint(ip, port);
+        s_AssertConnectionEndPoint(ip, port);
 
         IPEndPoint endPoint = new IPEndPoint(IPAddress.Parse(ip), Int32.Parse(port));
         _listener = new TcpListener(endPoint);
@@ -84,7 +81,7 @@ internal class TCPServerProtocol : BaseTCPProtocol, IServerProtocolAPI
         try
         {
             await using NetworkStream stream = client.GetStream();
-            ConsoleCommand clientCommand = m_ReceiveResponse(stream);
+            ConsoleCommand clientCommand = s_ReceiveResponse(stream);
 
             // Process message
             ConsoleCommand responseToClient;
@@ -110,7 +107,7 @@ internal class TCPServerProtocol : BaseTCPProtocol, IServerProtocolAPI
             }
 
             // Respond to client
-            m_SendCommand(stream, responseToClient);
+            s_SendCommand(stream, responseToClient);
         }
         finally
         {

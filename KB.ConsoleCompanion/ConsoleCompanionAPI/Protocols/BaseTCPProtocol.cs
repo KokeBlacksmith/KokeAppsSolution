@@ -13,7 +13,7 @@ namespace ConsoleCompanionAPI.Protocols
 {
     internal abstract class BaseTCPProtocol
     {
-        protected void m_SendCommand(NetworkStream stream, ConsoleCommand command)
+        protected static void s_SendCommand(NetworkStream stream, ConsoleCommand command)
         {
             Result<string> messageResult = XmlSerializableHelper.SaveToXMLString(command);
             if (messageResult.IsFailure)
@@ -26,7 +26,7 @@ namespace ConsoleCompanionAPI.Protocols
             stream.Write(messageBuffer, 0, messageBuffer.Length);
         }
 
-        protected ConsoleCommand m_ReceiveResponse(NetworkStream stream)
+        protected static ConsoleCommand s_ReceiveResponse(NetworkStream stream)
         {
             byte[] responseBuffer = new byte[1024];
             int bytesRead = stream.Read(responseBuffer, 0, responseBuffer.Length);
@@ -46,7 +46,7 @@ namespace ConsoleCompanionAPI.Protocols
             return responseCommandResult.Value!;
         }
 
-        protected void m_AssertConnectionEndPoint(string ip, string port)
+        protected static void s_AssertConnectionEndPoint(string ip, string port)
         {
             if (!RegexHelper.Network.IsIPAddress(ip))
             {

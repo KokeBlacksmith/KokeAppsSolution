@@ -1,10 +1,7 @@
 ﻿using ConsoleCompanionAPI.Data;
 using ConsoleCompanionAPI.Interfaces;
-using KB.SharpCore.Serialization;
-using KB.SharpCore.Utils;
 using System.Net;
 using System.Net.Sockets;
-using System.Text;
 
 namespace ConsoleCompanionAPI.Protocols;
 internal class TCPClientProtocol : BaseTCPProtocol, IClientProtocolAPI
@@ -13,7 +10,7 @@ internal class TCPClientProtocol : BaseTCPProtocol, IClientProtocolAPI
 
     public TCPClientProtocol(string ip, string port)
     {
-        m_AssertConnectionEndPoint(ip, port);
+        s_AssertConnectionEndPoint(ip, port);
 
         _endPoint = new IPEndPoint(IPAddress.Parse(ip), Int32.Parse(port));
     }
@@ -34,8 +31,8 @@ internal class TCPClientProtocol : BaseTCPProtocol, IClientProtocolAPI
 
             await using NetworkStream stream = client.GetStream();
 
-            m_SendCommand(stream, command);
-            return m_ReceiveResponse(stream);
+            s_SendCommand(stream, command);
+            return s_ReceiveResponse(stream);
         });
     }
 
