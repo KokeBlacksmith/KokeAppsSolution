@@ -4,8 +4,6 @@ using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Media;
 using ConsoleCompanionAPI.Data;
-using KB.AvaloniaCore.Controls.GraphEditor;
-using KB.ConsoleCompanion.Nodes;
 using System.Collections.Specialized;
 
 namespace KB.ConsoleCompanion.CommandView;
@@ -42,20 +40,20 @@ public partial class CommandView : UserControl
 
     private void _OnAddMacroButtonClick(object sender, RoutedEventArgs args)
     {
-        Window graphWindow = new Window();
-        GraphCanvas graphCanvas = new GraphCanvas();
-        graphCanvas.ChildNodes = new AvaloniaList<Node>() { 
-            new TimerNode() { 
-                Width = 100, Height= 100, Background = Brushes.Aqua, PositionX=50, PositionY=200, 
-                CornerRadius = new CornerRadius(10d), Padding = new Thickness(10d), BorderThickness = new Thickness(2d), BorderBrush = Brushes.Yellow,
-            },
-            new TimerNode() {
-                Width = 100, Height= 100, Background = Brushes.Aqua, PositionX=150, PositionY=200,
-                CornerRadius = new CornerRadius(10d), Padding = new Thickness(10d), BorderThickness = new Thickness(2d), BorderBrush = Brushes.Purple,
-            },
-        };
-        graphWindow.Content = graphCanvas;
-        graphWindow.Show();
+        //Window graphWindow = new Window();
+        //GraphCanvas graphCanvas = new GraphCanvas();
+        //graphCanvas.ChildNodes = new AvaloniaList<Node>() { 
+        //    new TimerNode() { 
+        //        Width = 100, Height= 100, Background = Brushes.Aqua, PositionX=50, PositionY=200, 
+        //        CornerRadius = new CornerRadius(10d), Padding = new Thickness(10d), BorderThickness = new Thickness(2d), BorderBrush = Brushes.Yellow,
+        //    },
+        //    new TimerNode() {
+        //        Width = 100, Height= 100, Background = Brushes.Aqua, PositionX=150, PositionY=200,
+        //        CornerRadius = new CornerRadius(10d), Padding = new Thickness(10d), BorderThickness = new Thickness(2d), BorderBrush = Brushes.Purple,
+        //    },
+        //};
+        //graphWindow.Content = graphCanvas;
+        //graphWindow.Show();
     }
 
     private void _OnSendCommandClick(object sender, RoutedEventArgs args)
