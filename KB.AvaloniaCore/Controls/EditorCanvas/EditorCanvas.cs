@@ -8,7 +8,6 @@ using Avalonia.Media;
 using Avalonia.Metadata;
 using Avalonia.VisualTree;
 using KB.AvaloniaCore.Controls.UserActions;
-using KB.AvaloniaCore.Injection;
 using KB.SharpCore.DesignPatterns.UserAction;
 using KB.SharpCore.Events;
 using KB.SharpCore.Synchronization;
@@ -286,6 +285,7 @@ public class EditorCanvas : Control
         }
     }
 
+    // Fired when the SelectedItems property changes. (Not when updated. Ej. Add, remove, clear..)
     private void _OnSelectedItemsPropertyChanged(AvaloniaPropertyChangedEventArgs e)
     {
         if(e.OldValue is AvaloniaList<IEditableControl> oldList)

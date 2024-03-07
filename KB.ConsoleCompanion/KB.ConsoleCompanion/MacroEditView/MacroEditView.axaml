@@ -7,36 +7,27 @@
 			 xmlns:view_graph="clr-namespace:KB.AvaloniaCore.Controls.GraphEditor;assembly=KB.AvaloniaCore"
 			 xmlns:view_nodes="clr-namespace:KB.ConsoleCompanion.Nodes;assembly=KB.ConsoleCompanion"
 			 
+			 xmlns:ext_bodong_pgc="clr-namespace:Avalonia.PropertyGrid.Controls;assembly=Avalonia.PropertyGrid"
+			 
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="KB.ConsoleCompanion.MacroEditView.MacroEditView">
 	<Grid>
-		<ScrollViewer
+
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="400" MinWidth="300"/>
+			<ColumnDefinition Width="Auto"/>
+			<ColumnDefinition Width="*" MinWidth="300"/>
+		</Grid.ColumnDefinitions>
+		<!-- Property Grid -->
+		<ext_bodong_pgc:PropertyGrid x:FieldModifier="private" x:Name="_propertyGrid" Grid.Column="0"
+									 Background="Blue"/>
+		
+		<GridSplitter Grid.Column="1"/>
+		
+		<!-- Graph-->
+		<ScrollViewer Grid.Column="2"
 			VerticalScrollBarVisibility="Auto"
 			HorizontalScrollBarVisibility="Auto">
-			<!--<Border Width="3000" Height="3000">
-				<view_core:ZoomDecorator
-					x:FieldModifier="private" x:Name="_zoomBorder"
-					EnableConstrains="True" ConstraintOffsetByParentBounds="True"
-					HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
-					MinZoomX="1" MaxZoomX="5"
-					MinZoomY="1" MaxZoomY="5">
-
-					<view_graph:GraphCanvas
-						x:FieldModifier="private" x:Name="_graphCanvas">
-
-							<view_nodes:TimerNode
-								PositionX="50" PositionY="100"
-								Width="200" Height="200"/>
-
-							<view_nodes:TimerNode
-								PositionX="250" PositionY="100"
-								Width="200" Height="200"/>
-					
-					</view_graph:GraphCanvas>
-				
-				</view_core:ZoomDecorator>
-			</Border>-->
-
 
 			<view_core:ZoomDecorator
 				x:FieldModifier="private" x:Name="_zoomBorder"

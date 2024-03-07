@@ -12,7 +12,7 @@ public partial class MainConsoleCompanion : UserControl
     private readonly MacroEditView.MacroEditView _macroEditView;
     private readonly ConfigurationView.ConfigurationView _configurationView;
 
-    IServerProtocolAPI _server;
+    IServerProtocolAPI? _server;
     public MainConsoleCompanion()
     {
         //Test

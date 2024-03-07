@@ -1,0 +1,3 @@
+[submodule "KB.SharpCore"]
+	path = KB.SharpCore
+	url = https://github.com/KokeBlacksmith/KB.SharpCore
