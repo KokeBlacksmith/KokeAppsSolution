@@ -1,3 +1,6 @@
 [submodule "KB.SharpCore"]
 	path = KB.SharpCore
 	url = https://github.com/KokeBlacksmith/KB.SharpCore
+[submodule "KB.AvaloniaCore"]
+	path = KB.AvaloniaCore
+	url = https://github.com/KokeBlacksmith/KB.AvaloniaCore
