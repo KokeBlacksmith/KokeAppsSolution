@@ -1,15 +1,13 @@
 ﻿using Avalonia.Collections;
 using Avalonia.Controls;
-using ConsoleCompanionAPI;
 using ConsoleCompanionAPI.Data;
-using ConsoleCompanionAPI.Interfaces;
 using KB.AvaloniaCore.ReactiveUI;
+using KB.ConsoleCompanion.Communication;
 
 namespace KB.ConsoleCompanion.CommandView;
 
 internal sealed class CommandViewModel : BaseViewModel
 {
-    private IClientProtocolAPI? _client;
     private AvaloniaList<ConsoleCommand> _commandsCollection;
     private AvaloniaList<ConsoleCommand> _userCommandsHistoryCollection;
     private GenericCommand<string?> _addCommandLineCommand;
@@ -25,7 +23,6 @@ internal sealed class CommandViewModel : BaseViewModel
 
         if (!Design.IsDesignMode)
         {
-            _client = ProtocolFactory.CreateClient("127.0.0.1", "55555");
             _RequestAvailableCommands();
         }
     }
@@ -72,13 +69,6 @@ internal sealed class CommandViewModel : BaseViewModel
 
         using (m_ExecuteBusyOperation())
         {
-            if (_client == null)
-            {
-                ConsoleCommand errorCommand = new ConsoleCommand("Not connected to server", ConsoleCommand.ECommandType.Error);
-                CommandsCollection.Add(errorCommand);
-                return;
-            }
-
             ConsoleCommand userCommand = ConsoleCommand.CreateUserInput(parameter!);
         
             // Add command to collection and to view
@@ -86,7 +76,7 @@ internal sealed class CommandViewModel : BaseViewModel
             UserCommandsHistoryCollection.Add(userCommand);
 
             // Send Command to desired application
-            Task<ConsoleCommand> responseTask = _client.SendCommand(userCommand);
+            Task<ConsoleCommand> responseTask = ProtocolClientController.Instance.ClientProtocolAPI.SendCommand(userCommand);
             Task _ = responseTask.ContinueWith((t) => { }, TaskContinuationOptions.OnlyOnFaulted);
             await responseTask;
             ConsoleCommand response;
@@ -110,7 +100,7 @@ internal sealed class CommandViewModel : BaseViewModel
 
     private async void _RequestAvailableCommands()
     {
-        IEnumerable<ConsoleCommand> availableCommands = await _client!.RequestAvailableCommands();
+        IEnumerable<ConsoleCommand> availableCommands = await ProtocolClientController.Instance.ClientProtocolAPI.RequestAvailableCommands();
         AvailableCommands = availableCommands.ToArray();
     }
 }

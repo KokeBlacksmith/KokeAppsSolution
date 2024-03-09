@@ -16,7 +16,7 @@ public class ConsoleCommand : IXmlSerializable
     public static readonly Guid REQUEST_AVAILABLE_COMMANDS_ID = new Guid("550e8400-e29b-41d4-a716-446655440000");
     public static readonly Guid REQUEST_AVAILABLE_COMMANDS_RESPONSE_ID = new Guid("6b29fc40-3949-4d38-9b34-065f8a7d47f7");
 
-    private const string _AVAILABLE_COMMANDS_SEPARATOR = ";;";
+    private const string c_AVAILABLE_COMMANDS_SEPARATOR = ";;";
 
     private ConsoleCommand()
     {
@@ -51,7 +51,7 @@ public class ConsoleCommand : IXmlSerializable
 
     public static ConsoleCommand CreateRequestAvailableCommandsResponse(IEnumerable<string> commands)
     {
-        return new ConsoleCommand(String.Join(_AVAILABLE_COMMANDS_SEPARATOR, commands), ECommandType.Info)
+        return new ConsoleCommand(String.Join(c_AVAILABLE_COMMANDS_SEPARATOR, commands), ECommandType.Info)
         {
             Id = REQUEST_AVAILABLE_COMMANDS_RESPONSE_ID,
             DependencyCommandId = REQUEST_AVAILABLE_COMMANDS_RESPONSE_ID,
@@ -65,7 +65,7 @@ public class ConsoleCommand : IXmlSerializable
             throw new InvalidOperationException("Cannot parse a command that is not a response to a request for available commands");
         }
 
-        foreach (string commandMessage in serverCommand.Command.Split(_AVAILABLE_COMMANDS_SEPARATOR))
+        foreach (string commandMessage in serverCommand.Command.Split(c_AVAILABLE_COMMANDS_SEPARATOR))
         {
             yield return new ConsoleCommand(commandMessage, ECommandType.Info);
         }

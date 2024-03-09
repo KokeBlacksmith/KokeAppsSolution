@@ -1,8 +1,5 @@
-﻿using Avalonia;
-using Avalonia.Collections;
-using Avalonia.Controls;
+﻿using Avalonia.Controls;
 using Avalonia.Interactivity;
-using Avalonia.Media;
 using ConsoleCompanionAPI.Data;
 using System.Collections.Specialized;
 

@@ -1,6 +1,7 @@
 using Avalonia;
 using Avalonia.Collections;
 using Avalonia.Controls;
+using Avalonia.Input;
 using Avalonia.Media;
 using KB.AvaloniaCore.Controls;
 using KB.AvaloniaCore.Injection;
@@ -17,5 +18,17 @@ public partial class MacroEditView : UserControl
     public MacroEditView()
     {
         InitializeComponent();
+        AddHandler(DragDrop.DropEvent, _OnDrop);
+        AddHandler(DragDrop.DragOverEvent, _OnDragOver);
+    }
+
+    private void _OnDragOver(object? sender, DragEventArgs e)
+    {
+        throw new NotImplementedException();
+    }
+
+    private void _OnDrop(object? sender, DragEventArgs e)
+    {
+        throw new NotImplementedException();
     }
 }
