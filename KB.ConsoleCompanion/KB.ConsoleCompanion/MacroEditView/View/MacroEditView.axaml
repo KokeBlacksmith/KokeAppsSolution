@@ -20,7 +20,8 @@
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition Width="300" MinWidth="250"/>
 			<ColumnDefinition Width="Auto"/>
-			<ColumnDefinition Width="*" MinWidth="500"/>
+			<ColumnDefinition Width="*" MinWidth="250"/>
+			<ColumnDefinition Width="*" MinWidth="250"/>
 		</Grid.ColumnDefinitions>
 
 		<!-- Available commands -->
@@ -68,6 +69,26 @@
 					</DataTemplate>
 				</ItemsControl.ItemTemplate>
 			</ItemsControl>
+		</Border>
+
+		<Border Grid.Column="3" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+			<view_core:SortingItemsControl ItemsSource="{Binding MacroCommands}" SwapItemsCommand="{Binding SwapMacroItemsCommand}">
+				<ItemsControl.ItemTemplate>
+					<DataTemplate>
+						<Border Margin="0,10,0,0"
+							CornerRadius="5"
+							BorderBrush="Gray" BorderThickness="1"
+							Padding="5">
+							<Grid ColumnDefinitions="30, *">
+								<Border Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+									<TextBlock Text="{Binding Command}"
+											   VerticalAlignment="Center"/>
+								</Border>
+							</Grid>
+						</Border>
+					</DataTemplate>
+				</ItemsControl.ItemTemplate>
+			</view_core:SortingItemsControl>
 		</Border>
 		
 	</Grid>

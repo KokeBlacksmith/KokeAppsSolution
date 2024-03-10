@@ -14,6 +14,7 @@ internal class MacroEditViewModel : BaseViewModel
 
     private readonly GenericCommand<ConsoleCommandViewModel> _sortUpMacroItemCommand;
     private readonly GenericCommand<ConsoleCommandViewModel> _sortDownMacroItemCommand;
+    private readonly GenericCommand<(int, int)> _swapMacroItemsCommand;
 
     public MacroEditViewModel()
     {
@@ -22,11 +23,22 @@ internal class MacroEditViewModel : BaseViewModel
 
         _sortUpMacroItemCommand = new GenericCommand<ConsoleCommandViewModel>(SortUpMacroItemCommandExecute, _CanSortUpMacroItemCommandExecute);
         _sortDownMacroItemCommand = new GenericCommand<ConsoleCommandViewModel>(SortDownMacroItemCommandExecute, _CanSortDownMacroItemCommandExecute);
+        _swapMacroItemsCommand = new GenericCommand<(int, int)>(_OnSwapMacroItemsCommandExecuted, null);
 
         if (!Design.IsDesignMode)
         {
             _RequestAvailableCommands();
         }
+    }
+
+    private void _OnSwapMacroItemsCommandExecuted((int, int) tuple)
+    {
+        MacroCommands.Move(tuple.Item1, tuple.Item2);
+    }
+
+    public GenericCommand<(int, int)> SwapMacroItemsCommand
+    {
+        get { return _swapMacroItemsCommand; }
     }
 
     public GenericCommand<ConsoleCommandViewModel> SortUpMacroItemCommand

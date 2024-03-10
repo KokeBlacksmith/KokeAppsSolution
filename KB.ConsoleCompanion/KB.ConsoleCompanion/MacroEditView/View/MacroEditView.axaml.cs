@@ -24,11 +24,9 @@ public partial class MacroEditView : UserControl
 
     private void _OnDragOver(object? sender, DragEventArgs e)
     {
-        throw new NotImplementedException();
     }
 
     private void _OnDrop(object? sender, DragEventArgs e)
     {
-        throw new NotImplementedException();
     }
 }
