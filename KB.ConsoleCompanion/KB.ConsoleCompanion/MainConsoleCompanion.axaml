@@ -10,6 +10,7 @@
 		<ResourceDictionary>
 			<ResourceDictionary.MergedDictionaries>
 				<ResourceInclude Source="avares://KB.ConsoleCompanion/Resources/IconGeometryResources.axaml" />
+				<ResourceInclude Source="avares://KB.AvaloniaCore/Converters/ConvertersResourceDictionary.axaml" />
 			</ResourceDictionary.MergedDictionaries>
 		</ResourceDictionary>
 	</UserControl.Resources>

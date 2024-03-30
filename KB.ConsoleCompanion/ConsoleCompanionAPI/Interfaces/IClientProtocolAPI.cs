@@ -1,6 +1,6 @@
-﻿using ConsoleCompanionAPI.Data;
+﻿using KB.ConsoleCompanionAPI.Data;
 
-namespace ConsoleCompanionAPI.Interfaces;
+namespace KB.ConsoleCompanionAPI.Interfaces;
 
 public interface IClientProtocolAPI
 {

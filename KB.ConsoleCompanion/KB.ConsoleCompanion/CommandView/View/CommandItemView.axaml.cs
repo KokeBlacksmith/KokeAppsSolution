@@ -1,6 +1,6 @@
 using Avalonia;
 using Avalonia.Controls;
-using ConsoleCompanionAPI.Data;
+using KB.ConsoleCompanionAPI.Data;
 using Avalonia.Media;
 
 namespace KB.ConsoleCompanion.CommandView;

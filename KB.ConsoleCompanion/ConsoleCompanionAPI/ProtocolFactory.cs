@@ -1,7 +1,7 @@
-﻿using ConsoleCompanionAPI.Interfaces;
-using ConsoleCompanionAPI.Protocols;
+﻿using KB.ConsoleCompanionAPI.Interfaces;
+using KB.ConsoleCompanionAPI.Protocols;
 
-namespace ConsoleCompanionAPI;
+namespace KB.ConsoleCompanionAPI;
 
 /// <summary>
 /// Factory class for creating server and client instances

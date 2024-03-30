@@ -1,6 +1,6 @@
 ﻿using Avalonia.Collections;
 using Avalonia.Controls;
-using ConsoleCompanionAPI.Data;
+using KB.ConsoleCompanionAPI.Data;
 using KB.AvaloniaCore.ReactiveUI;
 using KB.ConsoleCompanion.Communication;
 

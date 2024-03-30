@@ -1,11 +1,11 @@
-﻿using ConsoleCompanionAPI.Data;
+﻿using KB.ConsoleCompanionAPI.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ConsoleCompanionAPI.Interfaces;
+namespace KB.ConsoleCompanionAPI.Interfaces;
 public interface IServerProtocolAPI
 {
     event Func<ConsoleCommand, ConsoleCommand>? OnCommandReceived;

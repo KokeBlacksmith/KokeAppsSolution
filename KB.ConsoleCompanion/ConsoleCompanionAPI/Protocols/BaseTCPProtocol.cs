@@ -1,4 +1,4 @@
-﻿using ConsoleCompanionAPI.Data;
+﻿using KB.ConsoleCompanionAPI.Data;
 using KB.SharpCore.Serialization;
 using KB.SharpCore.Utils;
 using System;
@@ -9,7 +9,7 @@ using System.Security;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ConsoleCompanionAPI.Protocols
+namespace KB.ConsoleCompanionAPI.Protocols
 {
     internal abstract class BaseTCPProtocol
     {

@@ -1,4 +1,4 @@
-﻿using ConsoleCompanionAPI.Data;
+﻿using KB.ConsoleCompanionAPI.Data;
 using KB.AvaloniaCore.ReactiveUI;
 
 namespace KB.ConsoleCompanion.DataModels;

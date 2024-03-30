@@ -21,6 +21,7 @@ namespace KB.ConsoleCompanionStandalone
                     DataContext = null,
                     MinWidth = 600,
                     MinHeight = 400,
+                    Args = desktop.Args,
                 };
 
                 desktop.MainWindow = mainWindow;

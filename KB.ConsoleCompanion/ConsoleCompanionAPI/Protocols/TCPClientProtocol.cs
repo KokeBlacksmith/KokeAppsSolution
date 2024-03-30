@@ -1,9 +1,9 @@
-﻿using ConsoleCompanionAPI.Data;
-using ConsoleCompanionAPI.Interfaces;
+﻿using KB.ConsoleCompanionAPI.Data;
+using KB.ConsoleCompanionAPI.Interfaces;
 using System.Net;
 using System.Net.Sockets;
 
-namespace ConsoleCompanionAPI.Protocols;
+namespace KB.ConsoleCompanionAPI.Protocols;
 internal class TCPClientProtocol : BaseTCPProtocol, IClientProtocolAPI
 {
     private readonly IPEndPoint _endPoint;

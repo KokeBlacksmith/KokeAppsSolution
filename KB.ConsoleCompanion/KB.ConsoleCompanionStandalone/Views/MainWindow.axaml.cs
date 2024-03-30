@@ -8,5 +8,14 @@ namespace KB.ConsoleCompanionStandalone.Views
         {
             InitializeComponent();
         }
+
+        public string[]? Args
+        {
+            get { return m_ConsoleCompanionView.Args; }
+            set 
+            { 
+                m_ConsoleCompanionView.Args = value;
+            }
+        }
     }
 }

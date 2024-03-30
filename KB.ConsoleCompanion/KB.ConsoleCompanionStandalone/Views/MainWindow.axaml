@@ -8,5 +8,5 @@
         Icon="/Assets/avalonia-logo.ico"
         Title="KB.ConsoleCompanionStandalone">
 
-        <consoleCompanion:MainConsoleCompanion />
+        <consoleCompanion:MainConsoleCompanion x:FieldModifier="private" x:Name="m_ConsoleCompanionView" />
 </Window>

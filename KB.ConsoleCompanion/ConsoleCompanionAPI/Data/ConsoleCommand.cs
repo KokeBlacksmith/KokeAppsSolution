@@ -2,7 +2,7 @@
 using System.Xml;
 using System.Xml.Serialization;
 
-namespace ConsoleCompanionAPI.Data;
+namespace KB.ConsoleCompanionAPI.Data;
 public class ConsoleCommand : IXmlSerializable
 {
     public enum ECommandType : ushort

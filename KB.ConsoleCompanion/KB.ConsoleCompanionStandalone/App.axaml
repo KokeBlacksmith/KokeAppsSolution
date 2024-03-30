@@ -9,7 +9,7 @@
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceInclude Source="avares://KB.AvaloniaCore/Themes/ConvertersResourceDictionary.axaml" />
+                <ResourceInclude Source="avares://KB.AvaloniaCore/Converters/ConvertersResourceDictionary.axaml" />
 				<ResourceInclude Source="avares://KB.AvaloniaCore/Themes/CustomControls/CustomControlsThemesResourceDictionary.axaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>

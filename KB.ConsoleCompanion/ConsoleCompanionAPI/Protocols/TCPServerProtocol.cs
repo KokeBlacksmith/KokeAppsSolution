@@ -1,10 +1,10 @@
-﻿using ConsoleCompanionAPI.Data;
-using ConsoleCompanionAPI.Interfaces;
+﻿using KB.ConsoleCompanionAPI.Data;
+using KB.ConsoleCompanionAPI.Interfaces;
 using System.Net;
 using System.Net.Sockets;
 using System.Security;
 
-namespace ConsoleCompanionAPI.Protocols;
+namespace KB.ConsoleCompanionAPI.Protocols;
 
 internal class TCPServerProtocol : BaseTCPProtocol, IServerProtocolAPI
 {
@@ -46,11 +46,15 @@ internal class TCPServerProtocol : BaseTCPProtocol, IServerProtocolAPI
             _listener?.Stop();
             _listener = null;
             _listenerTaskCancellationTokenSource?.Cancel();
-            await _listenerTask!;
-            _listenerTask?.Dispose();
-            _listenerTask = null;
-            _listenerTaskCancellationTokenSource?.Dispose();
-            _listenerTaskCancellationTokenSource = null;
+            if(_listenerTask != null)
+            {
+                // Wait for the listener task to finish (if it hasn't already)
+                await _listenerTask!;
+                _listenerTask.Dispose();
+                _listenerTask = null;
+                _listenerTaskCancellationTokenSource?.Dispose();
+                _listenerTaskCancellationTokenSource = null;
+            }
         }
     }
 
@@ -73,6 +77,11 @@ internal class TCPServerProtocol : BaseTCPProtocol, IServerProtocolAPI
         catch (OperationCanceledException)
         {
             return Task.CompletedTask;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error in listener worker: {ex.Message}");
+            return Task.FromException(ex);
         }
     }
 
