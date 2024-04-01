@@ -20,25 +20,39 @@ internal class TCPClientProtocol : BaseTCPProtocol, IClientProtocolAPI
 
     public Task<ConsoleCommand> SendCommand(ConsoleCommand command)
     {
-        return Task.Run(async () => { 
-            using TcpClient client = new TcpClient();
-            client.Connect(_endPoint);
-
-            if (!client.Connected)
+        return Task.Run(async () => {
+            try
             {
-                throw new InvalidOperationException("Client is not connected");
+                using TcpClient client = new TcpClient();
+                client.Connect(_endPoint);
+
+                if (!client.Connected)
+                {
+                    throw new InvalidOperationException("Client is not connected");
+                }
+
+                await using NetworkStream stream = client.GetStream();
+
+                s_SendCommand(stream, command);
+                return s_ReceiveResponse(stream);
             }
-
-            await using NetworkStream stream = client.GetStream();
-
-            s_SendCommand(stream, command);
-            return s_ReceiveResponse(stream);
+            catch (Exception ex)
+            {
+                return ConsoleCommand.CreateResponseError(command, $"Failed to send command.\n{ex.Message}");
+            }
         });
     }
 
     public async Task<IEnumerable<ConsoleCommand>> RequestAvailableCommands()
     {
         ConsoleCommand response = await SendCommand(ConsoleCommand.CreateRequestAvailableCommands());
-        return ConsoleCommand.ParseAvailableCommandsResponse(response);
+        if(response.Type != ConsoleCommand.ECommandType.Error)
+        {
+            return ConsoleCommand.ParseAvailableCommandsResponse(response);
+        }
+        else
+        {
+            return Enumerable.Empty<ConsoleCommand>();
+        }
     }
 }

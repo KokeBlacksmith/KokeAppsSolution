@@ -105,7 +105,7 @@ internal class MacroEditViewModel : BaseViewModel
         AvailableCommands.Clear();
         IEnumerable<ConsoleCommand> availableCommands = await ProtocolClientController.Instance.ClientProtocolAPI.RequestAvailableCommands();
         AvailableCommands.AddRange(availableCommands.Select(command => new ConsoleCommandViewModel(command)));
-
+        
         // To test visual representation
         MacroCommands.AddRange(AvailableCommands);
     }
