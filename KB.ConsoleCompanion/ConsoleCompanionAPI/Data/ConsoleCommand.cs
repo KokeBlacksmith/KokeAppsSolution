@@ -1,6 +1,7 @@
 ﻿using System.Xml.Schema;
 using System.Xml;
 using System.Xml.Serialization;
+using KB.SharpCore.Utils;
 
 namespace KB.ConsoleCompanionAPI.Data;
 public class ConsoleCommand : IXmlSerializable
@@ -41,6 +42,52 @@ public class ConsoleCommand : IXmlSerializable
     public ECommandType Type { get; private set; }
     public Guid DependencyCommandId { get; private set; }
     public DateTime Time { get; private set; }
+
+    public Result TryExtractKeywords(out string? subManagerKey, out string? commandKey, out string? parameter)
+    {
+        subManagerKey = null;
+        commandKey = null;
+        parameter = null;
+
+        if(String.IsNullOrEmpty(Command))
+        {
+            return Result.CreateFailure("Trying to exract keywords from an empty console command!");
+        }
+
+        // A command has to have at least 2 keywords and a maxium of 3 by design
+        string[] keywords = Command.Trim().Split(" ").Select(kw => kw.Trim()).ToArray();
+        int length = keywords.Length;
+        if(length < 2)
+        {
+            return Result.CreateFailure("Invalid command. It does not have enough keywords.");
+        }
+
+        if (length > 3)
+        {
+            return Result.CreateFailure("Invalid command. It has more than 3 keywords.");
+        }
+
+        if(String.IsNullOrWhiteSpace(keywords[0]))
+        {
+            return Result.CreateFailure("Invalid command. Submanager key is empty.");
+        }
+
+        subManagerKey = keywords[0];
+
+        if (String.IsNullOrWhiteSpace(keywords[1]))
+        {
+            return Result.CreateFailure("Invalid command. Command key is empty.");
+        }
+
+        commandKey = keywords[1];
+
+        if(length == 3)
+        {
+            parameter = keywords[2];
+        }
+
+        return Result.CreateSuccess();
+    }
 
     #region Static Methods
 

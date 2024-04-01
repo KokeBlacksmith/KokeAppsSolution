@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using KB.SharpCore.Utils;
 
 namespace KB.ConsoleCompanionAPI.Data;
 public abstract class MainCommandManagerBase
@@ -16,30 +12,32 @@ public abstract class MainCommandManagerBase
 
     protected abstract void m_InitializeSubManagers();
 
-    private bool _TryGetSubCommandManagerFromCommand(ConsoleCommand command, out SubCommandManagerBase? subManager)
+    private Result _TryGetSubCommandManagerFromCommand(ConsoleCommand command, out SubCommandManagerBase? subManager)
     {
         subManager = null;
-        int endIndentifierIndex = command.Command.IndexOf(" ");
-        if (endIndentifierIndex >= 1)
+        Result extractKeywordsResult = command.TryExtractKeywords(out string? subManagerKey, out _, out _);
+        if(extractKeywordsResult.IsFailure)
         {
-            string managerIdentifier = command.Command.Substring(0, endIndentifierIndex).Trim().ToUpper();
-            if (m_subManagersDictionary!.TryGetValue(managerIdentifier, out subManager))
-            {
-                return true;
-            }
+            return extractKeywordsResult;
         }
 
-        return false;
+        if (m_subManagersDictionary!.TryGetValue(subManagerKey!.ToUpper(), out subManager))
+        {
+            return Result.CreateSuccess();
+        }
+
+        return Result.CreateFailure($"Couldn't retrieve the submanager '{subManagerKey}'.");
     }
 
     public ConsoleCommand ExecuteCommand(ConsoleCommand command)
     {
-        if (_TryGetSubCommandManagerFromCommand(command, out SubCommandManagerBase? subManager))
-        {
-            return subManager!.ExecuteCommand(command);
+        Result getSubmanagerResult = _TryGetSubCommandManagerFromCommand(command, out SubCommandManagerBase? subManager);
+        if(getSubmanagerResult.IsFailure) 
+        { 
+            return ConsoleCommand.CreateResponseError(command, getSubmanagerResult.MessagesAsString!);
         }
 
-        return ConsoleCommand.CreateResponseError(command, "Couldn't retrieve a sub manager handling this command.");
+        return subManager!.ExecuteCommand(command);
     }
 
     public ConsoleCommand GetAvailableCommands()
@@ -56,9 +54,10 @@ public abstract class MainCommandManagerBase
 
     public ConsoleCommand GetAvailableSubCommands(ConsoleCommand parentCommand)
     {
-        if (_TryGetSubCommandManagerFromCommand(parentCommand, out SubCommandManagerBase? subManager))
+        Result getSubmanagerResult = _TryGetSubCommandManagerFromCommand(parentCommand, out SubCommandManagerBase? subManager);
+        if (getSubmanagerResult.IsFailure)
         {
-            return null;
+            return ConsoleCommand.CreateResponseError(parentCommand, getSubmanagerResult.MessagesAsString!);
         }
 
         return null;

@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using KB.SharpCore.Utils;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace KB.ConsoleCompanionAPI.Data;
 
@@ -11,7 +7,59 @@ public abstract class SubCommandManagerBase
 {
     public ConsoleCommand ExecuteCommand(ConsoleCommand command)
     {
-        return ConsoleCommand.CreateResponseWarning(command, "Command received but SubCommandManagerBase is still not implemented");
+        Result keywordsResult = command.TryExtractKeywords(out string? subManagerKey, out string? commandMethodKey, out string? parameterKey);
+        if(keywordsResult.IsFailure)
+        {
+            return ConsoleCommand.CreateResponseError(command, $"Failed to retrieve keywords for the command '{command.Command}'.");
+        }
+
+        // Get the method that has the attribute with value coomandMethodKey
+        MethodInfo? targetMethod = null;
+        CommandMethodAttribute? targetCommandMethodAttribute = null;
+        foreach (MethodInfo method in this.GetType().GetMethods())
+        {
+            CommandMethodAttribute? commandMethodAttribute = method.GetCustomAttribute<CommandMethodAttribute>();
+            if(commandMethodAttribute == null)
+            {
+                continue;
+            }
+
+            if(String.Equals(commandMethodAttribute.Name, commandMethodKey, StringComparison.InvariantCultureIgnoreCase))
+            {
+                targetMethod = method;
+                targetCommandMethodAttribute = commandMethodAttribute;
+                break;
+            }
+        }
+
+        if(targetMethod == null) 
+        {
+            return ConsoleCommand.CreateResponseError(command, $"Failed to retrieve a method to execute the command '{commandMethodKey}' in the submanager '{subManagerKey}'.");
+        }
+
+        if(targetCommandMethodAttribute!.ParameterType != null)
+        {
+            if(String.IsNullOrWhiteSpace(parameterKey)) 
+            {
+                return ConsoleCommand.CreateResponseError(command, $"The command '{commandMethodKey}' is missing a parameter of type '{targetCommandMethodAttribute!.ParameterType.Name}'");
+            }
+
+            object? parameter = Convert.ChangeType(parameterKey, targetCommandMethodAttribute!.ParameterType);
+            if(parameter == null) 
+            {
+                return ConsoleCommand.CreateResponseError(command, $"Couldn't convert the paremeter '{parameterKey}' to '{targetCommandMethodAttribute!.ParameterType.Name}'");
+            }
+
+            return (ConsoleCommand)targetMethod.Invoke(this, new object[] { command, parameter! })!;
+        }
+        else if(!String.IsNullOrWhiteSpace(parameterKey))
+        {
+            return ConsoleCommand.CreateResponseError(command, $"The command '{commandMethodKey}' does not have parameters but a parameter with value '{parameterKey}' was provided.");
+        }
+        else
+        {
+            return (ConsoleCommand)targetMethod.Invoke(this, new object[] { command })!;
+        }
     }
 
     public IEnumerable<string> GetAvailableCommandsStringCollection()

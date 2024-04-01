@@ -3,12 +3,17 @@
 [AttributeUsage(AttributeTargets.Method, AllowMultiple = false, Inherited = true)]
 public class CommandMethodAttribute : Attribute
 {
-    public CommandMethodAttribute(string name, bool hasSubCommands)
+    public CommandMethodAttribute(string name) : this(name, null)
+    {
+
+    }
+
+    public CommandMethodAttribute(string name, Type? parameterType)
     {
         Name = name;
-        HasSubCommands = hasSubCommands;
+        ParameterType = parameterType;
     }
 
     public string Name { get; }
-    public bool HasSubCommands { get; }
+    public Type? ParameterType { get; }
 }
