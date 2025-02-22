@@ -1,19 +1,19 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>net6.0</TargetFramework>
+        <TargetFramework>net8.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <LangVersion>10</LangVersion>
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="Avalonia" Version="11.0.9" />
-      <PackageReference Include="Avalonia.Desktop" Version="11.0.9" />
-      <PackageReference Include="Avalonia.Diagnostics" Version="11.0.9" />
-      <PackageReference Include="Avalonia.ReactiveUI" Version="11.0.9" />
-      <PackageReference Include="Avalonia.Themes.Fluent" Version="11.0.9" />
-      <PackageReference Include="Avalonia.Xaml.Behaviors" Version="11.0.6" />
+      <PackageReference Include="Avalonia" Version="11.2.4" />
+      <PackageReference Include="Avalonia.Desktop" Version="11.2.4" />
+      <PackageReference Include="Avalonia.Diagnostics" Version="11.2.4" />
+      <PackageReference Include="Avalonia.ReactiveUI" Version="11.2.4" />
+      <PackageReference Include="Avalonia.Themes.Fluent" Version="11.2.4" />
+      <PackageReference Include="Avalonia.Xaml.Behaviors" Version="11.2.0.9" />
     </ItemGroup>
 
     <ItemGroup>
